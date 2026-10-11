@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHINAI Panel</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/preload.js"></script>
+  </head>
+  <body>
+    <div class="panel">
+      <!-- Header -->
+      <div class="panel-header">
+        <div class="brand-badge">
+          <div class="brand-icon">CH</div>
+          <div>
+            <div class="brand-title">CHINAI AI OS</div>
+            <div style="font-size: 10px; color: var(--muted-foreground, #64748b);">Thanh Bên Phụ Trợ</div>
+          </div>
+        </div>
+        <div id="server-status" class="server-pill">
+          <span class="dot"></span>
+          <span id="status-text">Đang kết nối...</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="tab-strip">
+        <button class="tab-btn active" data-tab="overview">Tổng Quan</button>
+        <button class="tab-btn" data-tab="formulas">Công Thức</button>
+        <button class="tab-btn" data-tab="sandbox">Chạy Sandbox</button>
+        <button class="tab-btn" data-tab="news">Radar AI</button>
+      </div>
+
+      <!-- Tab 1: Overview -->
+      <div id="tab-overview" class="tab-content">
+        <div class="card">
+          <div class="card-title">Tiến Độ Học Tập</div>
+          <div class="stats-row">
+            <div class="stat-box">
+              <div id="streak-val" class="stat-value" style="color: #f59e0b;">3🔥</div>
+              <div class="stat-label">Chuỗi ngày</div>
+            </div>
+            <div class="stat-box">
+              <div id="xp-val" class="stat-value" style="color: #8b5cf6;">150⚡</div>
+              <div class="stat-label">Tổng XP</div>
+            </div>
+            <div class="stat-box">
+              <div id="level-val" class="stat-value" style="color: #0284c7;">Lv.2🏆</div>
+              <div class="stat-label">Cấp bậc</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 10px;">
+          <div class="card-title">Lộ Trình AI 7 Khóa</div>
+          <div id="tracks-list" style="display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+            Đang tải danh sách lộ trình...
+          </div>
+        </div>
+
+        <div style="margin-top: 10px; display: flex; gap: 8px;">
+          <button id="open-full-btn" class="btn-primary" style="flex: 1;">
+            Mở Giao Diện Web Đầy Đủ (:5173)
+          </button>
+          <button id="ask-agent-btn" class="btn-secondary">
+            Hỏi Agent
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 2: Formulas -->
+      <div id="tab-formulas" class="tab-content" hidden>
+        <div class="card">
+          <div class="card-title">Chọn Bài Học Để Tra Cứu Công Thức</div>
+          <select id="lesson-select" style="width: 100%; padding: 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); font-size: 12px;">
+            <option value="lesson-foundations-what-is-ai">Nền tảng: Ranh giới Tuyến tính</option>
+            <option value="lesson-python-vectorization">Python: Tích vô hướng Vector</option>
+            <option value="lesson-math-gradient-descent">Toán: Gradient Descent Update</option>
+            <option value="lesson-ml-decision-trees">ML: Shannon Entropy</option>
+            <option value="lesson-dl-neural-activations">Deep Learning: ReLU & Sigmoid</option>
+            <option value="lesson-llm-embeddings-vector-search">LLM: Cosine Similarity</option>
+            <option value="lesson-mlops-latency-profiling">MLOps: P99 Tail Latency</option>
+          </select>
+
+          <div style="margin-top: 8px;">
+            <div id="formula-latex" class="formula-box">y = sign(w₁ · x₁ + w₂ · x₂ + b)</div>
+            <p id="formula-plain" style="font-size: 11px; color: var(--muted-foreground); margin: 6px 0 0 0; text-align: center;"></p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 10px;">
+          <div class="card-title">Giải Mã Ký Hiệu</div>
+          <div id="symbols-list" class="symbol-grid">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Sandbox -->
+      <div id="tab-sandbox" class="tab-content" hidden>
+        <div class="card">
+          <div class="card-title">Thử Nghiệm Mã Python Nhanh</div>
+          <textarea id="code-snippet" class="code-input"># Tính Gradient Descent cập nhật trọng số
+w = 5.0
+eta = 0.1
+grad = 2.0 * w
+w_new = w - eta * grad
+print(f"Trọng số cũ: {w}")
+print(f"Bước nhảy eta * grad: {eta * grad}")
+print(f"Trọng số mới: {w_new}")</textarea>
+          <div style="display: flex; gap: 8px; margin-top: 4px;">
+            <button id="run-code-btn" class="btn-primary" style="flex: 1;">
+              Chạy Mã (AST Sandbox)
+            </button>
+            <button id="clear-console-btn" class="btn-secondary">
+              Xóa Console
+            </button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 10px;">
+          <div class="card-title">Kết Quả Terminal</div>
+          <div id="sandbox-output" class="terminal-out">Chưa chạy mã. Bấm "Chạy Mã" để thực thi.</div>
+        </div>
+      </div>
+
+      <!-- Tab 4: News -->
+      <div id="tab-news" class="tab-content" hidden>
+        <div class="card">
+          <div class="card-title">Radar Tin Tức Nghiên Cứu Mới Nhất</div>
+          <div id="news-container" style="display: flex; flex-direction: column; gap: 8px;">
+            Đang tải dữ liệu bài báo...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
