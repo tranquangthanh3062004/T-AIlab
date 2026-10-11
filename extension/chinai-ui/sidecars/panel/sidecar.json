@@ -1,0 +1,18 @@
+{
+  "command": "node",
+  "args": ["main.mjs"],
+  "restart_policy": "always",
+  "display_name": "CHINAI AI Learning OS",
+  "description": "Bảng điều khiển học tập AI, tra cứu công thức, chạy thử Python Sandbox và cập nhật tin tức nghiên cứu.",
+  "has_web_ui": true,
+  "ui_config": {
+    "display_name": "CHINAI AI Learning OS",
+    "views": [
+      {
+        "path": "/",
+        "entrypoint": "SIDECAR_UI_ENTRYPOINT_AUX_PANE",
+        "title": "CHINAI"
+      }
+    ]
+  }
+}
