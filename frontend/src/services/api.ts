@@ -1,21 +1,100 @@
 import type {
   Track, Lesson, CodeExecutionResponse, NewsArticle,
   TutorResponse, WorkspaceProject, ProjectFile,
-  DatasetSummary, ExperimentRun, LearnerProgress
+  DatasetSummary, ExperimentRun, LearnerProgress,
+  AuthResponse, UserProfile
 } from '../types';
 
 const API_BASE = '/api';
 
+function getAuthHeaders(): Record<string, string> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  const token = localStorage.getItem('chinai_token');
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
 export const api = {
+  // Authentication & Google OAuth
+  async register(email: string, fullName: string, password: string, role?: string): Promise<AuthResponse> {
+    const res = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, full_name: fullName, password, role })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Đăng ký thất bại');
+    return data;
+  },
+
+  async login(email: string, password: string): Promise<AuthResponse> {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Đăng nhập thất bại');
+    return data;
+  },
+
+  async loginWithGoogle(email: string, fullName: string, avatarUrl?: string, googleCredential?: string): Promise<AuthResponse> {
+    const res = await fetch(`${API_BASE}/auth/google`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        full_name: fullName,
+        avatar_url: avatarUrl,
+        google_credential: googleCredential
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Kết nối Google thất bại');
+    return data;
+  },
+
+  async linkGoogleAccount(email: string, fullName: string, avatarUrl?: string): Promise<UserProfile> {
+    const res = await fetch(`${API_BASE}/auth/google/link`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ email, full_name: fullName, avatar_url: avatarUrl })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Không thể liên kết tài khoản Google');
+    return data;
+  },
+
+  async unlinkGoogleAccount(email: string): Promise<UserProfile> {
+    const res = await fetch(`${API_BASE}/auth/google/unlink`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Không thể hủy liên kết Google');
+    return data;
+  },
+
+  async getMe(): Promise<UserProfile> {
+    const res = await fetch(`${API_BASE}/auth/me`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Not authenticated');
+    return res.json();
+  },
+
   // Curriculum
   async getTracks(): Promise<Track[]> {
-    const res = await fetch(`${API_BASE}/learn/tracks`);
+    const res = await fetch(`${API_BASE}/learn/tracks`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch tracks');
     return res.json();
   },
 
   async getLesson(lessonId: string): Promise<Lesson> {
-    const res = await fetch(`${API_BASE}/learn/lessons/${lessonId}`);
+    const res = await fetch(`${API_BASE}/learn/lessons/${lessonId}`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch lesson');
     return res.json();
   },
@@ -23,7 +102,7 @@ export const api = {
   async submitQuiz(lessonId: string, selectedOptionIds: Record<string, string>): Promise<any> {
     const res = await fetch(`${API_BASE}/learn/quiz/submit`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ lesson_id: lessonId, selected_option_ids: selectedOptionIds })
     });
     if (!res.ok) throw new Error('Failed to submit quiz');
@@ -33,7 +112,7 @@ export const api = {
   async submitExercisePass(lessonId: string): Promise<any> {
     const res = await fetch(`${API_BASE}/learn/exercise/pass`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ lesson_id: lessonId })
     });
     if (!res.ok) throw new Error('Failed to record exercise pass');
@@ -41,7 +120,7 @@ export const api = {
   },
 
   async getDiagnosticQuestions(): Promise<any[]> {
-    const res = await fetch(`${API_BASE}/learn/diagnostic/questions`);
+    const res = await fetch(`${API_BASE}/learn/diagnostic/questions`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch diagnostic questions');
     return res.json();
   },
@@ -49,7 +128,7 @@ export const api = {
   async submitDiagnostic(answers: Record<string, string>): Promise<any> {
     const res = await fetch(`${API_BASE}/learn/diagnostic/submit`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ answers })
     });
     if (!res.ok) throw new Error('Failed to submit diagnostic');
@@ -57,7 +136,7 @@ export const api = {
   },
 
   async getProgress(): Promise<LearnerProgress> {
-    const res = await fetch(`${API_BASE}/learn/progress`);
+    const res = await fetch(`${API_BASE}/learn/progress`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch progress');
     return res.json();
   },
@@ -66,7 +145,7 @@ export const api = {
   async executeCode(code: string, exerciseId?: string): Promise<CodeExecutionResponse> {
     const res = await fetch(`${API_BASE}/execution/run`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ code, exercise_id: exerciseId, timeout_seconds: 5 })
     });
     if (!res.ok) throw new Error('Failed to execute code');
@@ -81,19 +160,25 @@ export const api = {
     if (params?.search) query.set('search', params.search);
     if (params?.bookmarked_only) query.set('bookmarked_only', 'true');
 
-    const res = await fetch(`${API_BASE}/news/articles?${query.toString()}`);
+    const res = await fetch(`${API_BASE}/news/articles?${query.toString()}`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch news');
     return res.json();
   },
 
   async toggleBookmark(articleId: string): Promise<{ id: string; bookmarked: boolean }> {
-    const res = await fetch(`${API_BASE}/news/articles/${articleId}/bookmark`, { method: 'POST' });
+    const res = await fetch(`${API_BASE}/news/articles/${articleId}/bookmark`, {
+      method: 'POST',
+      headers: getAuthHeaders()
+    });
     if (!res.ok) throw new Error('Failed to toggle bookmark');
     return res.json();
   },
 
   async triggerNewsIngestion(): Promise<any> {
-    const res = await fetch(`${API_BASE}/news/ingest`, { method: 'POST' });
+    const res = await fetch(`${API_BASE}/news/ingest`, {
+      method: 'POST',
+      headers: getAuthHeaders()
+    });
     if (!res.ok) throw new Error('Failed to trigger ingestion');
     return res.json();
   },
@@ -102,7 +187,7 @@ export const api = {
   async queryTutor(query: string, mode: 'learn' | 'engineer', lessonId?: string, codeContext?: string): Promise<TutorResponse> {
     const res = await fetch(`${API_BASE}/tutor/query`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({
         query,
         mode,
@@ -116,13 +201,13 @@ export const api = {
 
   // Workspace
   async getProjects(): Promise<WorkspaceProject[]> {
-    const res = await fetch(`${API_BASE}/workspace/projects`);
+    const res = await fetch(`${API_BASE}/workspace/projects`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch projects');
     return res.json();
   },
 
   async getProject(projectId: string): Promise<WorkspaceProject> {
-    const res = await fetch(`${API_BASE}/workspace/projects/${projectId}`);
+    const res = await fetch(`${API_BASE}/workspace/projects/${projectId}`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch project');
     return res.json();
   },
@@ -130,7 +215,7 @@ export const api = {
   async updateFile(fileId: string, content: string): Promise<ProjectFile> {
     const res = await fetch(`${API_BASE}/workspace/files/${fileId}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ content })
     });
     if (!res.ok) throw new Error('Failed to save file');
@@ -140,7 +225,7 @@ export const api = {
   async createFile(projectId: string, name: string, content: string = ''): Promise<ProjectFile> {
     const res = await fetch(`${API_BASE}/workspace/projects/${projectId}/files`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ name, content, language: name.endsWith('.csv') ? 'csv' : 'python' })
     });
     if (!res.ok) throw new Error('Failed to create file');
@@ -148,13 +233,13 @@ export const api = {
   },
 
   async getDatasetSummary(): Promise<DatasetSummary> {
-    const res = await fetch(`${API_BASE}/workspace/dataset/summary`);
+    const res = await fetch(`${API_BASE}/workspace/dataset/summary`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch dataset summary');
     return res.json();
   },
 
   async getExperiments(): Promise<ExperimentRun[]> {
-    const res = await fetch(`${API_BASE}/workspace/experiments`);
+    const res = await fetch(`${API_BASE}/workspace/experiments`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch experiments');
     return res.json();
   }

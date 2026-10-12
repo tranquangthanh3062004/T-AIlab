@@ -1,6 +1,31 @@
 export type AppMode = 'learn' | 'engineer';
 export type AppTheme = 'light' | 'dark';
 
+export interface GoogleAccountItem {
+  email: string;
+  name: string;
+  avatar_url?: string;
+  is_primary: boolean;
+  linked_at: string;
+}
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  full_name: string;
+  avatar_url?: string;
+  role: string;
+  auth_provider: string;
+  connected_google_accounts: GoogleAccountItem[];
+  created_at: string;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  token_type: string;
+  user: UserProfile;
+}
+
 export interface QuizOption {
   id: string;
   text: string;

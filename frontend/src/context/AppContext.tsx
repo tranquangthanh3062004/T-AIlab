@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { AppMode, AppTheme, LearnerProgress } from '../types';
+import type { AppMode, AppTheme, LearnerProgress, UserProfile } from '../types';
 import { api } from '../services/api';
 import { translations, type Language } from '../services/i18n';
+
+export type AuthModalTab = 'login' | 'register' | 'google';
 
 interface AppContextType {
   mode: AppMode;
@@ -19,6 +21,13 @@ interface AppContextType {
   openLesson: (lessonId: string) => void;
   progress: LearnerProgress | null;
   refreshProgress: () => Promise<void>;
+  user: UserProfile | null;
+  setUser: (user: UserProfile | null) => void;
+  authModalOpen: boolean;
+  authModalTab: AuthModalTab;
+  openAuthModal: (tab?: AuthModalTab) => void;
+  closeAuthModal: () => void;
+  logout: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -45,6 +54,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeView, setActiveView] = useState<string>('home');
   const [activeLessonId, setActiveLessonId] = useState<string | null>('lesson-foundations-what-is-ai');
   const [progress, setProgress] = useState<LearnerProgress | null>(null);
+  const [user, setUserState] = useState<UserProfile | null>(() => {
+    try {
+      const cached = localStorage.getItem('chinai_user');
+      return cached ? JSON.parse(cached) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
+  const [authModalTab, setAuthModalTab] = useState<AuthModalTab>('login');
+
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem('chinai_lang');
     return (saved === 'en' || saved === 'vi') ? saved : 'vi';
@@ -81,6 +101,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
+  const setUser = (newUser: UserProfile | null) => {
+    setUserState(newUser);
+    if (newUser) {
+      localStorage.setItem('chinai_user', JSON.stringify(newUser));
+    } else {
+      localStorage.removeItem('chinai_user');
+    }
+  };
+
+  const openAuthModal = (tab: AuthModalTab = 'login') => {
+    setAuthModalTab(tab);
+    setAuthModalOpen(true);
+  };
+
+  const closeAuthModal = () => {
+    setAuthModalOpen(false);
+  };
+
+  const logout = () => {
+    localStorage.removeItem('chinai_token');
+    localStorage.removeItem('chinai_user');
+    setUserState(null);
+    refreshProgress();
+  };
+
   const refreshProgress = async () => {
     try {
       const p = await api.getProgress();
@@ -96,8 +141,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   useEffect(() => {
-    refreshProgress();
+    const token = localStorage.getItem('chinai_token');
+    if (token) {
+      api.getMe()
+        .then((u) => setUser(u))
+        .catch(() => {
+          localStorage.removeItem('chinai_token');
+          setUser(null);
+        });
+    }
   }, []);
+
+  useEffect(() => {
+    refreshProgress();
+  }, [user]);
 
   return (
     <AppContext.Provider
@@ -116,7 +173,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         activeLessonId,
         openLesson,
         progress,
-        refreshProgress
+        refreshProgress,
+        user,
+        setUser,
+        authModalOpen,
+        authModalTab,
+        openAuthModal,
+        closeAuthModal,
+        logout
       }}
     >
       {children}
