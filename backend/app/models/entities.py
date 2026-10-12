@@ -3,6 +3,20 @@ from sqlalchemy import Column, String, Integer, Float, Boolean, Text, DateTime, 
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
+class UserAccount(Base):
+    __tablename__ = "user_accounts"
+
+    id = Column(String, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    full_name = Column(String, nullable=False)
+    password_hash = Column(String, nullable=True)
+    auth_provider = Column(String, default="local")  # "local", "google", "local+google"
+    avatar_url = Column(String, nullable=True)
+    role = Column(String, default="AI Explorer")
+    google_accounts_json = Column(Text, default="[]")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    last_login_at = Column(DateTime, default=datetime.utcnow)
+
 class UserProgress(Base):
     __tablename__ = "user_progress"
 
