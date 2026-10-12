@@ -3,6 +3,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
+from app.api.auth import get_current_user_id
 from app.models.entities import UserProgress, LearnerProfile
 from app.schemas.curriculum import (
     Track, Lesson, QuizSubmission, QuizResult,
@@ -78,16 +79,20 @@ def get_lesson_by_id(lesson_id: str):
     raise HTTPException(status_code=404, detail="Lesson not found")
 
 @router.post("/quiz/submit", response_model=QuizResult)
-def submit_quiz(submission: QuizSubmission, db: Session = Depends(get_db)):
+def submit_quiz(
+    submission: QuizSubmission,
+    user_id: str = Depends(get_current_user_id),
+    db: Session = Depends(get_db)
+):
     result = evaluate_lesson_quiz(submission.lesson_id, submission.selected_option_ids)
 
-    # Persist progress
-    progress_id = f"prog-{submission.lesson_id}"
+    # Persist progress per user_id
+    progress_id = f"prog-{user_id}-{submission.lesson_id}" if user_id != "default-learner" else f"prog-{submission.lesson_id}"
     prog = db.query(UserProgress).filter(UserProgress.id == progress_id).first()
     if not prog:
         prog = UserProgress(
             id=progress_id,
-            user_id="default-learner",
+            user_id=user_id,
             lesson_id=submission.lesson_id,
             completed=result.passed,
             quiz_score=result.score_percentage,
@@ -101,7 +106,7 @@ def submit_quiz(submission: QuizSubmission, db: Session = Depends(get_db)):
         prog.xp_earned = max(prog.xp_earned or 0, 40 if result.passed else 10)
 
     # Award XP & Badges
-    profile = get_or_create_profile(db)
+    profile = get_or_create_profile(db, user_id)
     xp_to_add = 40 if result.passed else 10
     profile.xp = (profile.xp or 0) + xp_to_add
     profile.today_xp = (profile.today_xp or 0) + xp_to_add
@@ -121,17 +126,21 @@ def submit_quiz(submission: QuizSubmission, db: Session = Depends(get_db)):
     return result
 
 @router.post("/exercise/pass")
-def submit_exercise_pass(payload: dict, db: Session = Depends(get_db)):
+def submit_exercise_pass(
+    payload: dict,
+    user_id: str = Depends(get_current_user_id),
+    db: Session = Depends(get_db)
+):
     lesson_id = payload.get("lesson_id", "")
     if not lesson_id:
         raise HTTPException(status_code=400, detail="lesson_id required")
     
-    progress_id = f"prog-{lesson_id}"
+    progress_id = f"prog-{user_id}-{lesson_id}" if user_id != "default-learner" else f"prog-{lesson_id}"
     prog = db.query(UserProgress).filter(UserProgress.id == progress_id).first()
     if not prog:
         prog = UserProgress(
             id=progress_id,
-            user_id="default-learner",
+            user_id=user_id,
             lesson_id=lesson_id,
             completed=True,
             code_exercise_passed=True,
@@ -142,7 +151,7 @@ def submit_exercise_pass(payload: dict, db: Session = Depends(get_db)):
         prog.code_exercise_passed = True
         prog.xp_earned = (prog.xp_earned or 0) + 30
 
-    profile = get_or_create_profile(db)
+    profile = get_or_create_profile(db, user_id)
     profile.xp = (profile.xp or 0) + 30
     profile.today_xp = (profile.today_xp or 0) + 30
     badges = set(json.loads(profile.badges_json or "[]"))
@@ -167,10 +176,14 @@ def get_diagnostic_questions():
     ]
 
 @router.post("/diagnostic/submit", response_model=DiagnosticResult)
-def submit_diagnostic(sub: DiagnosticSubmission, db: Session = Depends(get_db)):
+def submit_diagnostic(
+    sub: DiagnosticSubmission,
+    user_id: str = Depends(get_current_user_id),
+    db: Session = Depends(get_db)
+):
     result = evaluate_diagnostic_assessment(sub.answers)
 
-    profile = get_or_create_profile(db)
+    profile = get_or_create_profile(db, user_id)
     profile.diagnostic_completed = True
     profile.diagnostic_score = result.score_percentage
     profile.recommended_track = result.recommended_track_id
@@ -187,12 +200,15 @@ def submit_diagnostic(sub: DiagnosticSubmission, db: Session = Depends(get_db)):
     return result
 
 @router.get("/progress", response_model=LearnerProgressResponse)
-def get_learner_progress(db: Session = Depends(get_db)):
-    records = db.query(UserProgress).filter(UserProgress.user_id == "default-learner").all()
+def get_learner_progress(
+    user_id: str = Depends(get_current_user_id),
+    db: Session = Depends(get_db)
+):
+    records = db.query(UserProgress).filter(UserProgress.user_id == user_id).all()
     completed_ids = [r.lesson_id for r in records if r.completed]
     scores = {r.lesson_id: r.quiz_score for r in records if r.quiz_score is not None}
 
-    profile = get_or_create_profile(db)
+    profile = get_or_create_profile(db, user_id)
     earned_badge_ids = set(json.loads(profile.badges_json or "[]"))
     badges_list = [
         BadgeInfo(
@@ -222,4 +238,3 @@ def get_learner_progress(db: Session = Depends(get_db)):
         today_xp=profile.today_xp or 30,
         badges=badges_list
     )
-
