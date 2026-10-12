@@ -1,13 +1,24 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { AppMode, AppTheme, LearnerProgress, UserProfile } from '../types';
+import type { AppMode, AppTheme, LearnerPersona, LearnerProgress, UserProfile } from '../types';
 import { api } from '../services/api';
 import { translations, type Language } from '../services/i18n';
 
 export type AuthModalTab = 'login' | 'register' | 'google';
 
+function inferPersonaFromRole(role?: string): LearnerPersona {
+  if (!role) return 'beginner';
+  const r = role.toLowerCase();
+  if (r.includes('engineer') || r.includes('researcher') || r.includes('kỹ sư') || r.includes('creator')) {
+    return 'engineer';
+  }
+  return 'beginner';
+}
+
 interface AppContextType {
   mode: AppMode;
   setMode: (mode: AppMode) => void;
+  persona: LearnerPersona;
+  setPersona: (persona: LearnerPersona) => void;
   theme: AppTheme;
   setTheme: (theme: AppTheme) => void;
   toggleTheme: () => void;
@@ -28,12 +39,33 @@ interface AppContextType {
   openAuthModal: (tab?: AuthModalTab) => void;
   closeAuthModal: () => void;
   logout: () => void;
+  agentOpen: boolean;
+  setAgentOpen: (open: boolean) => void;
+  agentInitialPrompt: string | null;
+  openAgentWithPrompt: (prompt?: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [mode, setModeState] = useState<AppMode>('learn');
+  const [user, setUserState] = useState<UserProfile | null>(() => {
+    try {
+      const cached = localStorage.getItem('chinai_user');
+      return cached ? JSON.parse(cached) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const [persona, setPersonaState] = useState<LearnerPersona>(() => {
+    const saved = localStorage.getItem('chinai_persona');
+    if (saved === 'beginner' || saved === 'engineer') return saved;
+    if (user?.role) return inferPersonaFromRole(user.role);
+    return 'beginner';
+  });
+
+  const [mode, setModeState] = useState<AppMode>(() => (persona === 'engineer' ? 'engineer' : 'learn'));
+
   const [theme, setThemeState] = useState<AppTheme>(() => {
     const saved = localStorage.getItem('chinai_theme');
     if (saved === 'dark' || saved === 'light') return saved;
@@ -54,16 +86,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeView, setActiveView] = useState<string>('home');
   const [activeLessonId, setActiveLessonId] = useState<string | null>('lesson-foundations-what-is-ai');
   const [progress, setProgress] = useState<LearnerProgress | null>(null);
-  const [user, setUserState] = useState<UserProfile | null>(() => {
-    try {
-      const cached = localStorage.getItem('chinai_user');
-      return cached ? JSON.parse(cached) : null;
-    } catch {
-      return null;
-    }
-  });
   const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
   const [authModalTab, setAuthModalTab] = useState<AuthModalTab>('login');
+  const [agentOpen, setAgentOpen] = useState<boolean>(false);
+  const [agentInitialPrompt, setAgentInitialPrompt] = useState<string | null>(null);
 
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem('chinai_lang');
@@ -83,8 +109,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return translations[language][key] || translations['vi'][key] || key;
   };
 
+  const setPersona = (newPersona: LearnerPersona) => {
+    setPersonaState(newPersona);
+    localStorage.setItem('chinai_persona', newPersona);
+    setModeState(newPersona === 'engineer' ? 'engineer' : 'learn');
+  };
+
   const setMode = (newMode: AppMode) => {
     setModeState(newMode);
+    const mappedPersona: LearnerPersona = newMode === 'engineer' ? 'engineer' : 'beginner';
+    setPersonaState(mappedPersona);
+    localStorage.setItem('chinai_persona', mappedPersona);
   };
 
   const setTheme = (newTheme: AppTheme) => {
@@ -105,6 +140,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUserState(newUser);
     if (newUser) {
       localStorage.setItem('chinai_user', JSON.stringify(newUser));
+      const inferred = inferPersonaFromRole(newUser.role);
+      setPersona(inferred);
     } else {
       localStorage.removeItem('chinai_user');
     }
@@ -117,6 +154,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const closeAuthModal = () => {
     setAuthModalOpen(false);
+  };
+
+  const openAgentWithPrompt = (prompt?: string) => {
+    if (prompt) {
+      setAgentInitialPrompt(prompt);
+    }
+    setAgentOpen(true);
   };
 
   const logout = () => {
@@ -161,6 +205,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       value={{
         mode,
         setMode,
+        persona,
+        setPersona,
         theme,
         setTheme,
         toggleTheme,
@@ -180,7 +226,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         authModalTab,
         openAuthModal,
         closeAuthModal,
-        logout
+        logout,
+        agentOpen,
+        setAgentOpen,
+        agentInitialPrompt,
+        openAgentWithPrompt
       }}
     >
       {children}

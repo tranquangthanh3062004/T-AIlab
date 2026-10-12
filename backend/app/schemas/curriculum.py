@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 class QuizOption(BaseModel):
     id: str
@@ -45,18 +45,30 @@ class FormulaGuide(BaseModel):
     symbols: list[FormulaSymbol]
     steps: list[FormulaStep]
 
+class LessonDataset(BaseModel):
+    name: str
+    source_org: str
+    source_url: str
+    license: str
+    description: str
+    columns: list[str]
+    sample_rows: list[dict[str, str | float | int]]
+
 class Lesson(BaseModel):
     id: str
     module_id: str
     title: str
     track_id: str
+    target_audience: str = "beginner"  # "beginner" or "engineer"
     estimated_minutes: int
     difficulty: str  # Beginner, Intermediate, Advanced
     prerequisites: list[str] = []
     objectives: list[str]
     intuitive_explanation: str
+    deep_dive_notes: list[str] = []
     formal_explanation: str
     formula_guide: FormulaGuide | None = None
+    real_dataset: LessonDataset | None = None
     worked_example_code: str | None = None
     common_misconceptions: list[str] = []
     interactive_widget: LessonInteractiveWidget | None = None
@@ -78,6 +90,7 @@ class Track(BaseModel):
     tagline: str
     description: str
     level: str  # Beginner, Intermediate, Advanced
+    target_audience: str = "beginner"  # "beginner" or "engineer"
     estimated_hours: int
     modules: list[Module] = []
 
@@ -98,6 +111,7 @@ class DiagnosticSubmission(BaseModel):
 class DiagnosticResult(BaseModel):
     score_percentage: float
     recommended_track_id: str
+    recommended_persona: str = "beginner"
     track_title: str
     analysis: str
     suggested_starting_lesson_id: str

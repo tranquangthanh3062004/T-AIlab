@@ -87,20 +87,23 @@ export const api = {
   },
 
   // Curriculum
-  async getTracks(): Promise<Track[]> {
-    const res = await fetch(`${API_BASE}/learn/tracks`, { headers: getAuthHeaders() });
+  async getTracks(lang?: string): Promise<Track[]> {
+    const activeLang = lang || localStorage.getItem('chinai_lang') || 'vi';
+    const res = await fetch(`${API_BASE}/learn/tracks?lang=${encodeURIComponent(activeLang)}`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch tracks');
     return res.json();
   },
 
-  async getLesson(lessonId: string): Promise<Lesson> {
-    const res = await fetch(`${API_BASE}/learn/lessons/${lessonId}`, { headers: getAuthHeaders() });
+  async getLesson(lessonId: string, lang?: string): Promise<Lesson> {
+    const activeLang = lang || localStorage.getItem('chinai_lang') || 'vi';
+    const res = await fetch(`${API_BASE}/learn/lessons/${lessonId}?lang=${encodeURIComponent(activeLang)}`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch lesson');
     return res.json();
   },
 
-  async submitQuiz(lessonId: string, selectedOptionIds: Record<string, string>): Promise<any> {
-    const res = await fetch(`${API_BASE}/learn/quiz/submit`, {
+  async submitQuiz(lessonId: string, selectedOptionIds: Record<string, string>, lang?: string): Promise<any> {
+    const activeLang = lang || localStorage.getItem('chinai_lang') || 'vi';
+    const res = await fetch(`${API_BASE}/learn/quiz/submit?lang=${encodeURIComponent(activeLang)}`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ lesson_id: lessonId, selected_option_ids: selectedOptionIds })
@@ -119,14 +122,16 @@ export const api = {
     return res.json();
   },
 
-  async getDiagnosticQuestions(): Promise<any[]> {
-    const res = await fetch(`${API_BASE}/learn/diagnostic/questions`, { headers: getAuthHeaders() });
+  async getDiagnosticQuestions(lang?: string): Promise<any[]> {
+    const activeLang = lang || localStorage.getItem('chinai_lang') || 'vi';
+    const res = await fetch(`${API_BASE}/learn/diagnostic/questions?lang=${encodeURIComponent(activeLang)}`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch diagnostic questions');
     return res.json();
   },
 
-  async submitDiagnostic(answers: Record<string, string>): Promise<any> {
-    const res = await fetch(`${API_BASE}/learn/diagnostic/submit`, {
+  async submitDiagnostic(answers: Record<string, string>, lang?: string): Promise<any> {
+    const activeLang = lang || localStorage.getItem('chinai_lang') || 'vi';
+    const res = await fetch(`${API_BASE}/learn/diagnostic/submit?lang=${encodeURIComponent(activeLang)}`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ answers })

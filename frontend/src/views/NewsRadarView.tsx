@@ -65,6 +65,21 @@ export const NewsRadarView: React.FC = () => {
     fetchNews();
   }, [selectedCategory, bookmarksOnly, isVi]);
 
+  useEffect(() => {
+    // Auto-poll live RSS feeds once per session so newest articles appear automatically
+    const autoPolled = sessionStorage.getItem('chinai_news_autopolled');
+    if (!autoPolled) {
+      sessionStorage.setItem('chinai_news_autopolled', '1');
+      api.triggerNewsIngestion()
+        .then((res) => {
+          if (res && res.new_articles_persisted > 0) {
+            fetchNews();
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     fetchNews();

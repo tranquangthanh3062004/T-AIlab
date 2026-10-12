@@ -1,5 +1,6 @@
 export type AppMode = 'learn' | 'engineer';
 export type AppTheme = 'light' | 'dark';
+export type LearnerPersona = 'beginner' | 'engineer';
 
 export interface GoogleAccountItem {
   email: string;
@@ -78,6 +79,16 @@ export interface FormulaGuide {
   steps: FormulaStep[];
 }
 
+export interface LessonDataset {
+  name: string;
+  source_org: string;
+  source_url: string;
+  license: string;
+  description: string;
+  columns: string[];
+  sample_rows: Record<string, any>[];
+}
+
 export interface Lesson {
   id: string;
   module_id: string;
@@ -85,11 +96,14 @@ export interface Lesson {
   title: string;
   estimated_minutes: number;
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  target_audience?: 'beginner' | 'engineer';
   prerequisites: string[];
   objectives: string[];
   intuitive_explanation: string;
   formal_explanation: string;
+  deep_dive_notes?: string[];
   formula_guide?: FormulaGuide;
+  real_dataset?: LessonDataset;
   worked_example_code?: string;
   common_misconceptions: string[];
   interactive_widget?: LessonInteractiveWidget;
@@ -113,6 +127,7 @@ export interface Track {
   tagline: string;
   description: string;
   level: string;
+  target_audience?: 'beginner' | 'engineer';
   estimated_hours: number;
   modules: Module[];
 }

@@ -1,6 +1,5 @@
 import json
-from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.api.auth import get_current_user_id
@@ -11,8 +10,12 @@ from app.schemas.curriculum import (
     BadgeInfo, LearnerProgressResponse
 )
 from app.services.curriculum import (
-    CURRICULUM_TRACKS, DIAGNOSTIC_QUESTIONS,
-    evaluate_lesson_quiz, evaluate_diagnostic_assessment
+    CURRICULUM_TRACKS,
+    get_tracks_by_lang,
+    get_lesson_by_lang,
+    get_diagnostic_questions_by_lang,
+    evaluate_lesson_quiz,
+    evaluate_diagnostic_assessment
 )
 
 router = APIRouter(prefix="/learn", tags=["Learning Curriculum"])
@@ -59,32 +62,32 @@ def get_or_create_profile(db: Session, user_id: str = "default-learner") -> Lear
     return profile
 
 @router.get("/tracks", response_model=list[Track])
-def get_all_tracks():
-    return CURRICULUM_TRACKS
+def get_all_tracks(lang: str = Query(default="vi")):
+    return get_tracks_by_lang(lang)
 
 @router.get("/tracks/{track_id}", response_model=Track)
-def get_track_by_id(track_id: str):
-    track = next((t for t in CURRICULUM_TRACKS if t.id == track_id), None)
+def get_track_by_id(track_id: str, lang: str = Query(default="vi")):
+    tracks = get_tracks_by_lang(lang)
+    track = next((t for t in tracks if t.id == track_id), None)
     if not track:
         raise HTTPException(status_code=404, detail="Track not found")
     return track
 
 @router.get("/lessons/{lesson_id}", response_model=Lesson)
-def get_lesson_by_id(lesson_id: str):
-    for track in CURRICULUM_TRACKS:
-        for mod in track.modules:
-            for lsn in mod.lessons:
-                if lsn.id == lesson_id:
-                    return lsn
-    raise HTTPException(status_code=404, detail="Lesson not found")
+def get_lesson_by_id(lesson_id: str, lang: str = Query(default="vi")):
+    lsn = get_lesson_by_lang(lesson_id, lang)
+    if not lsn:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+    return lsn
 
 @router.post("/quiz/submit", response_model=QuizResult)
 def submit_quiz(
     submission: QuizSubmission,
+    lang: str = Query(default="vi"),
     user_id: str = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    result = evaluate_lesson_quiz(submission.lesson_id, submission.selected_option_ids)
+    result = evaluate_lesson_quiz(submission.lesson_id, submission.selected_option_ids, lang)
 
     # Persist progress per user_id
     progress_id = f"prog-{user_id}-{submission.lesson_id}" if user_id != "default-learner" else f"prog-{submission.lesson_id}"
@@ -110,14 +113,14 @@ def submit_quiz(
     xp_to_add = 40 if result.passed else 10
     profile.xp = (profile.xp or 0) + xp_to_add
     profile.today_xp = (profile.today_xp or 0) + xp_to_add
-    
+
     # Update badges
     current_badges = set(json.loads(profile.badges_json or "[]"))
     current_badges.add("first_step")
     if result.score_percentage >= 100.0:
         current_badges.add("quiz_master")
     profile.badges_json = json.dumps(list(current_badges))
-    
+
     # Update level
     new_lvl, _ = get_level_info(profile.xp)
     profile.level = new_lvl
@@ -134,7 +137,7 @@ def submit_exercise_pass(
     lesson_id = payload.get("lesson_id", "")
     if not lesson_id:
         raise HTTPException(status_code=400, detail="lesson_id required")
-    
+
     progress_id = f"prog-{user_id}-{lesson_id}" if user_id != "default-learner" else f"prog-{lesson_id}"
     prog = db.query(UserProgress).filter(UserProgress.id == progress_id).first()
     if not prog:
@@ -164,7 +167,8 @@ def submit_exercise_pass(
     return {"success": True, "xp_awarded": 30, "total_xp": profile.xp}
 
 @router.get("/diagnostic/questions")
-def get_diagnostic_questions():
+def get_diagnostic_questions(lang: str = Query(default="vi")):
+    questions = get_diagnostic_questions_by_lang(lang)
     return [
         {
             "id": q.id,
@@ -172,21 +176,23 @@ def get_diagnostic_questions():
             "type": q.type,
             "options": [{"id": o.id, "text": o.text} for o in q.options]
         }
-        for q in DIAGNOSTIC_QUESTIONS
+        for q in questions
     ]
 
 @router.post("/diagnostic/submit", response_model=DiagnosticResult)
 def submit_diagnostic(
     sub: DiagnosticSubmission,
+    lang: str = Query(default="vi"),
     user_id: str = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
-    result = evaluate_diagnostic_assessment(sub.answers)
+    result = evaluate_diagnostic_assessment(sub.answers, lang)
 
     profile = get_or_create_profile(db, user_id)
     profile.diagnostic_completed = True
     profile.diagnostic_score = result.score_percentage
     profile.recommended_track = result.recommended_track_id
+    profile.active_mode = "engineer" if result.recommended_persona == "engineer" else "learn"
     profile.xp = (profile.xp or 0) + 30
     profile.today_xp = (profile.today_xp or 0) + 30
 
