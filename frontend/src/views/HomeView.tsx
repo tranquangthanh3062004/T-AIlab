@@ -1,21 +1,26 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import { GoogleLogoSvg } from '../components/AuthModal';
 import {
   GraduationCap, Terminal, Newspaper, ArrowRight,
-  Compass, Flame, Award,
-  BookOpen, Sparkles
+  Compass, Flame, Award, BookOpen, Sparkles,
+  Rocket, Code, Brain, CheckCircle2, UserPlus, ShieldCheck
 } from 'lucide-react';
 
 export const HomeView: React.FC = () => {
-  const { setMode, setActiveView, openLesson, progress, t, language } = useApp();
+  const {
+    setMode, setActiveView, openLesson,
+    progress, t, language,
+    user, openAuthModal
+  } = useApp();
   const isVi = language === 'vi';
 
   const completedSet = new Set(progress?.completed_lesson_ids || []);
-  
+
   // Dynamic next lesson determination
   let nextLessonId = 'lesson-foundations-what-is-ai';
-  let nextLessonTitle = isVi 
-    ? 'AI là gì? Phân biệt AI, ML, Deep Learning & Generative AI' 
+  let nextLessonTitle = isVi
+    ? 'AI là gì? Phân biệt AI, ML, Deep Learning & Generative AI'
     : 'What is AI? Demystifying AI, ML, Deep Learning & Generative AI';
   let nextTrackTitle = isVi ? 'Track A: Nền tảng AI' : 'Track A: AI Foundations';
 
@@ -65,17 +70,111 @@ export const HomeView: React.FC = () => {
   const progressPercent = Math.min(100, Math.round((completedLessons / totalLessons) * 100));
   const dailyGoalPercent = Math.min(100, Math.round((todayXp / dailyGoalXp) * 100));
 
+  const renderBadgeIcon = (iconName: string, unlocked: boolean) => {
+    const cls = `w-5 h-5 ${unlocked ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`;
+    switch (iconName) {
+      case 'Rocket':
+        return <Rocket className={cls} />;
+      case 'Award':
+        return <Award className={cls} />;
+      case 'Code':
+        return <Code className={cls} />;
+      case 'Flame':
+        return <Flame className={cls} />;
+      case 'Brain':
+        return <Brain className={cls} />;
+      case 'Terminal':
+        return <Terminal className={cls} />;
+      default:
+        return <Sparkles className={cls} />;
+    }
+  };
+
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-6xl mx-auto px-4 py-7 space-y-7">
+      {/* Top Account & Google Cloud Sync Banner */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+        {user ? (
+          <>
+            <div className="flex items-center gap-3.5">
+              <img
+                src={user.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.full_name)}`}
+                alt={user.full_name}
+                className="w-11 h-11 rounded-full border-2 border-indigo-500/30 shrink-0"
+              />
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-slate-100">
+                    {isVi ? `Xin chào, ${user.full_name}!` : `Welcome back, ${user.full_name}!`}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                    {isVi ? 'Đã đồng bộ tài khoản' : 'Cloud Synced'}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  {user.email} &bull; {user.connected_google_accounts?.length || 0} {isVi ? 'tài khoản Google đã liên kết' : 'Google account(s) linked'}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => openAuthModal('google')}
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-750 text-xs font-bold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition"
+              >
+                <GoogleLogoSvg className="w-3.5 h-3.5" />
+                <span>{isVi ? 'Quản lý / Đổi tài khoản Google' : 'Switch Google Account'}</span>
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-200/60 dark:border-indigo-800">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
+                  {isVi
+                    ? 'Đăng nhập hoặc kết nối Google để lưu tiến độ học tập'
+                    : 'Sign in or connect Google to save your learning progress'}
+                </h2>
+                <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
+                  {isVi
+                    ? 'Đồng bộ điểm XP, huy hiệu, bài tập code và chuyển đổi linh hoạt giữa nhiều tài khoản Google.'
+                    : 'Sync your XP, badges, code exercises, and switch seamlessly across Google accounts.'}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <button
+                onClick={() => openAuthModal('google')}
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-100 font-bold text-xs border border-slate-300 dark:border-slate-700 shadow-2xs transition"
+              >
+                <GoogleLogoSvg className="w-3.5 h-3.5" />
+                <span>{isVi ? 'Kết nối Google' : 'Connect Google'}</span>
+              </button>
+              <button
+                onClick={() => openAuthModal('register')}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-2xs transition"
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                <span>{isVi ? 'Đăng ký / Đăng nhập' : 'Sign Up / Sign In'}</span>
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
       {/* Soft, Calming Hero Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-50/90 via-indigo-50/40 to-slate-50 dark:from-slate-900 dark:via-slate-850 dark:to-indigo-950/30 border border-indigo-150/80 dark:border-slate-800 p-8 sm:p-10 shadow-xs">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-50/90 via-indigo-50/40 to-slate-50 dark:from-slate-900 dark:via-slate-850 dark:to-indigo-950/30 border border-indigo-150/80 dark:border-slate-800 p-7 sm:p-9 shadow-xs">
         <div className="relative z-10 max-w-2xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-slate-800 text-xs font-bold text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/60 shadow-xs">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-slate-800 text-xs font-bold text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/60 shadow-2xs">
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
             <span>{t('heroBadge')}</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-slate-100 tracking-tight leading-tight">
+          <h1 className="text-2xl sm:text-4xl font-black text-slate-900 dark:text-slate-100 tracking-tight leading-tight">
             {t('heroHeading')}
           </h1>
 
@@ -118,12 +217,12 @@ export const HomeView: React.FC = () => {
         <div className="absolute right-[-40px] top-[-40px] w-80 h-80 rounded-full bg-gradient-to-br from-indigo-200/30 to-sky-200/20 dark:from-indigo-900/10 dark:to-sky-900/10 blur-3xl pointer-events-none" />
       </div>
 
-      {/* Gamification Dashboard: Streak, Daily Goal, Level, Badges */}
+      {/* Gamification Dashboard: Streak, Daily Goal, Level, Progress */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Streak */}
-        <div className="bg-white dark:bg-slate-850 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-750 shadow-xs flex items-center gap-4">
+        <div className="bg-white dark:bg-slate-850 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-750 shadow-2xs flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-200/70 dark:border-amber-800/60">
-            <Flame className="w-6 h-6 fill-current text-amber-500 animate-pulse" />
+            <Flame className="w-6 h-6 fill-current text-amber-500" />
           </div>
           <div>
             <div className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">{t('streakTitle')}</div>
@@ -133,7 +232,7 @@ export const HomeView: React.FC = () => {
         </div>
 
         {/* Card 2: Today's XP & Daily Goal */}
-        <div className="bg-white dark:bg-slate-850 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-750 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-850 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-750 shadow-2xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">{t('dailyGoalTitle')}</span>
             <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{todayXp}/{dailyGoalXp} {t('xpLabel')}</span>
@@ -151,19 +250,21 @@ export const HomeView: React.FC = () => {
         </div>
 
         {/* Card 3: Level & Tier */}
-        <div className="bg-white dark:bg-slate-850 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-750 shadow-xs flex items-center gap-4">
+        <div className="bg-white dark:bg-slate-850 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-750 shadow-2xs flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-200/70 dark:border-indigo-800/60 font-black text-lg">
             L{levelNum}
           </div>
           <div>
             <div className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">{t('levelTitle')}</div>
             <div className="text-base font-bold text-slate-900 dark:text-slate-100">{levelTitle}</div>
-            <div className="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium">{currentXp >= 300 ? (isVi ? 'Cấp Tối đa' : 'Max Tier') : `${300 - currentXp} XP ${isVi ? 'lên cấp mới' : 'to next tier'}`}</div>
+            <div className="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium">
+              {currentXp >= 300 ? (isVi ? 'Cấp Tối đa' : 'Max Tier') : `${300 - currentXp} XP ${isVi ? 'lên cấp mới' : 'to next tier'}`}
+            </div>
           </div>
         </div>
 
         {/* Card 4: 7 Tracks Overall Progress */}
-        <div className="bg-white dark:bg-slate-850 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-750 shadow-xs flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-850 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-750 shadow-2xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">{t('curriculumProgressTitle')}</span>
             <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{progressPercent}%</span>
@@ -182,7 +283,7 @@ export const HomeView: React.FC = () => {
       </div>
 
       {/* Recommended Next Lesson Card */}
-      <div className="bg-gradient-to-r from-sky-50/70 to-indigo-50/50 dark:from-slate-850 dark:to-slate-800 p-6 rounded-2xl border border-sky-200/80 dark:border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
+      <div className="bg-gradient-to-r from-sky-50/70 to-indigo-50/50 dark:from-slate-850 dark:to-slate-800 p-6 rounded-2xl border border-sky-200/80 dark:border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs">
         <div className="space-y-1">
           <div className="text-xs font-bold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">
             <BookOpen className="w-3.5 h-3.5" />
@@ -192,22 +293,97 @@ export const HomeView: React.FC = () => {
             {nextLessonTitle}
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            {isVi 
-              ? 'Hoàn thành bài tập sandbox và trả lời bài trắc nghiệm để nhận +40 XP và giữ vững chuỗi học tập!' 
+            {isVi
+              ? 'Hoàn thành bài tập sandbox và trả lời bài trắc nghiệm để nhận +40 XP và giữ vững chuỗi học tập!'
               : 'Complete sandbox exercises and pass the assessment to earn +40 XP and maintain your streak!'}
           </p>
         </div>
         <button
           onClick={() => openLesson(nextLessonId)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition shrink-0"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-2xs transition shrink-0"
         >
           {t('resumeLessonBtn')} <ArrowRight className="w-4 h-4" />
         </button>
       </div>
 
-      {/* Earned Badges Section */}
+      {/* 3 Simple Steps for Beginners */}
+      <div className="bg-white dark:bg-slate-850 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-750 space-y-4 shadow-2xs">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+            <Compass className="w-4 h-4 text-indigo-500" />
+            <span>{isVi ? 'Lộ Trình 3 Bước Đơn Giản Cho Người Mới' : '3 Simple Steps to Master AI'}</span>
+          </h2>
+          <span className="text-[11px] text-slate-400">
+            {isVi ? 'Thiết kế thân thiện, dễ hiểu' : 'Beginner-friendly workflow'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div
+            onClick={() => setActiveView('diagnostic')}
+            className="p-4 rounded-xl bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800 hover:border-indigo-400 cursor-pointer transition flex items-start gap-3"
+          >
+            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white font-black text-xs flex items-center justify-center shrink-0">
+              1
+            </div>
+            <div>
+              <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                {isVi ? 'Định vị năng lực (2 phút)' : '2-Minute Placement Check'}
+              </h3>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                {isVi
+                  ? 'Trả lời 4 câu hỏi nhanh để hệ thống chọn đúng bài học phù hợp trình độ của bạn.'
+                  : 'Answer 4 quick questions to get matched with the right starting track.'}
+              </p>
+            </div>
+          </div>
+
+          <div
+            onClick={() => openLesson('lesson-foundations-what-is-ai')}
+            className="p-4 rounded-xl bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800 hover:border-indigo-400 cursor-pointer transition flex items-start gap-3"
+          >
+            <div className="w-7 h-7 rounded-lg bg-sky-600 text-white font-black text-xs flex items-center justify-center shrink-0">
+              2
+            </div>
+            <div>
+              <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                {isVi ? 'Học trực quan & Giải nghĩa ký hiệu' : 'Visual Intuition & Clear Math'}
+              </h3>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                {isVi
+                  ? 'Mọi công thức đều có bảng giải thích từng ký hiệu và ví dụ tính nhẩm dễ hiểu.'
+                  : 'Every formula includes an interactive symbol breakdown and step-by-step arithmetic.'}
+              </p>
+            </div>
+          </div>
+
+          <div
+            onClick={() => {
+              setMode('engineer');
+              setActiveView('workspace');
+            }}
+            className="p-4 rounded-xl bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800 hover:border-emerald-400 cursor-pointer transition flex items-start gap-3"
+          >
+            <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white font-black text-xs flex items-center justify-center shrink-0">
+              3
+            </div>
+            <div>
+              <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                {isVi ? 'Chạy code ngay trên trình duyệt' : 'Run Python Code in Browser'}
+              </h3>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                {isVi
+                  ? 'Không cần cài đặt phức tạp. Thực hành trực tiếp với Monaco IDE và nhận gợi ý từ Gia sư AI.'
+                  : 'Zero setup required. Practice directly inside Monaco IDE with grounded AI Tutor help.'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Earned Badges Section (Fixed Icon Rendering) */}
       {badges.length > 0 && (
-        <div className="bg-white dark:bg-slate-850 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-750 space-y-4 shadow-xs">
+        <div className="bg-white dark:bg-slate-850 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-750 space-y-4 shadow-2xs">
           <div className="flex items-center gap-2">
             <Award className="w-4 h-4 text-amber-500" />
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
@@ -218,9 +394,19 @@ export const HomeView: React.FC = () => {
             {badges.map((b) => (
               <div
                 key={b.id}
-                className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 flex flex-col items-center text-center space-y-1.5 hover:border-indigo-300 dark:hover:border-indigo-600 transition"
+                className={`p-3.5 rounded-xl border flex flex-col items-center text-center space-y-1.5 transition ${
+                  b.unlocked
+                    ? 'bg-indigo-50/40 dark:bg-slate-800 border-indigo-200/80 dark:border-indigo-800/60'
+                    : 'bg-slate-50/60 dark:bg-slate-900/40 border-slate-200/60 dark:border-slate-800 opacity-65'
+                }`}
               >
-                <span className="text-2xl">{b.icon}</span>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  b.unlocked
+                    ? 'bg-white dark:bg-slate-900 shadow-2xs border border-indigo-100 dark:border-indigo-900'
+                    : 'bg-slate-100 dark:bg-slate-800'
+                }`}>
+                  {renderBadgeIcon(b.icon, b.unlocked)}
+                </div>
                 <span className="text-xs font-bold text-slate-800 dark:text-slate-200">{b.title}</span>
                 <span className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">{b.description}</span>
               </div>
@@ -238,7 +424,7 @@ export const HomeView: React.FC = () => {
           {/* Pillar 1 */}
           <div
             onClick={() => setActiveView('learn')}
-            className="group cursor-pointer bg-white dark:bg-slate-850 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-750 hover:border-indigo-300 dark:hover:border-indigo-700 shadow-xs hover:shadow-sm transition space-y-3"
+            className="group cursor-pointer bg-white dark:bg-slate-850 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-750 hover:border-indigo-300 dark:hover:border-indigo-700 shadow-2xs hover:shadow-sm transition space-y-3"
           >
             <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-200/60 dark:border-indigo-800">
               <GraduationCap className="w-5 h-5" />
@@ -260,7 +446,7 @@ export const HomeView: React.FC = () => {
               setMode('engineer');
               setActiveView('workspace');
             }}
-            className="group cursor-pointer bg-white dark:bg-slate-850 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-750 hover:border-emerald-300 dark:hover:border-emerald-700 shadow-xs hover:shadow-sm transition space-y-3"
+            className="group cursor-pointer bg-white dark:bg-slate-850 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-750 hover:border-emerald-300 dark:hover:border-emerald-700 shadow-2xs hover:shadow-sm transition space-y-3"
           >
             <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-200/60 dark:border-emerald-800">
               <Terminal className="w-5 h-5" />
@@ -279,7 +465,7 @@ export const HomeView: React.FC = () => {
           {/* Pillar 3 */}
           <div
             onClick={() => setActiveView('news')}
-            className="group cursor-pointer bg-white dark:bg-slate-850 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-750 hover:border-sky-300 dark:hover:border-sky-700 shadow-xs hover:shadow-sm transition space-y-3"
+            className="group cursor-pointer bg-white dark:bg-slate-850 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-750 hover:border-sky-300 dark:hover:border-sky-700 shadow-2xs hover:shadow-sm transition space-y-3"
           >
             <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-600 dark:text-sky-400 flex items-center justify-center border border-sky-200/60 dark:border-sky-800">
               <Newspaper className="w-5 h-5" />

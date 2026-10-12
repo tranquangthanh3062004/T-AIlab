@@ -4,7 +4,7 @@ import { api } from '../services/api';
 import type { Track } from '../types';
 import {
   Clock, CheckCircle2,
-  GraduationCap, AlertCircle, BookOpen, Zap
+  GraduationCap, AlertCircle, BookOpen, Zap, Search, Filter
 } from 'lucide-react';
 
 export const LearnView: React.FC = () => {
@@ -14,6 +14,8 @@ export const LearnView: React.FC = () => {
   const [tracks, setTracks] = useState<Track[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState<string>('ALL');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     const fetchCurriculum = async () => {
@@ -53,25 +55,86 @@ export const LearnView: React.FC = () => {
     );
   }
 
+  const filteredTracks = tracks.filter((track) => {
+    const lvl = track.level.toLowerCase();
+    if (selectedLevel === 'BEGINNER' && !lvl.includes('beginner')) return false;
+    if (selectedLevel === 'INTERMEDIATE' && !lvl.includes('intermediate')) return false;
+    if (selectedLevel === 'ADVANCED' && !lvl.includes('advanced')) return false;
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const matchTrack =
+        track.title.toLowerCase().includes(q) ||
+        track.tagline.toLowerCase().includes(q) ||
+        track.description.toLowerCase().includes(q);
+      const matchLesson = track.modules.some((m) =>
+        m.lessons.some((l) => l.title.toLowerCase().includes(q))
+      );
+      return matchTrack || matchLesson;
+    }
+    return true;
+  });
+
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
       {/* Syllabus Header */}
-      <div className="border-b border-slate-200/80 dark:border-slate-800 pb-6">
-        <div className="flex items-center gap-2 text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-1.5">
-          <GraduationCap className="w-4 h-4" />
-          <span>CHINAI Core Curriculum &bull; {isVi ? '7 Lộ Trình Toàn Diện' : '7 Core Tracks'}</span>
+      <div className="border-b border-slate-200/80 dark:border-slate-800 pb-6 space-y-4">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-1.5">
+            <GraduationCap className="w-4 h-4" />
+            <span>T AIlab Curriculum &bull; {isVi ? '7 Lộ Trình Chuẩn Hóa' : '7 Core Tracks'}</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100">
+            {t('curriculumHeading')}
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed max-w-3xl">
+            {t('curriculumSubheading')}
+          </p>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100">
-          {t('curriculumHeading')}
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed max-w-3xl">
-          {t('curriculumSubheading')}
-        </p>
+
+        {/* Friendly Filter & Search Toolbar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-xs font-bold text-slate-400 mr-1 flex items-center gap-1">
+              <Filter className="w-3.5 h-3.5" />
+              {isVi ? 'Cấp độ:' : 'Level:'}
+            </span>
+            {[
+              { id: 'ALL', label: isVi ? 'Tất cả (7)' : 'All (7)' },
+              { id: 'BEGINNER', label: isVi ? '🌱 Người mới bắt đầu' : '🌱 Beginner' },
+              { id: 'INTERMEDIATE', label: isVi ? '🚀 Trung cấp' : '🚀 Intermediate' },
+              { id: 'ADVANCED', label: isVi ? '⚡ Chuyên sâu' : '⚡ Advanced' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setSelectedLevel(tab.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                  selectedLevel === tab.id
+                    ? 'bg-indigo-600 text-white shadow-2xs'
+                    : 'bg-white dark:bg-slate-850 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-750 hover:border-indigo-400'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="relative w-full sm:w-64">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={isVi ? 'Tìm bài học (VD: Gradient, Python...)' : 'Search lessons...'}
+              className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-white dark:bg-slate-850 border border-slate-200/90 dark:border-slate-750 text-xs text-slate-900 dark:text-slate-100 focus:outline-hidden focus:border-indigo-500"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Tracks List */}
-      <div className="space-y-8">
-        {tracks.map((track) => {
+      <div className="space-y-6">
+        {filteredTracks.map((track, idx) => {
           const trackLessonIds = track.modules.flatMap(m => m.lessons.map(l => l.id));
           const completedInTrack = trackLessonIds.filter(id => progress?.completed_lesson_ids.includes(id)).length;
           const trackPct = trackLessonIds.length > 0 ? Math.round((completedInTrack / trackLessonIds.length) * 100) : 0;
@@ -79,13 +142,13 @@ export const LearnView: React.FC = () => {
           return (
             <div
               key={track.id}
-              className="bg-white dark:bg-slate-850 rounded-2xl border border-slate-200/80 dark:border-slate-750 p-6 shadow-xs space-y-5"
+              className="bg-white dark:bg-slate-850 rounded-2xl border border-slate-200/80 dark:border-slate-750 p-6 shadow-2xs space-y-5"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-750 pb-4">
                 <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800">
-                      {track.level}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800">
+                      {isVi ? `Lộ trình ${idx + 1}` : `Track ${idx + 1}`} &bull; {track.level}
                     </span>
                     <span className="text-xs text-slate-400 flex items-center gap-1 font-mono">
                       <Clock className="w-3 h-3" /> ~{track.estimated_hours} {t('hoursLabel')}
@@ -158,7 +221,7 @@ export const LearnView: React.FC = () => {
                             </div>
 
                             <div className="flex items-center gap-2 shrink-0">
-                              <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-lg ${
+                              <span className={`text-[11px] font-semibold px-3 py-1.5 rounded-lg ${
                                 isCompleted
                                   ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
                                   : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 group-hover:bg-indigo-600 group-hover:text-white transition'

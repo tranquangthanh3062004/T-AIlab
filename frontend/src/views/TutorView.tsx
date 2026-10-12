@@ -92,8 +92,8 @@ export const TutorView: React.FC = () => {
             <span>{isVi ? 'Trợ Lý AI Gia Sư CHINAI' : 'AI Tutor & Knowledge Retrieval'}</span>
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            {isVi 
-              ? 'Mọi phản hồi được neo chắc chắn vào bài học nền tảng và nghiên cứu khoa học với trích dẫn minh bạch.' 
+            {isVi
+              ? 'Mọi phản hồi được neo chắc chắn vào bài học nền tảng và nghiên cứu khoa học với trích dẫn minh bạch.'
               : 'Strictly grounded in platform lessons and verified research records with verifiable citations.'}
           </p>
         </div>
@@ -133,7 +133,7 @@ export const TutorView: React.FC = () => {
                         key={cIdx}
                         onClick={() => {
                           if (cite.type === 'lesson') openLesson(cite.id);
-                          else if (cite.url) window.open(cite.url, '_blank');
+                          else if (cite.url_or_ref && cite.url_or_ref.startsWith('http')) window.open(cite.url_or_ref, '_blank');
                         }}
                         className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50/80 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800 text-[11px] font-medium cursor-pointer hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition"
                       >
