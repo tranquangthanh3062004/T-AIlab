@@ -74,15 +74,19 @@ class CapstoneProjectSpec(BaseModel):
     deployment_plan: str
     rubric_dimensions: list[dict[str, str]]
 
+class FlashcardItem(BaseModel):
+    question: str
+    answer: str
+
 class Lesson(BaseModel):
-    # Phase 3: 24-Field Standard Lesson Schema
+    # Phase 3: Complete 16-Section & 27-Field Standard Lesson Schema
     id: str
     module_id: str
     title: str
     track_id: str
     target_audience: str = "beginner"  # "beginner" or "engineer"
     estimated_minutes: int
-    difficulty: str  # Beginner, Intermediate, Advanced
+    difficulty: str  # Beginner, Intermediate, Advanced, Research/Expert
     prerequisites: list[str] = []
     objectives: list[str]
     why_this_matters: str = "Cung cấp nền tảng toán học, tư duy dữ liệu và kỹ năng lập trình kiểm chứng được trong các hệ thống AI thực tế."
@@ -92,21 +96,24 @@ class Lesson(BaseModel):
     formula_guide: FormulaGuide | None = None
     real_dataset: LessonDataset | None = None
     worked_example_code: str | None = None
+    output_analysis: str = ""
     common_misconceptions: list[str] = []
+    when_to_use_and_not_use: list[str] = []
     guided_practice: list[str] = []
     interactive_widget: LessonInteractiveWidget | None = None
     quiz: list[QuizQuestion] = []
     code_exercise: CodeExercise | None = None
     capstone_spec: CapstoneProjectSpec | None = None
+    flashcards: list[FlashcardItem] = []
     mastery_criteria: list[str] = [
         "Đạt tối thiểu 70% bài kiểm tra trắc nghiệm định lượng (Active Recall Quiz).",
         "Vượt qua 100% kiểm thử đơn vị (Unit Assertions) trong môi trường Python Sandbox."
     ]
     further_reading: list[str] = []
     source_references: list[SourceReference] = []
-    content_version: str = "2.2.0"
+    content_version: str = "2.3.0"
     review_status: str = "PUBLISHED"  # DISCOVERED, METADATA_VERIFIED, CONTENT_REVIEWED, CURRICULUM_MAPPED, PUBLISHED
-    last_verified_date: str = "2026-10-12"
+    last_verified_date: str = "2026-10-13"
     license_provenance: str = "Original CHINAI Pedagogical Content (CC BY 4.0) grounded in verified open-source documentation & datasets."
     summary: str
     next_lesson_id: str | None = None
@@ -120,11 +127,13 @@ class Module(BaseModel):
 
 class Track(BaseModel):
     id: str
+    track_number: int = 0
     title: str
     tagline: str
     description: str
-    level: str  # Beginner, Intermediate, Advanced
+    level: str  # Beginner, Intermediate, Advanced, Research/Expert
     target_audience: str = "beginner"  # "beginner" or "engineer"
+    specialization_branch: str = "CORE"  # CORE_FOUNDATION, CORE_ENGINEERING, ELECTIVE_SPECIALIZATION, CAPSTONE_PORTFOLIO
     prerequisites: list[str] = []
     learning_outcomes: list[str] = []
     completion_criteria: str = "Hoàn thành toàn bộ bài tập Python Sandbox và đạt >= 70% điểm Quiz của các mô-đun."
@@ -185,6 +194,7 @@ class OERResourceSchema(BaseModel):
     organization: str
     canonical_url: str
     resource_type: str
+    access_model: str = "FREE_OPEN"  # FREE_OPEN, FREEMIUM_AUDIT, OPEN_SOURCE_DOCS
     spdx_license: str
     attribution_requirements: str
     lifecycle_status: str

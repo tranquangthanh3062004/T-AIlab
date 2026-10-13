@@ -91,26 +91,29 @@ export interface LessonDataset {
 
 export interface SourceReference {
   title: string;
-  author_or_org: string;
+  organization: string;
   url: string;
-  source_type: string;
+  resource_type: string;
   license: string;
-  usage_right: string;
-  lifecycle_state: string;
+  lifecycle_status: string;
 }
 
 export interface CapstoneProjectSpec {
-  id: string;
-  title: string;
   problem_statement: string;
-  input_data_source: string;
-  architecture_deliverables: string[];
+  dataset_and_license: string;
+  acceptance_criteria: string[];
+  baseline_model: string;
   evaluation_metrics: string[];
-  rubric_functionality_pct: number;
-  rubric_code_quality_pct: number;
-  rubric_ml_rigor_pct: number;
-  rubric_safety_pct: number;
-  rubric_documentation_pct: number;
+  implementation_steps: string[];
+  error_analysis_guide: string;
+  security_considerations: string;
+  deployment_plan: string;
+  rubric_dimensions: Record<string, string>[];
+}
+
+export interface FlashcardItem {
+  question: string;
+  answer: string;
 }
 
 export interface Lesson {
@@ -119,7 +122,7 @@ export interface Lesson {
   track_id: string;
   title: string;
   estimated_minutes: number;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced' | string;
   target_audience?: 'beginner' | 'engineer';
   prerequisites: string[];
   objectives: string[];
@@ -130,12 +133,15 @@ export interface Lesson {
   formula_guide?: FormulaGuide;
   real_dataset?: LessonDataset;
   worked_example_code?: string;
-  guided_practice?: string;
+  output_analysis?: string;
+  when_to_use_and_not_use?: string[];
+  guided_practice?: string[];
   common_misconceptions: string[];
   interactive_widget?: LessonInteractiveWidget;
   quiz: QuizQuestion[];
   code_exercise?: CodeExercise;
   capstone_spec?: CapstoneProjectSpec;
+  flashcards?: FlashcardItem[];
   mastery_criteria?: string[];
   further_reading?: string[];
   source_references?: SourceReference[];
@@ -157,11 +163,16 @@ export interface Module {
 
 export interface Track {
   id: string;
+  track_number?: number;
   title: string;
   tagline: string;
   description: string;
   level: string;
   target_audience?: 'beginner' | 'engineer';
+  specialization_branch?: string;
+  prerequisites?: string[];
+  learning_outcomes?: string[];
+  completion_criteria?: string;
   estimated_hours: number;
   modules: Module[];
 }
@@ -197,7 +208,7 @@ export interface NewsArticle {
 
 export interface CitationItem {
   id: string;
-  type: 'lesson' | 'news' | 'documentation';
+  type: 'lesson' | 'news' | 'documentation' | 'oer' | string;
   title: string;
   url_or_ref: string;
   excerpt: string;
@@ -257,33 +268,39 @@ export interface BadgeInfo {
 }
 
 export interface MasteryDimensionBreakdown {
-  completion_rate_pct: number;
-  assessment_performance_pct: number;
-  estimated_mastery_pct: number;
-  mastery_confidence_level: string;
-  demonstrated_project_skill_pct: number;
+  completion_rate: number;
+  assessment_performance: number;
+  estimated_mastery: number;
+  confidence_level: string;
+  confidence_note: string;
+  demonstrated_project_skill: number;
 }
 
 export interface AdaptiveRecommendationItem {
-  action_type: 'UNLOCK_NEXT' | 'REMEDIATE_PREREQUISITE' | 'SPACED_REVIEW' | 'CAPSTONE_READINESS';
-  target_id: string;
-  title: string;
+  lesson_id: string;
+  lesson_title: string;
+  track_id: string;
+  track_title: string;
+  target_audience: string;
+  priority: 'HIGH' | 'MEDIUM' | 'LOW' | string;
+  recommendation_type: 'NEXT_PREREQUISITE' | 'REMEDIATION' | 'SPACED_REVIEW' | 'CAPSTONE_UNLOCK' | string;
   rationale: string;
-  priority: 'HIGH' | 'MEDIUM' | 'LOW';
+  estimated_minutes: number;
 }
 
 export interface OERResourceSchema {
   id: string;
   title: string;
-  source_org: string;
+  organization: string;
   canonical_url: string;
-  license_spdx: string;
-  usage_classification: string;
-  lifecycle_state: string;
-  target_track_id: string;
-  target_persona: string;
-  pedagogical_summary: string;
-  verified_at: string;
+  resource_type: string;
+  access_model?: string;
+  spdx_license: string;
+  attribution_requirements: string;
+  lifecycle_status: string;
+  mapped_tracks: string[];
+  quality_score: number;
+  last_verified_date: string;
 }
 
 export interface LearnerProgress {
@@ -302,4 +319,3 @@ export interface LearnerProgress {
   mastery_dimensions?: MasteryDimensionBreakdown;
   recommendations?: AdaptiveRecommendationItem[];
 }
-

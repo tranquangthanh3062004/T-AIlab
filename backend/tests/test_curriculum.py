@@ -3,13 +3,15 @@ from app.services.curriculum import (
 )
 
 def test_curriculum_tracks_integrity():
-    assert len(CURRICULUM_TRACKS) == 12
+    assert len(CURRICULUM_TRACKS) == 15
     track_ids = {t.id for t in CURRICULUM_TRACKS}
     expected_ids = {
         "track-foundations", "track-python", "track-math",
         "track-data-science", "track-ml", "track-dl",
-        "track-computer-vision", "track-llm", "track-ai-agents",
-        "track-mlops", "track-research-engineering", "track-capstone-portfolio"
+        "track-computer-vision", "track-llm", "track-generative-multimodal",
+        "track-ai-agents", "track-mlops", "track-responsible-ai-security",
+        "track-research-engineering", "track-applied-specializations",
+        "track-capstone-portfolio"
     }
     assert track_ids == expected_ids
     foundations = next((t for t in CURRICULUM_TRACKS if t.id == "track-foundations"), None)

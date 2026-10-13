@@ -1981,6 +1981,8 @@ DIAGNOSTIC_QUESTIONS: list[QuizQuestion] = DIAGNOSTIC_QUESTIONS_VI
 def get_tracks_by_lang(lang: str = "vi") -> list[Track]:
     return CURRICULUM_TRACKS_EN if lang.lower().startswith("en") else CURRICULUM_TRACKS_VI
 
+get_tracks = get_tracks_by_lang
+
 
 def get_lesson_by_lang(lesson_id: str, lang: str = "vi") -> Lesson | None:
     tracks = get_tracks_by_lang(lang)

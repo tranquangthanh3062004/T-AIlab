@@ -40,6 +40,7 @@ export const LessonView: React.FC = () => {
   const [quizFeedback, setQuizFeedback] = useState<any[]>([]);
   const [quizScore, setQuizScore] = useState<number | null>(null);
   const [earnedXpToast, setEarnedXpToast] = useState<string | null>(null);
+  const [revealedFlashcards, setRevealedFlashcards] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     if (!activeLessonId) return;
@@ -53,6 +54,7 @@ export const LessonView: React.FC = () => {
         setSelectedAnswers({});
         setQuizFeedback([]);
         setEarnedXpToast(null);
+        setRevealedFlashcards({});
 
         const data = await api.getLesson(activeLessonId, language);
         setLesson(data);
@@ -421,7 +423,7 @@ export const LessonView: React.FC = () => {
         </div>
       )}
 
-      {/* Section 3: Worked Example Code */}
+      {/* Section 3: Worked Example Code & Output Analysis */}
       {lesson.worked_example_code && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
@@ -435,12 +437,27 @@ export const LessonView: React.FC = () => {
               <code>{lesson.worked_example_code}</code>
             </pre>
           </div>
-          {lesson.guided_practice && (
-            <div className="p-4 rounded-2xl bg-sky-50/70 dark:bg-sky-950/25 border border-sky-200/80 dark:border-sky-800/60 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
-              <strong className="font-extrabold text-sky-800 dark:text-sky-300 block mb-1">
+          {lesson.output_analysis && (
+            <div className="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/25 border border-emerald-200/80 dark:border-emerald-800/60 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+              <strong className="font-extrabold text-emerald-800 dark:text-emerald-300 block mb-1">
+                {isVi ? 'Phân Tích Đầu Ra & Ý Nghĩa Thực Nghiệm (Output Analysis):' : 'Empirical Output Analysis & Interpretation:'}
+              </strong>
+              {lesson.output_analysis}
+            </div>
+          )}
+          {lesson.guided_practice && lesson.guided_practice.length > 0 && (
+            <div className="p-4 rounded-2xl bg-sky-50/70 dark:bg-sky-950/25 border border-sky-200/80 dark:border-sky-800/60 text-xs sm:text-sm text-slate-700 dark:text-slate-300 space-y-1.5">
+              <strong className="font-extrabold text-sky-800 dark:text-sky-300 block">
                 {isVi ? 'Hướng Dẫn Thực Hành Có Định Hướng (Guided Practice):' : 'Guided Practice Walkthrough:'}
               </strong>
-              {lesson.guided_practice}
+              <ul className="space-y-1">
+                {(Array.isArray(lesson.guided_practice) ? lesson.guided_practice : [lesson.guided_practice]).map((step, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="font-bold text-sky-600 dark:text-sky-400">{idx + 1}.</span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </div>
@@ -453,69 +470,101 @@ export const LessonView: React.FC = () => {
             <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
               {isVi ? 'Đặc Tả Đồ Án Thực Chiến (Capstone Specification & Rubric)' : 'Production Capstone Specification & Rubric'}
             </span>
-            <span className="text-xs font-mono text-emerald-300">100% Multi-Metric Evaluation</span>
+            <span className="text-xs font-mono text-emerald-300">
+              {lesson.capstone_spec.dataset_and_license}
+            </span>
           </div>
-          <h3 className="text-lg font-black">{lesson.capstone_spec.title}</h3>
           <p className="text-xs sm:text-sm text-indigo-100/90 leading-relaxed">
             {lesson.capstone_spec.problem_statement}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1.5">
               <div className="font-extrabold text-indigo-300 uppercase text-[10px]">
-                {isVi ? 'Hạng mục Kiến trúc Bàn giao:' : 'Architecture Deliverables:'}
+                {isVi ? 'Tiêu Chí Nghiệm Thu & Chỉ Số Đánh Giá:' : 'Acceptance Criteria & Metrics:'}
               </div>
               <ul className="space-y-1 text-slate-200">
-                {lesson.capstone_spec.architecture_deliverables.map((item, i) => (
+                {lesson.capstone_spec.acceptance_criteria.map((item, i) => (
                   <li key={i}>&bull; {item}</li>
                 ))}
               </ul>
+              {lesson.capstone_spec.evaluation_metrics.length > 0 && (
+                <div className="pt-1.5 text-[11px] font-mono text-emerald-300">
+                  {lesson.capstone_spec.evaluation_metrics.join(' • ')}
+                </div>
+              )}
             </div>
             <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1.5">
               <div className="font-extrabold text-emerald-300 uppercase text-[10px]">
                 {isVi ? 'Thang Điểm Rubric 5 Chiều:' : '5-Dimension Grading Rubric:'}
               </div>
-              <div className="grid grid-cols-2 gap-1.5 text-[11px] font-mono">
-                <div>Functionality: {lesson.capstone_spec.rubric_functionality_pct}%</div>
-                <div>Code Quality: {lesson.capstone_spec.rubric_code_quality_pct}%</div>
-                <div>ML Rigor: {lesson.capstone_spec.rubric_ml_rigor_pct}%</div>
-                <div>Safety/Guardrails: {lesson.capstone_spec.rubric_safety_pct}%</div>
-                <div>Documentation: {lesson.capstone_spec.rubric_documentation_pct}%</div>
+              <div className="space-y-1 text-[11px] font-mono">
+                {lesson.capstone_spec.rubric_dimensions.map((dimItem, idx) => (
+                  <div key={idx}>
+                    <span className="font-bold text-indigo-200">
+                      {dimItem.dimension} ({dimItem.weight}):
+                    </span>{' '}
+                    <span className="text-slate-300">{dimItem.passing_bar}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Section 4: Common Misconceptions */}
-      {lesson.common_misconceptions.length > 0 && (
-        <div className="p-5 bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/60 rounded-2xl space-y-2.5">
-          <h3 className="text-xs font-extrabold text-amber-900 dark:text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
-            <AlertTriangle className="w-4 h-4 text-amber-600" />
-            <span>{t('section4Misconceptions')}</span>
-          </h3>
-          <ul className="space-y-1.5 text-xs sm:text-sm text-amber-950 dark:text-amber-200">
-            {lesson.common_misconceptions.map((misc, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="font-bold">&bull;</span>
-                <span>{misc}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {/* Section 4: Common Misconceptions & Practical When-To-Use / When-Not-To-Use */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {lesson.common_misconceptions.length > 0 && (
+          <div className="p-5 bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/60 rounded-2xl space-y-2.5">
+            <h3 className="text-xs font-extrabold text-amber-900 dark:text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4 text-amber-600" />
+              <span>{t('section4Misconceptions')}</span>
+            </h3>
+            <ul className="space-y-1.5 text-xs sm:text-sm text-amber-950 dark:text-amber-200">
+              {lesson.common_misconceptions.map((misc, i) => (
+                <li key={i} className="flex items-start gap-2">
+                  <span className="font-bold">&bull;</span>
+                  <span>{misc}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {lesson.when_to_use_and_not_use && lesson.when_to_use_and_not_use.length > 0 && (
+          <div className="p-5 bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-200/80 dark:border-indigo-800/60 rounded-2xl space-y-2.5">
+            <h3 className="text-xs font-extrabold text-indigo-900 dark:text-indigo-300 uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-indigo-600" />
+              <span>
+                {isVi
+                  ? 'Khi Nào Nên Dùng & Không Nên Dùng (Production Trade-offs)'
+                  : 'When to Use & When NOT to Use (Production Trade-offs)'}
+              </span>
+            </h3>
+            <ul className="space-y-1.5 text-xs sm:text-sm text-indigo-950 dark:text-indigo-200">
+              {lesson.when_to_use_and_not_use.map((item, i) => (
+                <li key={i} className="flex items-start gap-2">
+                  <span className="font-bold text-indigo-600">&bull;</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
 
       {/* Section 5: Embedded Monaco IDE Lab inside the Lesson */}
       {lesson.code_exercise && (
         <div className="space-y-4 pt-4 border-t border-slate-200/80 dark:border-slate-800">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-lg font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                   <Terminal className="w-5 h-5 text-emerald-500" />
                   <span>{t('section5Exercise')}</span>
                 </h2>
                 <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                  Monaco IDE Sandbox
+                  AST Guard + 5s Timeout Subprocess
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
@@ -622,6 +671,59 @@ export const LessonView: React.FC = () => {
               )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Section 5B: Active Recall & Spaced Repetition Flashcards */}
+      {lesson.flashcards && lesson.flashcards.length > 0 && (
+        <div className="space-y-3 pt-4 border-t border-slate-200/80 dark:border-slate-800">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              <span>
+                {isVi
+                  ? 'Thẻ Ghi Nhớ Chủ Động (Active Recall & Spaced Repetition Flashcards)'
+                  : 'Active Recall & Spaced Repetition Flashcards'}
+              </span>
+            </h2>
+            <span className="text-[11px] text-slate-500">
+              {isVi ? 'Nhấn vào thẻ để lật đáp án' : 'Click card to reveal answer'}
+            </span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {lesson.flashcards.map((fc, idx) => {
+              const isRevealed = !!revealedFlashcards[idx];
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() =>
+                    setRevealedFlashcards((prev) => ({ ...prev, [idx]: !prev[idx] }))
+                  }
+                  className="text-left p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-400 transition space-y-2 flex flex-col justify-between"
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+                      <span>Flashcard #{idx + 1}</span>
+                      <span>{isRevealed ? (isVi ? 'Đáp án' : 'Answer') : (isVi ? 'Câu hỏi' : 'Prompt')}</span>
+                    </div>
+                    <p className="text-xs font-bold text-slate-900 dark:text-slate-100 leading-relaxed">
+                      {fc.question}
+                    </p>
+                  </div>
+                  {isRevealed ? (
+                    <div className="pt-2 mt-2 border-t border-slate-200/70 dark:border-slate-800 text-xs text-emerald-800 dark:text-emerald-300 leading-relaxed">
+                      {fc.answer}
+                    </div>
+                  ) : (
+                    <div className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 pt-1">
+                      {isVi ? '→ Lật thẻ kiểm tra trí nhớ' : '→ Reveal answer'}
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
@@ -766,7 +868,7 @@ export const LessonView: React.FC = () => {
                     <div className="min-w-0">
                       <div className="font-bold text-slate-900 dark:text-slate-100 truncate">{src.title}</div>
                       <div className="text-[10px] text-slate-500 font-mono">
-                        {src.author_or_org} &bull; {src.license} &bull; {src.usage_right}
+                        {src.organization} &bull; {src.license} &bull; {src.resource_type}
                       </div>
                     </div>
                     <a
@@ -789,7 +891,7 @@ export const LessonView: React.FC = () => {
         </div>
       )}
 
-      {/* Summary & Next Lesson Navigation */}
+      {/* Summary & Prev/Next Lesson Navigation */}
       <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h3 className="font-extrabold text-slate-900 dark:text-slate-100 text-sm">
@@ -800,14 +902,26 @@ export const LessonView: React.FC = () => {
           </p>
         </div>
 
-        {lesson.next_lesson_id && (
-          <button
-            onClick={() => openLesson(lesson.next_lesson_id!)}
-            className="flex items-center gap-1.5 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition shrink-0"
-          >
-            {t('nextLessonBtn')} <ArrowRight className="w-4 h-4" />
-          </button>
-        )}
+        <div className="flex items-center gap-2 shrink-0">
+          {lesson.prerequisites && lesson.prerequisites.length > 0 && (
+            <button
+              onClick={() => openLesson(lesson.prerequisites[0])}
+              className="flex items-center gap-1.5 px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl border border-slate-200 dark:border-slate-700 transition"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>{isVi ? 'Bài Tiên Quyết' : 'Prerequisite'}</span>
+            </button>
+          )}
+          {lesson.next_lesson_id && (
+            <button
+              onClick={() => openLesson(lesson.next_lesson_id!)}
+              className="flex items-center gap-1.5 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition"
+            >
+              <span>{t('nextLessonBtn')}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

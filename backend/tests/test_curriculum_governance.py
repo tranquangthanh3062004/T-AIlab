@@ -9,14 +9,24 @@ from app.services.curriculum_governance import (
     compute_mastery_and_recommendations
 )
 from app.services.execution import execute_sandboxed_code
+from app.cli_content import (
+    run_content_validate,
+    run_content_report,
+    run_resources_check,
+    run_content_import,
+    run_content_publish,
+    run_content_rollback
+)
 
 client = TestClient(app)
 
 
-def test_12_track_bilingual_curriculum_and_dag_integrity():
+def test_15_track_bilingual_curriculum_and_dag_integrity():
     for lang in ("vi", "en"):
         tracks = get_tracks_by_lang(lang)
-        assert len(tracks) == 12, f"Expected 12 tracks for lang={lang}, got {len(tracks)}"
+        assert len(tracks) == 15, f"Expected 15 tracks (Track 0..14) for lang={lang}, got {len(tracks)}"
+        track_numbers = [tr.track_number for tr in tracks]
+        assert track_numbers == list(range(15)), f"Expected track_number 0..14, got {track_numbers}"
         audit = validate_curriculum_prerequisite_dag(tracks)
         assert audit["duplicate_lesson_ids"] == []
         assert audit["missing_prerequisites"] == []
@@ -25,14 +35,26 @@ def test_12_track_bilingual_curriculum_and_dag_integrity():
         assert audit["average_rubric_score"] >= 9.5
 
 
-def test_all_lesson_code_exercises_pass_sandbox_unit_assertions():
+def test_all_lesson_code_exercises_and_16_section_fields():
     tracks = get_tracks_by_lang("vi")
     executed_count = 0
     for tr in tracks:
+        assert tr.specialization_branch in (
+            "BEGINNER_CORE",
+            "APPLIED_ENGINEER",
+            "SYSTEMS_MLOPS",
+            "RESEARCH_SPECIALIST",
+            "SPECIALIZATION_RESEARCH",
+            "CAPSTONE_PORTFOLIO",
+            "CAPSTONE",
+        )
         for mod in tr.modules:
             for lsn in mod.lessons:
                 assert lsn.real_dataset is not None, f"Lesson {lsn.id} missing verified dataset"
                 assert lsn.source_references and len(lsn.source_references) >= 1
+                assert len(lsn.output_analysis) > 20, f"Lesson {lsn.id} missing output_analysis"
+                assert len(lsn.when_to_use_and_not_use) >= 2, f"Lesson {lsn.id} missing when_to_use_and_not_use"
+                assert len(lsn.flashcards) >= 2, f"Lesson {lsn.id} missing flashcards"
                 if lsn.code_exercise:
                     res = execute_sandboxed_code(
                         code=lsn.code_exercise.solution_code,
@@ -42,7 +64,7 @@ def test_all_lesson_code_exercises_pass_sandbox_unit_assertions():
                     assert res.success is True, f"Solution failed in {lsn.id}: {res.stderr}"
                     assert res.passed_tests is True
                     executed_count += 1
-    assert executed_count >= 12
+    assert executed_count >= 15
 
 
 def test_13_criterion_rubric_hard_blocking_gate():
@@ -77,16 +99,18 @@ def test_13_criterion_rubric_hard_blocking_gate():
 
 
 def test_oer_registry_and_explainable_recommendations_api():
+    assert len(VERIFIED_OER_REGISTRY) >= 21
     oer_res = client.get("/api/learn/oer/resources")
     assert oer_res.status_code == 200
     oer_list = oer_res.json()
-    assert len(oer_list) >= 10
+    assert len(oer_list) >= 21
     assert all(item["canonical_url"].startswith("https://") for item in oer_list)
 
     audit_res = client.get("/api/learn/governance/audit?lang=vi")
     assert audit_res.status_code == 200
     audit_data = audit_res.json()
     assert audit_data["all_lessons_passed_rubric"] is True
+    assert audit_data["total_tracks"] == 15
 
     prog_res = client.get("/api/learn/progress?lang=vi&persona=beginner")
     assert prog_res.status_code == 200
@@ -95,6 +119,32 @@ def test_oer_registry_and_explainable_recommendations_api():
     assert "recommendations" in prog_data
     assert len(prog_data["recommendations"]) >= 1
     assert len(prog_data["recommendations"][0]["rationale"]) > 20
+
+
+def test_cli_content_governance_pipeline_and_api():
+    val_res = run_content_validate()
+    assert val_res["status"] == "PASSED"
+    assert val_res["bilingual_track_parity"] is True
+
+    rep_res = run_content_report()
+    assert rep_res["total_tracks"] == 15
+    assert rep_res["oer_registry_count"] >= 21
+
+    chk_res = run_resources_check()
+    assert chk_res["status"] == "HEALTHY"
+
+    dry_res = run_content_import(dry_run=True)
+    assert dry_res["status"] == "DRY_RUN_READY"
+
+    pub_res = run_content_publish()
+    assert pub_res["status"] == "PUBLISHED"
+
+    rb_res = run_content_rollback()
+    assert rb_res["status"] == "ROLLED_BACK_SUCCESSFULLY"
+
+    api_rep = client.get("/api/learn/pipeline/report")
+    assert api_rep.status_code == 200
+    assert api_rep.json()["total_tracks"] == 15
 
 
 def test_remediation_recommendation_when_quiz_score_low():
@@ -109,3 +159,4 @@ def test_remediation_recommendation_when_quiz_score_low():
     )
     assert mastery.confidence_level in ("LOW", "MODERATE", "HIGH")
     assert any(r.recommendation_type == "REMEDIATION" and r.lesson_id == "lesson-foundations-what-is-ai" for r in recs)
+

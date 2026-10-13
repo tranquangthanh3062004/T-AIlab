@@ -178,7 +178,7 @@ export const LearnView: React.FC = () => {
             </div>
             <div className="min-w-0">
               <div className="text-xs font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <span>{isVi ? '1. Người Mới Bắt Đầu (5 Lộ Trình)' : '1. Complete Beginner (5 Tracks)'}</span>
+                <span>{isVi ? '1. Người Mới Bắt Đầu (5 Lộ Trình: 0–4)' : '1. Complete Beginner (5 Tracks: 0–4)'}</span>
               </div>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">
                 {isVi ? 'AI Foundations, Python, Giải tích, Data Science & ML' : 'Foundations, Python, Calculus, Data Science & ML'}
@@ -203,10 +203,10 @@ export const LearnView: React.FC = () => {
             </div>
             <div className="min-w-0">
               <div className="text-xs font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <span>{isVi ? '2. Kỹ Sư AI Thực Chiến (7 Lộ Trình)' : '2. Applied AI Engineer (7 Tracks)'}</span>
+                <span>{isVi ? '2. Kỹ Sư AI Thực Chiến (10 Lộ Trình: 5–14)' : '2. Applied AI Engineer (10 Tracks: 5–14)'}</span>
               </div>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">
-                {isVi ? 'DL, Computer Vision, LLM RAG, Agents, MLOps & Đồ án' : 'DL, Vision, LLM RAG, Agents, MLOps, Research & Capstone'}
+                {isVi ? 'DL, Vision, LLM RAG, Diffusion, Agents, MLOps, RAI & Capstone' : 'DL, Vision, RAG, Diffusion, Agents, MLOps, RAI & Capstone'}
               </p>
             </div>
           </button>
@@ -225,10 +225,10 @@ export const LearnView: React.FC = () => {
             </div>
             <div className="min-w-0">
               <div className="text-xs font-extrabold text-slate-900 dark:text-white">
-                {isVi ? 'Tất Cả 12 Lộ Trình Chuẩn Hóa' : 'All 12 Curriculum Tracks'}
+                {isVi ? 'Tất Cả 15 Lộ Trình Chuẩn Hóa (0–14)' : 'All 15 Curriculum Tracks (0–14)'}
               </div>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">
-                {isVi ? 'Đồ thị tiên quyết DAG & Học liệu mở OER' : 'Full Prerequisite DAG & Verified OER'}
+                {isVi ? 'Đồ thị tiên quyết DAG & 21 Nguồn Học liệu mở OER' : 'Full Prerequisite DAG & 21 Verified OER Sources'}
               </p>
             </div>
           </button>
@@ -255,21 +255,21 @@ export const LearnView: React.FC = () => {
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold">
                       {oerResources.length} {isVi ? 'Nguồn Chuẩn Quốc Tế' : 'Verified Sources'}
                     </span>
-                    {governanceAudit?.dag_integrity?.is_valid_dag && (
+                    {governanceAudit && (
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-mono font-bold">
-                        DAG: {governanceAudit.passed_blocking_gates_count}/{governanceAudit.total_lessons} PASS ({governanceAudit.average_rubric_score}/10)
+                        DAG: {governanceAudit.total_tracks} Tracks / {governanceAudit.total_lessons} Lessons PASS ({governanceAudit.average_rubric_score}/10)
                       </span>
                     )}
                   </div>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400">
                     {isVi
-                      ? 'MIT 6.036, Stanford CS229/CS231n, UC Berkeley CS188, D2L.ai, MML Book, Karpathy micrograd/nanoGPT — Đầy đủ giấy phép SPDX & trạng thái vòng đời.'
-                      : 'MIT 6.036, Stanford CS229/CS231n, UC Berkeley CS188, D2L.ai, MML Book, Karpathy micrograd/nanoGPT — Full SPDX licenses & lifecycle states.'}
+                      ? 'Google ML, Hugging Face, PyTorch, scikit-learn, fast.ai, D2L.ai, MIT OCW, Stanford CS229/CS231n, Berkeley CS188, arXiv — Đầy đủ giấy phép SPDX & phân loại FREE_OPEN / FREEMIUM_AUDIT.'
+                      : 'Google ML, Hugging Face, PyTorch, scikit-learn, fast.ai, D2L.ai, MIT OCW, Stanford CS229/CS231n, Berkeley CS188, arXiv — Full SPDX licenses & FREE_OPEN / FREEMIUM_AUDIT classification.'}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 shrink-0">
-                <span>{oerOpen ? (isVi ? 'Thu gọn' : 'Hide') : (isVi ? 'Xem Nguồn OER' : 'Inspect Registry')}</span>
+                <span>{oerOpen ? (isVi ? 'Thu gọn' : 'Hide') : (isVi ? 'Xem 21 Nguồn OER' : 'Inspect 21 Sources')}</span>
                 {oerOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </div>
             </div>
@@ -284,14 +284,14 @@ export const LearnView: React.FC = () => {
                     <div className="space-y-1">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
                         <span className="text-[10px] font-extrabold uppercase text-indigo-600 dark:text-indigo-400">
-                          {res.source_org}
+                          {res.organization}
                         </span>
                         <div className="flex items-center gap-1.5">
                           <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                            {res.lifecycle_state}
+                            {res.access_model || 'FREE_OPEN'}
                           </span>
                           <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                            {res.license_spdx}
+                            {res.spdx_license}
                           </span>
                         </div>
                       </div>
@@ -299,11 +299,13 @@ export const LearnView: React.FC = () => {
                         {res.title}
                       </div>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                        {res.pedagogical_summary}
+                        {res.attribution_requirements}
                       </p>
                     </div>
                     <div className="flex items-center justify-between pt-1.5 border-t border-slate-200/60 dark:border-slate-700/60 text-[10px]">
-                      <span className="font-mono text-slate-400">{res.usage_classification}</span>
+                      <span className="font-mono text-slate-400">
+                        {res.resource_type} &bull; {res.lifecycle_status}
+                      </span>
                       <a
                         href={res.canonical_url}
                         target="_blank"
@@ -365,22 +367,22 @@ export const LearnView: React.FC = () => {
                     <div className="flex items-center gap-2 text-sm font-extrabold text-emerald-900 dark:text-emerald-200">
                       <Sparkles className="w-4 h-4 text-emerald-600" />
                       <span>
-                        {isVi ? 'Kết quả Định vị:' : 'Placement Result:'} {diagResult.overall_level} ({diagResult.score_percentage}%)
+                        {isVi ? 'Kết quả Định vị:' : 'Placement Result:'} {diagResult.track_title} ({diagResult.score_percentage}%)
                       </span>
                     </div>
                     <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700">
                       {diagResult.recommended_persona === 'engineer'
-                        ? (isVi ? 'Đề xuất: Kỹ sư AI Thực chiến (E–G)' : 'Recommended: AI Engineer (E–G)')
-                        : (isVi ? 'Đề xuất: Người mới bắt đầu (A–D)' : 'Recommended: Beginner Path (A–D)')}
+                        ? (isVi ? 'Đề xuất: Kỹ sư AI Thực chiến (Tracks 5–14)' : 'Recommended: AI Engineer (Tracks 5–14)')
+                        : (isVi ? 'Đề xuất: Người mới bắt đầu (Tracks 0–4)' : 'Recommended: Beginner Path (Tracks 0–4)')}
                     </span>
                   </div>
                   <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-                    {diagResult.rationale}
+                    {diagResult.analysis}
                   </p>
                   <div className="flex items-center gap-3 pt-1">
                     <button
                       type="button"
-                      onClick={() => openLesson(diagResult.recommended_lesson_id)}
+                      onClick={() => openLesson(diagResult.suggested_starting_lesson_id)}
                       className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition"
                     >
                       <span>{isVi ? 'Học ngay bài được đề xuất' : 'Start Recommended Lesson'}</span>
@@ -407,7 +409,7 @@ export const LearnView: React.FC = () => {
                         className="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800 space-y-2.5"
                       >
                         <div className="text-[10px] font-extrabold uppercase text-indigo-600 dark:text-indigo-400">
-                          {isVi ? `Câu ${idx + 1}` : `Q${idx + 1}`} &bull; {q.category}
+                          {isVi ? `Câu ${idx + 1}` : `Q${idx + 1}`} &bull; {q.type}
                         </div>
                         <div className="text-xs font-bold text-slate-900 dark:text-slate-100">
                           {q.question}
@@ -469,6 +471,9 @@ export const LearnView: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[10px] font-mono font-extrabold px-2 py-0.5 rounded-md bg-slate-900 dark:bg-slate-800 text-white border border-slate-700">
+                      Track {track.track_number ?? 0}
+                    </span>
                     <span
                       className={`text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
                         isBeginner
@@ -481,6 +486,11 @@ export const LearnView: React.FC = () => {
                         : (isVi ? '💻 Dành cho Kỹ sư AI' : '💻 Engineer Track')}{' '}
                       &bull; {track.level}
                     </span>
+                    {track.specialization_branch && (
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        {track.specialization_branch}
+                      </span>
+                    )}
                     <span className="text-xs text-slate-400 flex items-center gap-1 font-mono">
                       <Clock className="w-3 h-3" /> ~{track.estimated_hours} {t('hoursLabel')}
                     </span>

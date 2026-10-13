@@ -182,8 +182,8 @@ export const HomeView: React.FC = () => {
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 <span>
                   {persona === 'engineer'
-                    ? (isVi ? 'Chế độ: Kỹ sư AI Thực chiến (7 Lộ trình Chuyên sâu)' : 'Track: Applied AI Engineer (7 Advanced Tracks)')
-                    : (isVi ? 'Chế độ: Người mới bắt đầu từ số 0 (5 Lộ trình Nền tảng)' : 'Track: Complete Beginner Path (5 Core Tracks)')}
+                    ? (isVi ? 'Chế độ: Kỹ sư AI Thực chiến (10 Lộ trình Chuyên sâu: Tracks 5–14)' : 'Track: Applied AI Engineer (10 Advanced Tracks: Tracks 5–14)')
+                    : (isVi ? 'Chế độ: Người mới bắt đầu từ số 0 (5 Lộ trình Nền tảng: Tracks 0–4)' : 'Track: Complete Beginner Path (5 Core Tracks: Tracks 0–4)')}
                 </span>
               </span>
             </div>
@@ -191,17 +191,17 @@ export const HomeView: React.FC = () => {
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
               {persona === 'engineer'
                 ? (isVi
-                    ? 'Làm chủ Deep Learning, Computer Vision, LLM RAG, AI Agents & MLOps'
-                    : 'Master Deep Learning, Vision, RAG Vector Search, AI Agents & MLOps')
+                    ? 'Làm chủ Deep Learning, Vision, LLM RAG, Diffusion, AI Agents, MLOps & Responsible AI'
+                    : 'Master Deep Learning, Vision, RAG, Diffusion, AI Agents, MLOps & Responsible AI')
                 : (isVi
-                    ? 'Xây dựng Nền tảng AI Vững chắc: Từ Trực quan, Khoa học Dữ liệu đến Học máy'
-                    : 'Build a Rock-Solid AI Foundation: Intuition, Data Science & Classical ML')}
+                    ? 'Xây dựng Nền tảng AI Vững chắc: Từ Trực quan, Python, Toán AI đến Khoa học Dữ liệu & ML'
+                    : 'Build a Rock-Solid AI Foundation: Intuition, Python, Math, Data Science & Classical ML')}
             </h1>
 
             <p className="text-indigo-100/85 text-xs sm:text-sm leading-relaxed max-w-xl">
               {isVi
-                ? 'Chương trình 12 Lộ trình chuẩn đại học quốc tế (MIT, Stanford, UC Berkeley, D2L.ai) kết hợp 13 Bộ dữ liệu mở xác thực, Giải nghĩa ký hiệu Toán học và Phòng Lab Code Python.'
-                : '12-Track curriculum grounded in MIT, Stanford, UC Berkeley & D2L.ai OER sources, with 13 verified open datasets, mathematical symbol guides, and Python Code Labs.'}
+                ? 'Chương trình 15 Lộ trình (Track 0 → Track 14) chuẩn đại học quốc tế (MIT, Stanford, UC Berkeley, D2L.ai, Google, Hugging Face) kết hợp 16 Bộ dữ liệu mở xác thực, 21 Nguồn OER và Phòng Lab Code Python.'
+                : '15-Track curriculum (Track 0 → Track 14) grounded in 21 verified OER sources (MIT, Stanford, UC Berkeley, D2L.ai, Google, Hugging Face), with 16 open datasets and Python Code Labs.'}
             </p>
           </div>
 
@@ -221,7 +221,7 @@ export const HomeView: React.FC = () => {
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/15 transition"
             >
               <BookOpen className="w-4 h-4 text-sky-300" />
-              <span>{isVi ? 'Xem toàn bộ 12 Lộ trình' : 'Explore All 12 Tracks'}</span>
+              <span>{isVi ? 'Xem toàn bộ 15 Lộ trình (Tracks 0–14)' : 'Explore All 15 Tracks (0–14)'}</span>
             </button>
             <button
               onClick={() =>
@@ -348,7 +348,7 @@ export const HomeView: React.FC = () => {
           <div>
             <div className="text-[11px] font-bold text-slate-400 uppercase">{isVi ? 'Dữ liệu & Nguồn OER' : 'Datasets & OER'}</div>
             <div className="text-base font-black text-slate-900 dark:text-white">
-              13 {isVi ? 'Bộ chuẩn Quốc tế' : 'Verified Datasets'}
+              16 {isVi ? 'Datasets & 21 OER' : 'Datasets & 21 OER'}
             </div>
           </div>
         </div>
@@ -370,13 +370,14 @@ export const HomeView: React.FC = () => {
                   </span>
                 </h3>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  {isVi
-                    ? 'Tách biệt rõ Tiến độ hoàn thành, Điểm bài kiểm tra, Độ thành thạo ước lượng và Kỹ năng thực hành code.'
-                    : 'Strictly separates Completion Rate, Assessment Performance, Estimated Mastery, and Demonstrated Project Skill.'}
+                  {masteryDims.confidence_note ||
+                    (isVi
+                      ? 'Tách biệt rõ Tiến độ hoàn thành, Điểm bài kiểm tra, Độ thành thạo ước lượng và Kỹ năng thực hành code.'
+                      : 'Strictly separates Completion Rate, Assessment Performance, Estimated Mastery, and Demonstrated Project Skill.')}
                 </p>
               </div>
               <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                {isVi ? 'Độ tin cậy:' : 'Confidence:'} {masteryDims.mastery_confidence_level}
+                {isVi ? 'Độ tin cậy:' : 'Confidence:'} {masteryDims.confidence_level}
               </span>
             </div>
 
@@ -387,13 +388,13 @@ export const HomeView: React.FC = () => {
                     {isVi ? '1. Tỷ lệ Hoàn thành (Completion)' : '1. Completion Rate'}
                   </span>
                   <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">
-                    {masteryDims.completion_rate_pct}%
+                    {masteryDims.completion_rate}%
                   </span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
                   <div
                     className="h-full bg-emerald-500 rounded-full"
-                    style={{ width: `${Math.min(100, masteryDims.completion_rate_pct)}%` }}
+                    style={{ width: `${Math.min(100, masteryDims.completion_rate || 0)}%` }}
                   />
                 </div>
               </div>
@@ -404,13 +405,13 @@ export const HomeView: React.FC = () => {
                     {isVi ? '2. Điểm Đánh giá (Assessment)' : '2. Assessment Performance'}
                   </span>
                   <span className="text-sky-600 dark:text-sky-400 font-extrabold">
-                    {masteryDims.assessment_performance_pct}%
+                    {masteryDims.assessment_performance}%
                   </span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
                   <div
                     className="h-full bg-sky-500 rounded-full"
-                    style={{ width: `${Math.min(100, masteryDims.assessment_performance_pct)}%` }}
+                    style={{ width: `${Math.min(100, masteryDims.assessment_performance || 0)}%` }}
                   />
                 </div>
               </div>
@@ -421,13 +422,13 @@ export const HomeView: React.FC = () => {
                     {isVi ? '3. Độ Thành thạo Ước lượng' : '3. Estimated Concept Mastery'}
                   </span>
                   <span className="text-indigo-600 dark:text-indigo-400 font-extrabold">
-                    {masteryDims.estimated_mastery_pct}%
+                    {masteryDims.estimated_mastery}%
                   </span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
                   <div
                     className="h-full bg-indigo-500 rounded-full"
-                    style={{ width: `${Math.min(100, masteryDims.estimated_mastery_pct)}%` }}
+                    style={{ width: `${Math.min(100, masteryDims.estimated_mastery || 0)}%` }}
                   />
                 </div>
               </div>
@@ -438,13 +439,13 @@ export const HomeView: React.FC = () => {
                     {isVi ? '4. Kỹ năng Thực hành & Dự án' : '4. Demonstrated Project Skill'}
                   </span>
                   <span className="text-amber-600 dark:text-amber-400 font-extrabold">
-                    {masteryDims.demonstrated_project_skill_pct}%
+                    {masteryDims.demonstrated_project_skill}%
                   </span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
                   <div
                     className="h-full bg-amber-500 rounded-full"
-                    style={{ width: `${Math.min(100, masteryDims.demonstrated_project_skill_pct)}%` }}
+                    style={{ width: `${Math.min(100, masteryDims.demonstrated_project_skill || 0)}%` }}
                   />
                 </div>
               </div>
@@ -467,17 +468,17 @@ export const HomeView: React.FC = () => {
                 {adaptiveRecs.slice(0, 2).map((rec, idx) => (
                   <div
                     key={idx}
-                    onClick={() => openLesson(rec.target_id)}
+                    onClick={() => openLesson(rec.lesson_id)}
                     className="p-3.5 rounded-2xl bg-indigo-50/40 dark:bg-slate-800/70 hover:bg-indigo-50 dark:hover:bg-slate-800 border border-indigo-200/60 dark:border-slate-700 cursor-pointer transition space-y-1"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-                        {rec.action_type} &bull; {rec.priority}
+                        {rec.recommendation_type} &bull; {rec.priority}
                       </span>
                       <ArrowRight className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
                     </div>
                     <div className="text-xs font-extrabold text-slate-900 dark:text-slate-100">
-                      {rec.title}
+                      {rec.lesson_title}
                     </div>
                     <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
                       {rec.rationale}
@@ -490,8 +491,8 @@ export const HomeView: React.FC = () => {
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 flex items-center justify-between">
               <span>
                 {isVi
-                  ? 'Đồ thị điều kiện tiên quyết (Prerequisite DAG): Hợp lệ'
-                  : 'Prerequisite DAG Status: Verified Acyclic'}
+                  ? 'Đồ thị điều kiện tiên quyết 15 Lộ trình (Prerequisite DAG): Hợp lệ'
+                  : '15-Track Prerequisite DAG Status: Verified Acyclic'}
               </span>
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
             </div>
@@ -504,19 +505,19 @@ export const HomeView: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 className="text-lg font-black text-slate-900 dark:text-slate-100">
-              {isVi ? 'Bản Đồ 12 Lộ Trình Học Theo 2 Đối Tượng Rõ Ràng' : '12-Track Learning Roadmap for 2 Distinct Audiences'}
+              {isVi ? 'Bản Đồ 15 Lộ Trình Học Theo 2 Đối Tượng (Tracks 0–14)' : '15-Track Learning Roadmap for 2 Distinct Audiences (Tracks 0–14)'}
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {isVi
-                ? 'Bài kiểm tra năng lực, Bộ dữ liệu thật, Nguồn học liệu OER và Phòng Lab IDE đã được lồng ghép trực tiếp vào từng bài học.'
-                : 'Diagnostic placement, real open datasets, OER citations, and Python IDE labs are embedded directly inside each lesson.'}
+                ? 'Bài kiểm tra năng lực, Bộ dữ liệu thật, Nguồn học liệu OER, Flashcards và Phòng Lab IDE đã được lồng ghép trực tiếp vào từng bài học.'
+                : 'Diagnostic placement, real open datasets, OER citations, flashcards, and Python IDE labs are embedded directly inside each lesson.'}
             </p>
           </div>
           <button
             onClick={() => setActiveView('learn')}
             className="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 self-start sm:self-auto"
           >
-            <span>{isVi ? 'Mở trang 12 Lộ trình & Danh mục Học liệu Mở OER' : 'Open Full 12-Track Curriculum & OER Registry'}</span>
+            <span>{isVi ? 'Mở trang 15 Lộ trình & 21 Nguồn Học liệu Mở OER' : 'Open Full 15-Track Curriculum & 21-Source OER Registry'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>

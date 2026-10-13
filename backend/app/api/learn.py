@@ -94,6 +94,21 @@ def get_curriculum_governance_audit(lang: str = Query(default="vi")):
     tracks = get_tracks_by_lang(lang)
     return validate_curriculum_prerequisite_dag(tracks)
 
+@router.get("/pipeline/report")
+def get_content_pipeline_report():
+    from app.cli_content import run_content_report
+    return run_content_report()
+
+@router.post("/pipeline/import")
+def trigger_content_pipeline_import(dry_run: bool = Query(default=True)):
+    from app.cli_content import run_content_import
+    return run_content_import(dry_run=dry_run)
+
+@router.post("/pipeline/rollback")
+def trigger_content_pipeline_rollback():
+    from app.cli_content import run_content_rollback
+    return run_content_rollback()
+
 @router.post("/quiz/submit", response_model=QuizResult)
 def submit_quiz(
     submission: QuizSubmission,

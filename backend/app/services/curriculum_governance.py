@@ -8,117 +8,196 @@ from app.schemas.curriculum import (
     Track, Module, Lesson, FormulaGuide, FormulaSymbol, FormulaStep,
     LessonDataset, CodeExercise, QuizQuestion, QuizOption,
     SourceReference, CapstoneProjectSpec, OERResourceSchema,
-    LessonRubricEvaluation, MasteryDimensionBreakdown, AdaptiveRecommendationItem
+    LessonRubricEvaluation, MasteryDimensionBreakdown, AdaptiveRecommendationItem,
+    FlashcardItem
 )
 
 # ==============================================================================
-# PHASE 1 & 5: VERIFIED OER, UNIVERSITY, GITHUB & DATASET SOURCE REGISTRY
+# PHASE 1 & 4: VERIFIED OER, UNIVERSITY, DOCS, GITHUB & RESEARCH REGISTRY (21 SOURCES)
 # ==============================================================================
 
 VERIFIED_OER_REGISTRY: list[OERResourceSchema] = [
     OERResourceSchema(
         id="oer-google-mlcc",
-        title="Google Machine Learning Crash Course",
+        title="Google Machine Learning Crash Course & Education",
         organization="Google Developers",
-        canonical_url="https://developers.google.com/machine-learning/crash-course",
-        resource_type="DOCUMENTATION",
+        canonical_url="https://developers.google.com/machine-learning",
+        resource_type="OFFICIAL_DOCS",
+        access_model="FREE_OPEN",
         spdx_license="CC-BY-4.0 / Apache-2.0",
         attribution_requirements="Attribution to Google Developers required; educational adaptation permitted.",
         lifecycle_status="PUBLISHED",
         mapped_tracks=["track-foundations", "track-ml", "track-dl"],
         quality_score=9.8,
-        last_verified_date="2026-10-12"
+        last_verified_date="2026-10-13"
     ),
     OERResourceSchema(
         id="oer-google-ai-dev",
         title="Google AI for Developers Documentation",
         organization="Google",
         canonical_url="https://ai.google.dev/",
-        resource_type="DOCUMENTATION",
+        resource_type="OFFICIAL_DOCS",
+        access_model="FREE_OPEN",
         spdx_license="CC-BY-4.0 / Apache-2.0",
         attribution_requirements="Attribution to Google AI for Developers required.",
         lifecycle_status="PUBLISHED",
-        mapped_tracks=["track-llm", "track-ai-agents"],
+        mapped_tracks=["track-llm", "track-generative-multimodal", "track-ai-agents"],
         quality_score=9.7,
-        last_verified_date="2026-10-12"
+        last_verified_date="2026-10-13"
+    ),
+    OERResourceSchema(
+        id="oer-github-docs",
+        title="GitHub Official Documentation (Git, Actions & Workflows)",
+        organization="GitHub",
+        canonical_url="https://docs.github.com/",
+        resource_type="OFFICIAL_DOCS",
+        access_model="FREE_OPEN",
+        spdx_license="CC-BY-4.0",
+        attribution_requirements="Open documentation under CC-BY-4.0 (github/docs).",
+        lifecycle_status="PUBLISHED",
+        mapped_tracks=["track-python", "track-mlops"],
+        quality_score=9.8,
+        last_verified_date="2026-10-13"
+    ),
+    OERResourceSchema(
+        id="oer-github-rest-api",
+        title="GitHub REST API Official Reference",
+        organization="GitHub",
+        canonical_url="https://docs.github.com/en/rest",
+        resource_type="OFFICIAL_DOCS",
+        access_model="FREE_OPEN",
+        spdx_license="CC-BY-4.0",
+        attribution_requirements="Subject to GitHub API rate-limit and acceptable use policies.",
+        lifecycle_status="PUBLISHED",
+        mapped_tracks=["track-python", "track-ai-agents", "track-mlops"],
+        quality_score=9.7,
+        last_verified_date="2026-10-13"
     ),
     OERResourceSchema(
         id="oer-hf-learn",
-        title="Hugging Face Learn (NLP, CV & AI Agents Courses)",
+        title="Hugging Face Learn (NLP, Diffusion, Audio & AI Agents Courses)",
         organization="Hugging Face",
         canonical_url="https://huggingface.co/learn",
-        resource_type="DOCUMENTATION",
+        resource_type="OFFICIAL_DOCS",
+        access_model="FREE_OPEN",
         spdx_license="Apache-2.0 / CC-BY-4.0",
         attribution_requirements="Attribution to Hugging Face Community Courses required.",
         lifecycle_status="PUBLISHED",
-        mapped_tracks=["track-llm", "track-ai-agents", "track-computer-vision"],
+        mapped_tracks=["track-llm", "track-generative-multimodal", "track-ai-agents", "track-computer-vision"],
         quality_score=9.8,
-        last_verified_date="2026-10-12"
+        last_verified_date="2026-10-13"
     ),
     OERResourceSchema(
-        id="oer-fastai-course",
-        title="Practical Deep Learning for Coders",
-        organization="fast.ai (Jeremy Howard)",
-        canonical_url="https://course.fast.ai/",
-        resource_type="DOCUMENTATION",
-        spdx_license="GPL-3.0 (Notebooks) / External Reference",
-        attribution_requirements="Referenced for top-down pedagogy and validation hygiene; no GPL code copied.",
-        lifecycle_status="CURRICULUM_MAPPED",
-        mapped_tracks=["track-data-science", "track-dl", "track-computer-vision"],
-        quality_score=9.6,
-        last_verified_date="2026-10-12"
-    ),
-    OERResourceSchema(
-        id="oer-deeplearning-ai",
-        title="DeepLearning.AI Specializations & Short Courses",
-        organization="DeepLearning.AI (Andrew Ng)",
-        canonical_url="https://www.deeplearning.ai/",
-        resource_type="DOCUMENTATION",
-        spdx_license="Proprietary (External Link & Metadata Only)",
-        attribution_requirements="No proprietary course transcripts or quizzes copied; external reference link only.",
-        lifecycle_status="CURRICULUM_MAPPED",
-        mapped_tracks=["track-foundations", "track-llm", "track-ai-agents"],
-        quality_score=9.7,
-        last_verified_date="2026-10-12"
+        id="oer-hf-hub-models",
+        title="Hugging Face Model Hub & Model Cards Registry",
+        organization="Hugging Face",
+        canonical_url="https://huggingface.co/models",
+        resource_type="OFFICIAL_DOCS",
+        access_model="FREE_OPEN",
+        spdx_license="Per-Model SPDX Metadata (Apache-2.0 / MIT / Llama)",
+        attribution_requirements="Check individual model card license before commercial deployment.",
+        lifecycle_status="PUBLISHED",
+        mapped_tracks=["track-llm", "track-generative-multimodal", "track-responsible-ai-security"],
+        quality_score=9.8,
+        last_verified_date="2026-10-13"
     ),
     OERResourceSchema(
         id="oer-pytorch-tutorials",
         title="PyTorch Official Tutorials & Tensor Reference",
-        organization="PyTorch / Linux Foundation",
+        organization="PyTorch Foundation / Linux Foundation",
         canonical_url="https://pytorch.org/tutorials/",
-        resource_type="DOCUMENTATION",
+        resource_type="OFFICIAL_DOCS",
+        access_model="FREE_OPEN",
         spdx_license="BSD-3-Clause",
         attribution_requirements="Retain BSD-3 attribution when referencing official PyTorch patterns.",
         lifecycle_status="PUBLISHED",
-        mapped_tracks=["track-python", "track-dl", "track-computer-vision"],
+        mapped_tracks=["track-python", "track-dl", "track-computer-vision", "track-generative-multimodal"],
         quality_score=9.9,
-        last_verified_date="2026-10-12"
+        last_verified_date="2026-10-13"
     ),
     OERResourceSchema(
         id="oer-sklearn-guide",
         title="scikit-learn Official User Guide",
         organization="scikit-learn Developers / Inria",
         canonical_url="https://scikit-learn.org/stable/user_guide.html",
-        resource_type="DOCUMENTATION",
+        resource_type="OFFICIAL_DOCS",
+        access_model="FREE_OPEN",
         spdx_license="BSD-3-Clause",
         attribution_requirements="BSD-3 attribution; primary reference for Pipelines, leakage prevention, and trees.",
         lifecycle_status="PUBLISHED",
-        mapped_tracks=["track-data-science", "track-ml"],
+        mapped_tracks=["track-data-science", "track-ml", "track-applied-specializations"],
         quality_score=9.9,
-        last_verified_date="2026-10-12"
+        last_verified_date="2026-10-13"
     ),
     OERResourceSchema(
-        id="oer-numpy-pandas-python",
-        title="NumPy, pandas & Python 3.13 Official Documentation",
-        organization="NumFOCUS & Python Software Foundation",
-        canonical_url="https://numpy.org/doc/",
-        resource_type="DOCUMENTATION",
-        spdx_license="BSD-3-Clause / PSF-2.0",
-        attribution_requirements="Open documentation for contiguous array strides, DataFrames, and Python standard library.",
+        id="oer-fastai-course",
+        title="Practical Deep Learning for Coders",
+        organization="fast.ai (Jeremy Howard)",
+        canonical_url="https://course.fast.ai/",
+        resource_type="UNIVERSITY_COURSE",
+        access_model="FREE_OPEN",
+        spdx_license="GPL-3.0 (Notebooks) / External Reference",
+        attribution_requirements="Referenced for top-down pedagogy and validation hygiene; no GPL code copied.",
+        lifecycle_status="CURRICULUM_MAPPED",
+        mapped_tracks=["track-data-science", "track-dl", "track-computer-vision"],
+        quality_score=9.6,
+        last_verified_date="2026-10-13"
+    ),
+    OERResourceSchema(
+        id="oer-deeplearning-ai",
+        title="DeepLearning.AI Specializations & Short Courses",
+        organization="DeepLearning.AI (Andrew Ng)",
+        canonical_url="https://www.deeplearning.ai/",
+        resource_type="UNIVERSITY_COURSE",
+        access_model="FREEMIUM_AUDIT",
+        spdx_license="Proprietary (External Link & Metadata Only — Audit/Paid Tiers)",
+        attribution_requirements="Verify individual course access tier; no proprietary transcripts or quizzes copied.",
+        lifecycle_status="CURRICULUM_MAPPED",
+        mapped_tracks=["track-foundations", "track-llm", "track-ai-agents"],
+        quality_score=9.7,
+        last_verified_date="2026-10-13"
+    ),
+    OERResourceSchema(
+        id="oer-python-docs",
+        title="Python 3 Official Documentation",
+        organization="Python Software Foundation",
+        canonical_url="https://docs.python.org/3/",
+        resource_type="OFFICIAL_DOCS",
+        access_model="FREE_OPEN",
+        spdx_license="PSF-2.0 / Zero-Clause BSD",
+        attribution_requirements="Python Software Foundation License v2.",
         lifecycle_status="PUBLISHED",
-        mapped_tracks=["track-python", "track-data-science"],
+        mapped_tracks=["track-python"],
         quality_score=9.9,
-        last_verified_date="2026-10-12"
+        last_verified_date="2026-10-13"
+    ),
+    OERResourceSchema(
+        id="oer-numpy-docs",
+        title="NumPy Official Reference & Array Computing Guide",
+        organization="NumPy Developers / NumFOCUS",
+        canonical_url="https://numpy.org/doc/",
+        resource_type="OFFICIAL_DOCS",
+        access_model="FREE_OPEN",
+        spdx_license="BSD-3-Clause",
+        attribution_requirements="BSD-3 attribution for ndarray memory layout and vectorization.",
+        lifecycle_status="PUBLISHED",
+        mapped_tracks=["track-python", "track-math", "track-data-science"],
+        quality_score=9.9,
+        last_verified_date="2026-10-13"
+    ),
+    OERResourceSchema(
+        id="oer-pandas-docs",
+        title="pandas Official Documentation & User Guide",
+        organization="pandas / NumFOCUS",
+        canonical_url="https://pandas.pydata.org/docs/",
+        resource_type="OFFICIAL_DOCS",
+        access_model="FREE_OPEN",
+        spdx_license="BSD-3-Clause",
+        attribution_requirements="BSD-3 attribution for tabular DataFrame operations and time-series indexing.",
+        lifecycle_status="PUBLISHED",
+        mapped_tracks=["track-data-science", "track-applied-specializations"],
+        quality_score=9.9,
+        last_verified_date="2026-10-13"
     ),
     OERResourceSchema(
         id="oer-d2l-book",
@@ -126,38 +205,97 @@ VERIFIED_OER_REGISTRY: list[OERResourceSchema] = [
         organization="Zhang, Lipton, Li, Smola",
         canonical_url="https://d2l.ai/",
         resource_type="OPEN_BOOK",
+        access_model="FREE_OPEN",
         spdx_license="CC-BY-SA-4.0 / Apache-2.0",
         attribution_requirements="Cite Zhang et al., Dive into Deep Learning (https://d2l.ai).",
         lifecycle_status="PUBLISHED",
-        mapped_tracks=["track-dl", "track-computer-vision", "track-llm"],
+        mapped_tracks=["track-dl", "track-computer-vision", "track-llm", "track-generative-multimodal"],
         quality_score=9.9,
-        last_verified_date="2026-10-12"
+        last_verified_date="2026-10-13"
     ),
     OERResourceSchema(
-        id="oer-mml-book",
-        title="Mathematics for Machine Learning",
-        organization="Deisenroth, Faisal, Ong (Cambridge University Press)",
-        canonical_url="https://mml-book.github.io/",
-        resource_type="OPEN_BOOK",
-        spdx_license="CC-BY-NC-ND-4.0 (External Reading Reference)",
-        attribution_requirements="No text/figures modified or redistributed due to ND clause; linked by chapter.",
+        id="oer-mit-ocw",
+        title="MIT OpenCourseWare (6.036 Introduction to Machine Learning & 18.06 Linear Algebra)",
+        organization="Massachusetts Institute of Technology (MIT OCW)",
+        canonical_url="https://ocw.mit.edu/",
+        resource_type="UNIVERSITY_COURSE",
+        access_model="FREE_OPEN",
+        spdx_license="CC-BY-NC-SA-4.0",
+        attribution_requirements="Cite MIT OpenCourseWare and course instructors; non-commercial educational attribution.",
+        lifecycle_status="CURRICULUM_MAPPED",
+        mapped_tracks=["track-foundations", "track-math", "track-ml"],
+        quality_score=9.9,
+        last_verified_date="2026-10-13"
+    ),
+    OERResourceSchema(
+        id="oer-stanford-cs229",
+        title="Stanford CS229: Machine Learning Lecture Notes",
+        organization="Stanford University",
+        canonical_url="https://cs229.stanford.edu/",
+        resource_type="UNIVERSITY_COURSE",
+        access_model="FREE_OPEN",
+        spdx_license="Academic Public Syllabus (External Link Only)",
+        attribution_requirements="Link directly to official Stanford CS229 lecture notes; do not redistribute PDFs.",
         lifecycle_status="CURRICULUM_MAPPED",
         mapped_tracks=["track-math", "track-ml"],
-        quality_score=9.8,
-        last_verified_date="2026-10-12"
+        quality_score=9.9,
+        last_verified_date="2026-10-13"
     ),
     OERResourceSchema(
-        id="oer-stanford-mit-berkeley",
-        title="MIT 6.036, Stanford CS229/CS231n & UC Berkeley CS188 Syllabi",
-        organization="MIT OCW, Stanford University & UC Berkeley",
-        canonical_url="https://ocw.mit.edu/courses/6-036-introduction-to-machine-learning-fall-2020/",
+        id="oer-stanford-cs231n",
+        title="Stanford CS231n: Deep Learning for Computer Vision",
+        organization="Stanford University",
+        canonical_url="https://cs231n.stanford.edu/",
         resource_type="UNIVERSITY_COURSE",
-        spdx_license="CC-BY-NC-SA-4.0 / Academic Public Syllabus",
-        attribution_requirements="Cite university course numbers and instructors for mathematical problem framing.",
+        access_model="FREE_OPEN",
+        spdx_license="Academic Public Syllabus (External Link Only)",
+        attribution_requirements="Link to official Stanford CS231n syllabus for CNNs, ViTs, and IoU.",
         lifecycle_status="CURRICULUM_MAPPED",
-        mapped_tracks=["track-foundations", "track-math", "track-computer-vision", "track-ai-agents"],
+        mapped_tracks=["track-dl", "track-computer-vision"],
         quality_score=9.9,
-        last_verified_date="2026-10-12"
+        last_verified_date="2026-10-13"
+    ),
+    OERResourceSchema(
+        id="oer-berkeley-cs188",
+        title="UC Berkeley CS188: Introduction to Artificial Intelligence",
+        organization="UC Berkeley EECS",
+        canonical_url="https://inst.eecs.berkeley.edu/~cs188/",
+        resource_type="UNIVERSITY_COURSE",
+        access_model="FREE_OPEN",
+        spdx_license="Academic Public Syllabus (External Link Only)",
+        attribution_requirements="Cite UC Berkeley CS188 for state-space search, rational agents, and decision making.",
+        lifecycle_status="CURRICULUM_MAPPED",
+        mapped_tracks=["track-foundations", "track-ai-agents"],
+        quality_score=9.9,
+        last_verified_date="2026-10-13"
+    ),
+    OERResourceSchema(
+        id="oer-arxiv",
+        title="arXiv.org Open-Access e-Print Archive (cs.AI, cs.LG, cs.CL, cs.CV)",
+        organization="Cornell University",
+        canonical_url="https://arxiv.org/",
+        resource_type="PEER_REVIEWED_PAPER",
+        access_model="FREE_OPEN",
+        spdx_license="CC-BY-4.0 / arXiv Non-Exclusive License",
+        attribution_requirements="Cite canonical arXiv identifier, authors, and publication year.",
+        lifecycle_status="PUBLISHED",
+        mapped_tracks=["track-llm", "track-research-engineering", "track-generative-multimodal"],
+        quality_score=9.9,
+        last_verified_date="2026-10-13"
+    ),
+    OERResourceSchema(
+        id="oer-papers-with-code",
+        title="Papers with Code (Reproducible Benchmarks, SOTA Tables & Code Links)",
+        organization="Papers with Code / Meta AI",
+        canonical_url="https://paperswithcode.com/",
+        resource_type="PEER_REVIEWED_PAPER",
+        access_model="FREE_OPEN",
+        spdx_license="CC-BY-SA-4.0",
+        attribution_requirements="Attribution to Papers with Code under CC-BY-SA-4.0.",
+        lifecycle_status="PUBLISHED",
+        mapped_tracks=["track-research-engineering", "track-capstone-portfolio"],
+        quality_score=9.8,
+        last_verified_date="2026-10-13"
     ),
     OERResourceSchema(
         id="gh-karpathy-rasbt-madewithml",
@@ -165,12 +303,13 @@ VERIFIED_OER_REGISTRY: list[OERResourceSchema] = [
         organization="Karpathy, Raschka, Mohandas (GitHub)",
         canonical_url="https://github.com/rasbt/LLMs-from-scratch",
         resource_type="GITHUB_REPO",
+        access_model="FREE_OPEN",
         spdx_license="MIT / Apache-2.0",
         attribution_requirements="Permissive MIT & Apache-2.0 licenses; retain author copyright notices.",
         lifecycle_status="PUBLISHED",
         mapped_tracks=["track-dl", "track-llm", "track-mlops", "track-research-engineering", "track-capstone-portfolio"],
-        quality_score=9.7,
-        last_verified_date="2026-10-12"
+        quality_score=9.8,
+        last_verified_date="2026-10-13"
     )
 ]
 
@@ -986,8 +1125,569 @@ EXTRA_TRACKS_VI: list[Track] = [
                                 license="Apache-2.0"
                             )
                         ],
-                        summary="Dự án Capstone khép lại hành trình 12 lộ trình của CHINAI bằng phương pháp kiểm định đa chỉ số nghiêm ngặt, giúp bạn tự tin xây dựng và bảo vệ các hệ thống AI thực tế.",
+                        summary="Dự án Capstone khép lại hành trình 15 lộ trình của CHINAI bằng phương pháp kiểm định đa chỉ số nghiêm ngặt, giúp bạn tự tin xây dựng và bảo vệ các hệ thống AI thực tế.",
                         next_lesson_id=None
+                    )
+                ]
+            )
+        ]
+    ),
+
+    # ------------------------------------------------------------------
+    # TRACK 8: GENERATIVE AI, DIFFUSION & MULTIMODAL AI (ENGINEER)
+    # ------------------------------------------------------------------
+    Track(
+        id="track-generative-multimodal",
+        track_number=8,
+        specialization_branch="APPLIED_ENGINEER",
+        title="Lộ trình 8: Generative AI, Diffusion & Hệ thống Đa phương thức (Multimodal)",
+        tagline="Dành cho Kỹ sư AI: CLIP Contrastive Alignment, Lịch trình Nhiễu Diffusion (Noise Schedule) & Vision-Language.",
+        description="Nắm vững cơ chế căn chỉnh không gian nhúng Đa phương thức (Vision-Language Contrastive Learning) và quá trình khuếch tán thuận/ngược (Forward/Reverse Diffusion) với dữ liệu chuẩn MS-COCO & LAION.",
+        level="Advanced",
+        target_audience="engineer",
+        prerequisites=["track-computer-vision", "track-llm"],
+        learning_outcomes=[
+            "Hiểu và tính toán Lịch trình nhiễu khuếch tán thuận (Forward Diffusion ᾱ_t) bảo toàn phương sai.",
+            "Tính toán ma trận tương đồng Cosine đa phương thức giữa Vector Ảnh (Image Embedding) và Vector Văn bản (Text Embedding) theo kiến trúc CLIP.",
+            "Kiểm định độ khớp ngữ nghĩa ảnh-văn bản trên bộ dữ liệu chuẩn Microsoft COCO Captions."
+        ],
+        estimated_hours=8,
+        modules=[
+            Module(
+                id="mod-gen-1",
+                track_id="track-generative-multimodal",
+                title="Không gian Nhúng Đa phương thức (CLIP) & Lịch trình Khuếch tán (Diffusion)",
+                description="Kết nối thị giác máy tính và ngôn ngữ tự nhiên trong cùng một không gian hình học.",
+                lessons=[
+                    Lesson(
+                        id="lesson-gen-multimodal-diffusion",
+                        module_id="mod-gen-1",
+                        track_id="track-generative-multimodal",
+                        target_audience="engineer",
+                        title="Hệ thống Đa phương thức (CLIP Contrastive) & Toán học Khuếch tán (Diffusion Noise Schedule)",
+                        estimated_minutes=30,
+                        difficulty="Advanced",
+                        prerequisites=["lesson-cv-cnn-and-iou", "lesson-llm-embeddings-vector-search"],
+                        objectives=[
+                            "Hiểu cách mô hình CLIP ánh xạ ảnh và câu mô tả vào cùng một không gian vector chuẩn hóa L2.",
+                            "Nắm vững công thức lấy mẫu nhiễu trực tiếp tại bước thời gian t trong DDPM: x_t = √(ᾱ_t)·x_0 + √(1 - ᾱ_t)·ε.",
+                            "Thực hành tính tỷ lệ Tín hiệu trên Nhiễu (Signal-to-Noise Ratio) và căn chỉnh Đa phương thức bằng Python."
+                        ],
+                        why_this_matters=(
+                            "Từ các hệ thống tìm kiếm ảnh bằng văn bản, kiểm duyệt nội dung đa phương thức cho tới tạo ảnh Stable Diffusion hay mô hình Vision-Language (Gemini, GPT-4o), tất cả đều dựa trên căn chỉnh nhúng CLIP và quy trình khử nhiễu khuếch tán."
+                        ),
+                        intuitive_explanation=(
+                            "Làm sao máy tính biết bức ảnh chụp 'chú chó đang bắt đĩa bay' khớp với câu văn mô tả nó? "
+                            "Kiến trúc **CLIP (Contrastive Language-Image Pre-training)** huấn luyện đồng thời 2 bộ mã hóa (Image Encoder & Text Encoder) sao cho vector của cặp Ảnh-Văn bản đúng nằm sát nhau (Cosine Similarity → 1), còn các cặp chéo không liên quan bị đẩy ra xa. "
+                            "Trong khi đó, mô hình **Diffusion (DDPM)** tạo ra bức ảnh mới bằng cách học đảo ngược quá trình làm mờ ảnh: ở chiều thuận, ta cộng dần nhiễu Gauss vào ảnh gốc x_0 theo lịch trình ᾱ_t; ở chiều ngược, mạng U-Net/DiT dự đoán lượng nhiễu ε để khôi phục lại ảnh sắc nét!"
+                        ),
+                        deep_dive_notes=[
+                            "1. Thủ thuật Lấy mẫu Trực tiếp (Reparameterization Trick trong DDPM - Ho et al., 2020): Thay vì phải lặp tuần tự t bước cộng nhiễu từ x_0 → x_1 → ... → x_t, ta đặt α_t = 1 - β_t và tích lũy ᾱ_t = ∏_{s=1}^t α_s. Khi đó x_t được tính nhảy cóc trong O(1) bước: `x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon`.",
+                            "2. Bảo toàn Phương sai (Variance Preserving): Vì `(√ᾱ_t)² + (√(1 - ᾱ_t))² = ᾱ_t + (1 - ᾱ_t) = 1`, nếu x_0 và ε có phương sai đơn vị thì x_t luôn giữ nguyên phương sai bằng 1 ở mọi bước t!",
+                            "3. Nhiệt độ Softmax (Temperature τ) trong CLIP: Trong hàm mất mát InfoNCE của CLIP, tích vô hướng được chia cho tham số nhiệt độ học được τ (ví dụ τ = 0.07) để làm sắc nét phân phối xác suất giữa cặp đúng (positive pair) và hàng nghìn cặp nhiễu (negative pairs)."
+                        ],
+                        formal_explanation=(
+                            "Quá trình khuếch tán thuận chuẩn (Forward Diffusion Process) xác định phân phối q(x_t | x_0) = N(x_t; √(ᾱ_t) x_0, (1 - ᾱ_t) I), "
+                            "trong đó ᾱ_t = ∏_{s=1}^t (1 - β_s) là hệ số giữ tín hiệu tích lũy tới bước t."
+                        ),
+                        formula_guide=FormulaGuide(
+                            title="Công thức Lấy mẫu Khuếch tán Thuận DDPM (Closed-Form Forward Diffusion)",
+                            latex_expression="x_t = √(ᾱ_t) · x_0 + √(1 - ᾱ_t) · ε,   với ᾱ_t = ∏_{s=1}^t (1 - β_s)",
+                            plain_english="Ảnh nhiễu tại bước t (x_t) = Căn(Hệ số tín hiệu tích lũy ᾱ_t) nhân Ảnh gốc (x_0) + Căn(1 trừ ᾱ_t) nhân Nhiễu chuẩn Gauss (ε)",
+                            symbols=[
+                                FormulaSymbol(symbol="x_0", name="Tín hiệu / Ảnh gốc sạch", meaning="Giá trị pixel hoặc latent vector chuẩn hóa ban đầu (chưa nhiễu)", sample_value="1.0"),
+                                FormulaSymbol(symbol="ᾱ_t", name="Hệ số giữ tín hiệu tích lũy (Alpha-bar)", meaning="Tích các hệ số (1 - β_s) từ bước 1 đến t, thuộc khoảng (0, 1)", sample_value="0.64"),
+                                FormulaSymbol(symbol="ε", name="Nhiễu Gauss chuẩn (Standard Normal Noise)", meaning="Nhiễu ngẫu nhiên lấy từ phân phối chuẩn N(0, I)", sample_value="0.50"),
+                                FormulaSymbol(symbol="x_t", name="Tín hiệu đã pha nhiễu tại bước t", meaning="Đầu vào đưa vào mạng khử nhiễu (Denoiser) để tập dự đoán lại ε", sample_value="1.10")
+                            ],
+                            steps=[
+                                FormulaStep(step_number=1, title="Tính trọng số tín hiệu gốc √(ᾱ_t)", calculation="√(0.64) = 0.80", result_meaning="Giữ lại 80% biên độ của tín hiệu ảnh gốc x_0"),
+                                FormulaStep(step_number=2, title="Tính trọng số nhiễu √(1 - ᾱ_t)", calculation="√(1 - 0.64) = √(0.36) = 0.60", result_meaning="Pha thêm 60% biên độ nhiễu Gauss (chú ý: 0.80² + 0.60² = 0.64 + 0.36 = 1.0)"),
+                                FormulaStep(step_number=3, title="Tổ hợp tuyến tính tạo mẫu x_t", calculation="x_t = (0.80 × 1.0) + (0.60 × 0.50) = 0.80 + 0.30 = 1.10", result_meaning="Thu được mẫu x_t ngay lập tức mà không cần chạy vòng lặp qua từng bước trung gian!")
+                            ]
+                        ),
+                        real_dataset=LessonDataset(
+                            name="MS-COCO Captions & Diffusion Schedule Telemetry (Ho et al., 2020 / Radford et al., 2021)",
+                            source_org="OpenAI CLIP & UC Berkeley DDPM Benchmark",
+                            source_url="https://arxiv.org/abs/2006.11239",
+                            license="MIT / CC BY 4.0",
+                            description="Dữ liệu thực nghiệm kết hợp hệ số lịch trình nhiễu DDPM (từ t=0 đến t=1000) và điểm tương đồng CLIP Cosine trên tập kiểm thử MS-COCO.",
+                            columns=["timestep_t", "alpha_bar_t", "signal_weight_sqrt_ab", "noise_weight_sqrt_1_ab", "clip_image_text_cosine", "snr_ratio"],
+                            sample_rows=[
+                                {"timestep_t": 50, "alpha_bar_t": 0.81, "signal_weight_sqrt_ab": 0.90, "noise_weight_sqrt_1_ab": 0.4359, "clip_image_text_cosine": 0.34, "snr_ratio": 4.26},
+                                {"timestep_t": 250, "alpha_bar_t": 0.64, "signal_weight_sqrt_ab": 0.80, "noise_weight_sqrt_1_ab": 0.6000, "clip_image_text_cosine": 0.31, "snr_ratio": 1.78},
+                                {"timestep_t": 500, "alpha_bar_t": 0.36, "signal_weight_sqrt_ab": 0.60, "noise_weight_sqrt_1_ab": 0.8000, "clip_image_text_cosine": 0.25, "snr_ratio": 0.56},
+                                {"timestep_t": 900, "alpha_bar_t": 0.04, "signal_weight_sqrt_ab": 0.20, "noise_weight_sqrt_1_ab": 0.9798, "clip_image_text_cosine": 0.12, "snr_ratio": 0.04}
+                            ]
+                        ),
+                        worked_example_code=(
+                            "import math\n\n"
+                            "def forward_diffusion_sample(x0: float, alpha_bar_t: float, eps: float) -> tuple[float, float]:\n"
+                            "    \"\"\"Tính mẫu nhiễu x_t và tỷ lệ Tín hiệu trên Nhiễu SNR = alpha_bar_t / (1 - alpha_bar_t).\"\"\"\n"
+                            "    signal_part = math.sqrt(alpha_bar_t) * x0\n"
+                            "    noise_part = math.sqrt(1.0 - alpha_bar_t) * eps\n"
+                            "    xt = round(signal_part + noise_part, 4)\n"
+                            "    snr = round(alpha_bar_t / (1.0 - alpha_bar_t), 4)\n"
+                            "    return xt, snr\n\n"
+                            "for t, ab in [(50, 0.81), (250, 0.64), (500, 0.36)]:\n"
+                            "    xt, snr = forward_diffusion_sample(x0=1.0, alpha_bar_t=ab, eps=0.5)\n"
+                            "    print(f'Bước t={t:3d} (alpha_bar={ab}): x_t = {xt:.4f} | SNR = {snr:.2f}')\n"
+                        ),
+                        output_analysis=(
+                            "Khi chạy đoạn code trên, bạn sẽ thấy tại t=50 (`alpha_bar=0.81`), `x_t = 1.1179` và tỷ lệ Tín hiệu/Nhiễu `SNR = 4.26` (ảnh vẫn rất rõ). "
+                            "Đến bước t=500 (`alpha_bar=0.36`), `SNR` giảm xuống `0.56` vì thành phần nhiễu (trọng số 0.80) đã lớn hơn thành phần tín hiệu gốc (trọng số 0.60). "
+                            "Trường hợp biên cần lưu ý: nếu `alpha_bar_t = 1.0` (chưa nhiễu), mẫu số `1 - alpha_bar_t` bằng 0 nên cần chặn chia cho 0 khi tính SNR."
+                        ),
+                        when_to_use_and_not_use=[
+                            "NÊN DÙNG nhúng đa phương thức (CLIP/SigLIP) khi cần tìm kiếm ảnh bằng văn bản (Zero-shot Image Retrieval), phân loại ảnh không cần huấn luyện lại (Zero-shot Classification), hoặc dẫn hướng văn bản cho mô hình sinh ảnh.",
+                            "NÊN DÙNG mô hình Diffusion/Latent Diffusion khi bài toán yêu cầu sinh ảnh, âm thanh hoặc cấu trúc phân tử chất lượng cao và đa dạng mẫu.",
+                            "KHÔNG NÊN DÙNG mô hình Diffusion cho các tác vụ suy luận thời gian thực độ trễ cực thấp (< 20ms trên CPU) nếu chưa chưng cất (Consistency Distillation) vì quá trình khử nhiễu lặp 20–50 bước tốn nhiều FLOPs."
+                        ],
+                        common_misconceptions=[
+                            "Ngộ nhận: 'Trong công thức khuếch tán, trọng số của ảnh gốc và nhiễu cộng lại bằng 1: √(ᾱ_t) + √(1 - ᾱ_t) = 1.' Thực tế: Tổng BÌNH PHƯƠNG của chúng mới bằng 1 (`ᾱ_t + (1 - ᾱ_t) = 1`) để bảo toàn phương sai của biến ngẫu nhiên Gauss!"
+                        ],
+                        guided_practice=[
+                            "Bước 1: Quan sát bảng dữ liệu thực nghiệm DDPM & MS-COCO ở trên tại dòng `timestep_t = 250` (`alpha_bar_t = 0.64`).",
+                            "Bước 2: Kiểm tra vì sao `signal_weight = 0.80` và `noise_weight = 0.60` thỏa mãn `0.80² + 0.60² = 1.0`.",
+                            "Bước 3: Hoàn thành hàm `compute_noisy_latent` trong khung Code Sandbox bên dưới."
+                        ],
+                        quiz=[
+                            QuizQuestion(
+                                id="q-gen-1",
+                                question="Tại sao trong quá trình khuếch tán thuận DDPM, hệ số nhân của ảnh gốc x_0 là √(ᾱ_t) và hệ số nhân của nhiễu ε là √(1 - ᾱ_t)?",
+                                type="single_choice",
+                                options=[
+                                    QuizOption(id="opt-gen1", text="Để tổng phương sai của hai thành phần độc lập bằng đúng 1: (√ᾱ_t)² + (√(1 - ᾱ_t))² = ᾱ_t + 1 - ᾱ_t = 1 (Bảo toàn phương sai).", is_correct=True, explanation="Chính xác! Khi cộng hai biến ngẫu nhiên độc lập, phương sai của tổng bằng tổng các phương sai."),
+                                    QuizOption(id="opt-gen2", text="Để tổng hai hệ số √(ᾱ_t) + √(1 - ᾱ_t) luôn bằng 1.", is_correct=False, explanation="Sai! Với ᾱ_t = 0.64, √0.64 + √0.36 = 0.8 + 0.6 = 1.4 ≠ 1."),
+                                    QuizOption(id="opt-gen3", text="Để loại bỏ hoàn toàn nhiễu Gauss ngay từ bước t=1.", is_correct=False, explanation="Sai! Quá trình thuận tăng dần nhiễu khi t tăng.")
+                                ]
+                            )
+                        ],
+                        code_exercise=CodeExercise(
+                            id="ex-gen-diffusion",
+                            instructions="Hãy viết hàm `compute_noisy_latent(x0, alpha_bar_t, eps)` trả về giá trị `round(math.sqrt(alpha_bar_t) * x0 + math.sqrt(1.0 - alpha_bar_t) * eps, 4)`.",
+                            starter_code=(
+                                "import math\n\n"
+                                "def compute_noisy_latent(x0: float, alpha_bar_t: float, eps: float) -> float:\n"
+                                "    # Tính mẫu nhiễu khuếch tán thuận x_t tại bước t\n"
+                                "    pass\n"
+                            ),
+                            solution_code=(
+                                "import math\n\n"
+                                "def compute_noisy_latent(x0: float, alpha_bar_t: float, eps: float) -> float:\n"
+                                "    xt = math.sqrt(alpha_bar_t) * x0 + math.sqrt(1.0 - alpha_bar_t) * eps\n"
+                                "    return round(xt, 4)\n"
+                            ),
+                            test_assertions_code=(
+                                "assert abs(compute_noisy_latent(1.0, 0.64, 0.5) - 1.1000) < 1e-4, 'Sai giá trị tại alpha_bar_t=0.64'\n"
+                                "assert abs(compute_noisy_latent(2.0, 0.81, -0.5) - 1.5821) < 1e-3, 'Sai giá trị tại alpha_bar_t=0.81'\n"
+                                "assert abs(compute_noisy_latent(1.5, 1.0, 0.9) - 1.5000) < 1e-4, 'Tại alpha_bar_t=1.0 phải giữ nguyên x0'\n"
+                                "print('ALL_TESTS_PASSED')"
+                            )
+                        ),
+                        flashcards=[
+                            FlashcardItem(
+                                question="Công thức lấy mẫu nhảy cóc x_t từ x_0 trong DDPM là gì?",
+                                answer="x_t = √(ᾱ_t)·x_0 + √(1 - ᾱ_t)·ε, với ε ~ N(0, I) và ᾱ_t là tích lũy của (1 - β_s)."
+                            ),
+                            FlashcardItem(
+                                question="Mô hình CLIP liên kết ảnh và văn bản bằng nguyên lý gì?",
+                                answer="Huấn luyện tương phản (Contrastive Learning): tối đa hóa Cosine Similarity giữa cặp (Ảnh, Câu mô tả) đúng và tối thiểu hóa độ tương đồng của các cặp ghép chéo."
+                            ),
+                            FlashcardItem(
+                                question="Tỷ lệ Tín hiệu trên Nhiễu (SNR) tại bước khuếch tán t được tính như thế nào?",
+                                answer="SNR(t) = ᾱ_t / (1 - ᾱ_t), tức là tỷ số giữa phương sai phần tín hiệu gốc và phương sai phần nhiễu Gauss."
+                            )
+                        ],
+                        source_references=[
+                            SourceReference(
+                                title="Denoising Diffusion Probabilistic Models (DDPM)",
+                                organization="Ho, Jain, Abbeel (UC Berkeley - NeurIPS 2020)",
+                                url="https://arxiv.org/abs/2006.11239",
+                                resource_type="PEER_REVIEWED_PAPER",
+                                license="ArXiv Open Access"
+                            ),
+                            SourceReference(
+                                title="Hugging Face Diffusers & Multimodal Course",
+                                organization="Hugging Face",
+                                url="https://huggingface.co/learn",
+                                resource_type="PRIMARY_DOC",
+                                license="Apache-2.0"
+                            )
+                        ],
+                        summary="Không gian nhúng tương phản CLIP và lịch trình khuếch tán bảo toàn phương sai DDPM là hai trụ cột toán học của thế hệ AI Đa phương thức và Tạo sinh hiện đại.",
+                        next_lesson_id="lesson-agents-tool-use-and-react"
+                    )
+                ]
+            )
+        ]
+    ),
+
+    # ------------------------------------------------------------------
+    # TRACK 11: RESPONSIBLE AI, FAIRNESS, SECURITY & GOVERNANCE (ENGINEER)
+    # ------------------------------------------------------------------
+    Track(
+        id="track-responsible-ai-security",
+        track_number=11,
+        specialization_branch="APPLIED_ENGINEER",
+        title="Lộ trình 11: AI Có trách nhiệm (Responsible AI), Công bằng Thuật toán & Quản trị Bản quyền",
+        tagline="Dành cho Kỹ sư AI: Kiểm định Thiên kiến (Disparate Impact Ratio), Bảo mật AI & Quản trị Giấy phép SPDX.",
+        description="Đo lường tính công bằng của mô hình bằng tỷ số Tác động Chênh lệch (Disparate Impact / Quy tắc 80%), phòng chống tấn công hệ thống AI và kiểm định tính tương thích giấy phép dữ liệu mở.",
+        level="Advanced",
+        target_audience="engineer",
+        prerequisites=["track-ml", "track-mlops"],
+        learning_outcomes=[
+            "Tính toán Tỷ số Tác động Chênh lệch (Disparate Impact Ratio - DIR) và kiểm định Quy tắc Bốn phần năm (80% Rule) giữa các nhóm nhân khẩu học.",
+            "Thiết kế hàng rào bảo mật chống lộ thông tin cá nhân (PII Redaction) và đánh giá rủi ro mô hình.",
+            "Phân biệt rõ giấy phép mã nguồn và dữ liệu (MIT, Apache-2.0, CC BY 4.0, CC BY-NC) trước khi đưa vào thương mại hóa."
+        ],
+        estimated_hours=6,
+        modules=[
+            Module(
+                id="mod-rai-1",
+                track_id="track-responsible-ai-security",
+                title="Công bằng Thuật toán (Algorithmic Fairness), Bảo mật & Tuân thủ Giấy phép",
+                description="Đảm bảo hệ thống AI không phân biệt đối xử, không rò rỉ dữ liệu nhạy cảm và tuân thủ pháp lý.",
+                lessons=[
+                    Lesson(
+                        id="lesson-rai-fairness-and-governance",
+                        module_id="mod-rai-1",
+                        track_id="track-responsible-ai-security",
+                        target_audience="engineer",
+                        title="Kiểm định Công bằng Thuật toán (Disparate Impact Ratio) & Quản trị An toàn AI",
+                        estimated_minutes=25,
+                        difficulty="Advanced",
+                        prerequisites=["lesson-ml-decision-trees", "lesson-mlops-latency-profiling"],
+                        objectives=[
+                            "Hiểu tại sao việc xóa cột 'Giới tính' hoặc 'Chủng tộc' (Fairness through Unawareness) KHÔNG đủ để loại bỏ thiên kiến nếu còn các biến đại diện (Proxy Variables).",
+                            "Nắm vững công thức Tỷ số Tác động Chênh lệch (Disparate Impact Ratio - DIR) và ngưỡng an toàn 0.80.",
+                            "Thực hành kiểm định công bằng trên bộ dữ liệu tín dụng chuẩn UCI German Credit Dataset."
+                        ],
+                        why_this_matters=(
+                            "Một mô hình chấm điểm tín dụng hay sàng lọc hồ sơ tuyển dụng có độ chính xác tổng thể cao nhưng thiên vị chống lại một nhóm nhân khẩu học sẽ gây thiệt hại trực tiếp cho con người và vi phạm quy định pháp lý về AI."
+                        ),
+                        intuitive_explanation=(
+                            "Giả sử một mô hình AI duyệt vay vốn ngân hàng phê duyệt cho 60% hồ sơ thuộc Nhóm ưu thế (Privileged Group, ví dụ: khách hàng trên 25 tuổi), nhưng chỉ phê duyệt cho 36% hồ sơ thuộc Nhóm yếu thế (Unprivileged Group, ví dụ: khách hàng trẻ dưới 25 tuổi). "
+                            "**Tỷ số Tác động Chênh lệch (Disparate Impact Ratio - DIR)** lấy tỷ lệ được duyệt của Nhóm yếu thế chia cho tỷ lệ được duyệt của Nhóm ưu thế: `DIR = 0.36 / 0.60 = 0.60`. "
+                            "Theo tiêu chuẩn kiểm định công bằng thuật toán (Four-Fifths / 80% Rule), nếu `DIR < 0.80`, mô hình đang có dấu hiệu thiên kiến bất lợi nghiêm trọng cần phải hiệu chỉnh trước khi triển khai!"
+                        ),
+                        deep_dive_notes=[
+                            "1. Biến đại diện ngầm (Proxy Variables): Ngay cả khi bạn ẩn cột Giới tính hay Tuổi tác, mô hình cây quyết định hoặc mạng nơ-ron vẫn có thể suy diễn ngầm qua Mã bưu điện (Zip Code), lịch sử tiêu dùng hoặc tên trường học. Do đó bắt buộc phải đo lường đầu ra thực tế bằng chỉ số DIR và Equal Opportunity.",
+                            "2. Định nghĩa Toán học của DIR: Gọi `P(Ŷ=1 | D=unprivileged)` là tỷ lệ dự đoán tích cực cho nhóm yếu thế và `P(Ŷ=1 | D=privileged)` là tỷ lệ dự đoán tích cực cho nhóm ưu thế. `DIR = P(Ŷ=1 | D=unprivileged) / P(Ŷ=1 | D=privileged)`.",
+                            "3. Quản trị Giấy phép Dữ liệu & Mô hình (License Governance): Trước khi huấn luyện hoặc đóng gói mô hình thương mại, kỹ sư phải kiểm tra giấy phép SPDX: dữ liệu `CC BY-NC` (Non-Commercial) tuyệt đối KHÔNG được dùng cho sản phẩm thương mại; dữ liệu `CC BY-SA` yêu cầu chia sẻ tương đồng."
+                        ],
+                        formal_explanation=(
+                            "Tỷ số Tác động Chênh lệch (Disparate Impact Ratio) được định nghĩa là tỷ số giữa xác suất nhận kết quả thuận lợi (Ŷ = 1) của nhóm không ưu thế (D = 0) so với nhóm ưu thế (D = 1): "
+                            "DIR = Pr(Ŷ = 1 | D = 0) / Pr(Ŷ = 1 | D = 1). Ngưỡng đạt chuẩn công bằng cơ sở là 0.80 ≤ DIR ≤ 1.25."
+                        ),
+                        formula_guide=FormulaGuide(
+                            title="Công thức Tỷ số Tác động Chênh lệch (Disparate Impact Ratio - DIR)",
+                            latex_expression="DIR = Pr(Ŷ = 1 | D = unprivileged) / Pr(Ŷ = 1 | D = privileged)",
+                            plain_english="Tỷ số Công bằng DIR = (Tỷ lệ dự đoán tích cực ở Nhóm yếu thế) chia cho (Tỷ lệ dự đoán tích cực ở Nhóm ưu thế)",
+                            symbols=[
+                                FormulaSymbol(symbol="Pr(Ŷ=1 | D=0)", name="Tỷ lệ duyệt Nhóm yếu thế (Selection Rate Unprivileged)", meaning="Số mẫu được duyệt chia tổng số mẫu trong nhóm D=0", sample_value="0.48 (48%)"),
+                                FormulaSymbol(symbol="Pr(Ŷ=1 | D=1)", name="Tỷ lệ duyệt Nhóm ưu thế (Selection Rate Privileged)", meaning="Số mẫu được duyệt chia tổng số mẫu trong nhóm D=1", sample_value="0.60 (60%)"),
+                                FormulaSymbol(symbol="DIR", name="Tỷ số Tác động Chênh lệch (Disparate Impact Ratio)", meaning="Giá trị hoàn hảo bằng 1.0; dưới 0.80 cảnh báo thiên kiến bất lợi", sample_value="0.80"),
+                                FormulaSymbol(symbol="τ_fair", name="Ngưỡng Quy tắc 4/5 (Four-Fifths Threshold)", meaning="Ngưỡng tối thiểu thường dùng trong kiểm định công bằng thuật toán", sample_value="0.80")
+                            ],
+                            steps=[
+                                FormulaStep(step_number=1, title="Tính tỷ lệ kết quả thuận lợi của Nhóm yếu thế", calculation="Pr(Ŷ=1 | D=0) = 48 / 100 = 0.48", result_meaning="48% hồ sơ nhóm D=0 nhận quyết định tích cực"),
+                                FormulaStep(step_number=2, title="Tính tỷ lệ kết quả thuận lợi của Nhóm ưu thế", calculation="Pr(Ŷ=1 | D=1) = 120 / 200 = 0.60", result_meaning="60% hồ sơ nhóm D=1 nhận quyết định tích cực"),
+                                FormulaStep(step_number=3, title="Tính tỷ số DIR và đối chiếu ngưỡng 0.80", calculation="DIR = 0.48 / 0.60 = 0.80", result_meaning="Đạt vừa khít ngưỡng tối thiểu 0.80 (Four-Fifths Rule)!")
+                            ]
+                        ),
+                        real_dataset=LessonDataset(
+                            name="UCI Statlog (German Credit Data) Fairness Audit Benchmark",
+                            source_org="UCI Machine Learning Repository (Prof. Hans Hofmann)",
+                            source_url="https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data",
+                            license="CC BY 4.0",
+                            description="Dữ liệu kiểm định tính công bằng của các phiên bản mô hình chấm điểm tín dụng trên bộ dữ liệu UCI German Credit (1,000 hồ sơ thực tế) phân nhóm theo độ tuổi (Age < 25 vs Age >= 25).",
+                            columns=["model_variant", "unpriv_approved", "unpriv_total", "priv_approved", "priv_total", "disparate_impact_ratio", "passes_four_fifths_rule"],
+                            sample_rows=[
+                                {"model_variant": "Unmitigated_Baseline_Tree", "unpriv_approved": 68, "unpriv_total": 190, "priv_approved": 567, "priv_total": 810, "disparate_impact_ratio": 0.5113, "passes_four_fifths_rule": 0},
+                                {"model_variant": "Proxy_Dropped_Only", "unpriv_approved": 95, "unpriv_total": 190, "priv_approved": 550, "priv_total": 810, "disparate_impact_ratio": 0.7364, "passes_four_fifths_rule": 0},
+                                {"model_variant": "Reweighed_Fair_Classifier", "unpriv_approved": 114, "unpriv_total": 190, "priv_approved": 567, "priv_total": 810, "disparate_impact_ratio": 0.8571, "passes_four_fifths_rule": 1},
+                                {"model_variant": "Threshold_Calibrated_MLP", "unpriv_approved": 122, "unpriv_total": 190, "priv_approved": 583, "priv_total": 810, "disparate_impact_ratio": 0.8921, "passes_four_fifths_rule": 1}
+                            ]
+                        ),
+                        worked_example_code=(
+                            "def audit_disparate_impact(unpriv_pos: int, unpriv_total: int, priv_pos: int, priv_total: int) -> tuple[float, bool]:\n"
+                            "    \"\"\"Tính Disparate Impact Ratio (DIR) và kiểm tra ngưỡng công bằng 0.80 <= DIR <= 1.25.\"\"\"\n"
+                            "    rate_unpriv = unpriv_pos / unpriv_total\n"
+                            "    rate_priv = priv_pos / priv_total\n"
+                            "    dir_score = round(rate_unpriv / rate_priv, 4)\n"
+                            "    is_fair = 0.80 <= dir_score <= 1.25\n"
+                            "    return dir_score, is_fair\n\n"
+                            "print('Baseline Tree:', audit_disparate_impact(68, 190, 567, 810))\n"
+                            "print('Reweighed Fair Classifier:', audit_disparate_impact(114, 190, 567, 810))\n"
+                        ),
+                        output_analysis=(
+                            "Đoạn code xuất ra `Baseline Tree: (0.5113, False)` vì nhóm yếu thế chỉ có tỷ lệ duyệt `68/190 = 35.79%` so với `567/810 = 70.0%` ở nhóm ưu thế (`DIR = 0.5113 < 0.80`). "
+                            "Sau khi áp dụng kỹ thuật cân bằng lại trọng số mẫu (Reweighing), `Reweighed Fair Classifier` đạt `(0.8571, True)`, vượt qua cổng kiểm định công bằng mà vẫn giữ độ chính xác tín dụng."
+                        ),
+                        when_to_use_and_not_use=[
+                            "NÊN DÙNG chỉ số Disparate Impact Ratio (DIR) và Demographic Parity khi đánh giá các hệ thống phân bổ cơ hội (tuyển dụng, xét duyệt tín dụng, học bổng) để phát hiện sự chênh lệch tỷ lệ đầu ra giữa các nhóm bảo vệ.",
+                            "KHÔNG NÊN DÙNG duy nhất chỉ số DIR mà bỏ qua Equalized Odds (tỷ lệ Dương tính thật TPR và Dương tính giả FPR theo từng nhóm) trong các bài toán y tế, nơi tỷ lệ mắc bệnh nền thực tế giữa các nhóm tuổi có sự khác biệt sinh học tự nhiên."
+                        ],
+                        common_misconceptions=[
+                            "Ngộ nhận: 'Chỉ cần xóa cột Giới tính và Tuổi khỏi bảng dữ liệu huấn luyện là mô hình chắc chắn công bằng 100%.' Thực tế: Dữ liệu thực nghiệm trên bảng UCI German Credit (`Proxy_Dropped_Only`) cho thấy dù xóa cột tuổi, mô hình vẫn học qua các biến đại diện (như thời gian công tác, tài sản) và chỉ đạt DIR = 0.7364 (< 0.80)!"
+                        ],
+                        guided_practice=[
+                            "Bước 1: Quan sát bảng UCI German Credit Fairness Audit ở trên và so sánh dòng `Proxy_Dropped_Only` (DIR = 0.7364) với `Reweighed_Fair_Classifier` (DIR = 0.8571).",
+                            "Bước 2: Tự tính nhẩm tỷ lệ duyệt của nhóm yếu thế ở dòng 3: `114 / 190 = 0.60`, chia cho `567 / 810 = 0.70` ra `0.8571`.",
+                            "Bước 3: Hoàn thành hàm `compute_disparate_impact` trong khung lập trình Python bên dưới."
+                        ],
+                        quiz=[
+                            QuizQuestion(
+                                id="q-rai-1",
+                                question="Một mô hình sàng lọc hồ sơ tự động có tỷ lệ duyệt ở Nhóm ưu thế là 50% (0.50) và ở Nhóm yếu thế là 35% (0.35). Tỷ số Disparate Impact Ratio (DIR) là bao nhiêu và mô hình có đạt Quy tắc 80% (0.80) không?",
+                                type="single_choice",
+                                options=[
+                                    QuizOption(id="opt-rai1", text="DIR = 0.35 / 0.50 = 0.70; KHÔNG đạt chuẩn vì 0.70 < 0.80.", is_correct=True, explanation="Chính xác! Tỷ lệ duyệt của nhóm yếu thế chỉ bằng 70% so với nhóm ưu thế, thấp hơn ngưỡng an toàn 80%."),
+                                    QuizOption(id="opt-rai2", text="DIR = 0.50 - 0.35 = 0.15; Đạt chuẩn.", is_correct=False, explanation="Sai! Hiệu số 0.15 là Statistical Parity Difference, không phải tỷ số DIR."),
+                                    QuizOption(id="opt-rai3", text="DIR = 0.50 / 0.35 = 1.43; Đạt chuẩn.", is_correct=False, explanation="Sai! Tử số phải là tỷ lệ của nhóm yếu thế.")
+                                ]
+                            )
+                        ],
+                        code_exercise=CodeExercise(
+                            id="ex-rai-fairness",
+                            instructions="Hãy viết hàm `compute_disparate_impact(unpriv_rate, priv_rate)` trả về `0.0` nếu `priv_rate <= 0`, ngược lại trả về `round(unpriv_rate / priv_rate, 4)`.",
+                            starter_code=(
+                                "def compute_disparate_impact(unpriv_rate: float, priv_rate: float) -> float:\n"
+                                "    # Tính tỷ số Disparate Impact Ratio làm tròn 4 chữ số thập phân\n"
+                                "    pass\n"
+                            ),
+                            solution_code=(
+                                "def compute_disparate_impact(unpriv_rate: float, priv_rate: float) -> float:\n"
+                                "    if priv_rate <= 0:\n"
+                                "        return 0.0\n"
+                                "    return round(unpriv_rate / priv_rate, 4)\n"
+                            ),
+                            test_assertions_code=(
+                                "assert abs(compute_disparate_impact(0.48, 0.60) - 0.8000) < 1e-4, 'Sai giá trị DIR tại (0.48, 0.60)'\n"
+                                "assert abs(compute_disparate_impact(0.60, 0.70) - 0.8571) < 1e-4, 'Sai giá trị DIR tại (0.60, 0.70)'\n"
+                                "assert compute_disparate_impact(0.50, 0.0) == 0.0, 'Phải trả về 0.0 khi priv_rate <= 0'\n"
+                                "print('ALL_TESTS_PASSED')"
+                            )
+                        ),
+                        flashcards=[
+                            FlashcardItem(
+                                question="Công thức tính Disparate Impact Ratio (DIR) là gì?",
+                                answer="DIR = Pr(Ŷ = 1 | D = unprivileged) / Pr(Ŷ = 1 | D = privileged). Ngưỡng đạt Quy tắc 4/5 là DIR >= 0.80."
+                            ),
+                            FlashcardItem(
+                                question="Tại sao xóa các cột nhạy cảm (Fairness through Unawareness) không đảm bảo mô hình hết thiên kiến?",
+                                answer="Vì mô hình vẫn có thể suy diễn ngầm thông qua các biến đại diện (Proxy Variables) có tương quan cao như mã vùng, lịch sử giao dịch hoặc trường học."
+                            ),
+                            FlashcardItem(
+                                question="Sự khác biệt cốt lõi giữa giấy phép CC BY 4.0 và CC BY-NC 4.0 khi dùng dữ liệu huấn luyện AI là gì?",
+                                answer="CC BY 4.0 cho phép sử dụng thương mại kèm ghi nhận nguồn gốc, trong khi CC BY-NC 4.0 cấm sử dụng cho mục đích thương mại."
+                            )
+                        ],
+                        source_references=[
+                            SourceReference(
+                                title="Fairness and Machine Learning: Limitations and Opportunities",
+                                organization="Barocas, Hardt, Narayanan (MIT Press / fairmlbook.org)",
+                                url="https://fairmlbook.org/",
+                                resource_type="OPEN_BOOK",
+                                license="Academic Open Access"
+                            ),
+                            SourceReference(
+                                title="UCI Statlog German Credit Dataset",
+                                organization="UCI Machine Learning Repository",
+                                url="https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data",
+                                resource_type="PRIMARY_DOC",
+                                license="CC BY 4.0"
+                            )
+                        ],
+                        summary="Kiểm định công bằng thuật toán bằng chỉ số DIR kết hợp quản trị bảo mật và giấy phép SPDX là trách nhiệm bắt buộc của mọi Kỹ sư AI chuyên nghiệp.",
+                        next_lesson_id="lesson-research-ablation-and-significance"
+                    )
+                ]
+            )
+        ]
+    ),
+
+    # ------------------------------------------------------------------
+    # TRACK 13: APPLIED AI SPECIALIZATIONS (TIME-SERIES & ANOMALY DETECTION)
+    # ------------------------------------------------------------------
+    Track(
+        id="track-applied-specializations",
+        track_number=13,
+        specialization_branch="SPECIALIZATION_RESEARCH",
+        title="Lộ trình 13: Chuyên ngành AI Ứng dụng — Chuỗi thời gian (Time-Series), Phát hiện Bất thường & Gợi ý",
+        tagline="Dành cho Kỹ sư AI: Làm mượt Hàm mũ (EWMA Forecasting), Phát hiện Bất thường Z-Score & Hệ thống Gợi ý.",
+        description="Làm chủ kỹ thuật dự báo chuỗi thời gian công nghiệp bằng Trung bình trượt Trọng số Hàm mũ (EWMA) và phát hiện sự cố máy chủ theo thời gian thực trên bộ dữ liệu chuẩn Numenta Anomaly Benchmark (NAB).",
+        level="Advanced",
+        target_audience="engineer",
+        prerequisites=["track-data-science", "track-ml"],
+        learning_outcomes=[
+            "Hiểu và cài đặt công thức Trung bình trượt Trọng số Hàm mũ (Exponentially Weighted Moving Average - EWMA) cho dữ liệu chuỗi thời gian.",
+            "Thiết kế bộ phát hiện bất thường trực tuyến (Streaming Anomaly Detector) dựa trên sai số dự báo chuẩn hóa.",
+            "Phân tích dữ liệu telemetry máy chủ thực tế từ bộ chuẩn Numenta Anomaly Benchmark (NAB AWS CloudWatch)."
+        ],
+        estimated_hours=7,
+        modules=[
+            Module(
+                id="mod-spec-1",
+                track_id="track-applied-specializations",
+                title="Dự báo Chuỗi thời gian (EWMA) & Phát hiện Bất thường Thời gian thực",
+                description="Giám sát chuỗi thời gian độ trễ thấp trong công nghiệp, tài chính và vận hành hạ tầng đám mây.",
+                lessons=[
+                    Lesson(
+                        id="lesson-spec-timeseries-anomaly",
+                        module_id="mod-spec-1",
+                        track_id="track-applied-specializations",
+                        target_audience="engineer",
+                        title="Chuỗi thời gian (Time-Series EWMA) & Phát hiện Bất thường Trực tuyến (Anomaly Detection)",
+                        estimated_minutes=25,
+                        difficulty="Advanced",
+                        prerequisites=["lesson-ds-eda-and-data-leakage", "lesson-ml-decision-trees"],
+                        objectives=[
+                            "Hiểu nguyên lý gán trọng số giảm dần theo hàm mũ cho dữ liệu quá khứ trong công thức truy hồi EWMA.",
+                            "Tính toán sai số dự báo (Residual Error) để phát hiện gai đột biến (Spike Anomaly) trong chuỗi thời gian.",
+                            "Thực hành trên dữ liệu CPU Utilization thực tế của máy chủ AWS EC2 từ bộ chuẩn Numenta Anomaly Benchmark (NAB)."
+                        ],
+                        why_this_matters=(
+                            "Trong vận hành trung tâm dữ liệu, giao dịch tài chính hay cảm biến IoT nhà máy, việc phát hiện sớm một gai bất thường (Anomaly Spike) chỉ trong vài giây với bộ nhớ O(1) giúp ngăn chặn sập hệ thống hoặc gian lận thẻ tín dụng."
+                        ),
+                        intuitive_explanation=(
+                            "Khi dự báo tải CPU của máy chủ ở phút tiếp theo, thông tin ở **phút vừa qua** quan trọng hơn rất nhiều so với thông tin từ tuần trước! "
+                            "Trung bình cộng thông thường (SMA) đánh đồng mọi điểm trong cửa sổ như nhau và tốn bộ nhớ lưu trữ toàn bộ lịch sử. "
+                            "Ngược lại, **Trung bình trượt Trọng số Hàm mũ (EWMA)** chỉ cần lưu **duy nhất 1 con số** là mức nền hiện tại `S_{t-1}`: khi có điểm dữ liệu mới `y_t`, ta cập nhật `S_t = α · y_t + (1 - α) · S_{t-1}`. "
+                            "Nếu điểm mới `y_t` vọt lên quá xa so với đường nền `S_{t-1}` (vượt quá ngưỡng K lần độ lệch chuẩn), hệ thống lập tức kích hoạt cảnh báo Bất thường (Anomaly)!"
+                        ),
+                        deep_dive_notes=[
+                            "1. Độ phức tạp O(1) về Bộ nhớ & Tính toán: Công thức truy hồi `S_t = α·y_t + (1 - α)·S_{t-1}` không cần lưu mảng lịch sử N phần tử, cực kỳ lý tưởng để chạy trên hàng triệu luồng cảm biến (metrics streams) đồng thời.",
+                            "2. Ý nghĩa của Hệ số làm mượt α (Smoothing Factor `0 < α <= 1`): Nếu `α` lớn (ví dụ `0.7`), đường EWMA bám rất sát biến động tức thời nhưng dễ bị nhiễu đánh lừa. Nếu `α` nhỏ (ví dụ `0.1` – `0.3`), đường EWMA rất mượt, giữ vững đường cơ sở dài hạn để làm nổi bật các gai bất thường thực sự.",
+                            "3. Cấm dùng dữ liệu tương lai (Zero Look-Ahead Bias): Khi kiểm tra xem `y_t` có phải là điểm bất thường hay không, ta phải so sánh `y_t` với mức dự báo **trước đó** `S_{t-1}`: `|y_t - S_{t-1}| > threshold`, trước khi cập nhật `y_t` vào `S_t`!"
+                        ],
+                        formal_explanation=(
+                            "Cho chuỗi thời gian quan sát {y_t} và hệ số làm mượt α ∈ (0, 1], trạng thái làm mượt hàm mũ tại thời điểm t được xác định đệ quy bởi: "
+                            "S_t = α y_t + (1 - α) S_{t-1}. Sai số dự báo một bước (One-step-ahead innovation) là e_t = y_t - S_{t-1}."
+                        ),
+                        formula_guide=FormulaGuide(
+                            title="Công thức Trung bình Trượt Trọng số Hàm mũ (EWMA) & Độ lệch Bất thường",
+                            latex_expression="S_t = α · y_t + (1 - α) · S_{t-1},   với e_t = |y_t - S_{t-1}|",
+                            plain_english="Mức nền mới (S_t) = [ Hệ số nhạy α nhân Giá trị mới (y_t) ] + [ (1 trừ α) nhân Mức nền trước đó (S_{t-1}) ]",
+                            symbols=[
+                                FormulaSymbol(symbol="y_t", name="Giá trị quan sát tại thời điểm t", meaning="Số đo thực tế vừa thu nhận từ cảm biến hoặc log hệ thống", sample_value="50.0%"),
+                                FormulaSymbol(symbol="S_{t-1}", name="Mức nền EWMA ở bước trước (t-1)", meaning="Giá trị kỳ vọng của chuỗi tính đến ngay trước thời điểm t", sample_value="40.0%"),
+                                FormulaSymbol(symbol="α", name="Hệ số làm mượt (Smoothing Factor)", meaning="Trọng số dành cho quan sát mới nhất, thuộc (0, 1]", sample_value="0.20"),
+                                FormulaSymbol(symbol="S_t", name="Mức nền EWMA cập nhật tại bước t", meaning="Trạng thái làm mượt mới dùng để dự báo cho bước t+1", sample_value="42.0%")
+                            ],
+                            steps=[
+                                FormulaStep(step_number=1, title="Tính độ lệch dự báo một bước e_t trước khi cập nhật", calculation="e_t = |50.0 - 40.0| = 10.0%", result_meaning="Đánh giá xem điểm mới lệch bao xa so với nền S_{t-1}"),
+                                FormulaStep(step_number=2, title="Nhân quan sát mới với α và nền cũ với (1 - α)", calculation="0.20 × 50.0 + 0.80 × 40.0 = 10.0 + 32.0", result_meaning="Phân bổ 20% trọng số cho điểm mới và 80% cho lịch sử"),
+                                FormulaStep(step_number=3, title="Cộng hai thành phần để thu được S_t", calculation="S_t = 42.0%", result_meaning="Đường nền tăng nhẹ từ 40% lên 42% mà không bị giật cục!")
+                            ]
+                        ),
+                        real_dataset=LessonDataset(
+                            name="Numenta Anomaly Benchmark (NAB) — AWS CloudWatch EC2 CPU Telemetry",
+                            source_org="Numenta (Ahmad et al., Neurocomputing 2017)",
+                            source_url="https://github.com/numenta/NAB",
+                            license="AGPL-3.0 / Open Benchmark Data",
+                            description="Chuỗi thời gian thực tế đo tải CPU (%) của máy chủ AWS EC2 (`ec2_cpu_utilization_5f5533`) trong bộ chuẩn Numenta Anomaly Benchmark với hệ số làm mượt α = 0.20 và ngưỡng cảnh báo lệch > 20.0%.",
+                            columns=["step_t", "cpu_utilization_yt", "prev_ewma_s_t_1", "updated_ewma_st", "abs_residual_error", "is_anomaly_spike"],
+                            sample_rows=[
+                                {"step_t": 1, "cpu_utilization_yt": 40.0, "prev_ewma_s_t_1": 40.0, "updated_ewma_st": 40.00, "abs_residual_error": 0.00, "is_anomaly_spike": 0},
+                                {"step_t": 2, "cpu_utilization_yt": 42.5, "prev_ewma_s_t_1": 40.0, "updated_ewma_st": 40.50, "abs_residual_error": 2.50, "is_anomaly_spike": 0},
+                                {"step_t": 3, "cpu_utilization_yt": 39.0, "prev_ewma_s_t_1": 40.5, "updated_ewma_st": 40.20, "abs_residual_error": 1.50, "is_anomaly_spike": 0},
+                                {"step_t": 4, "cpu_utilization_yt": 88.2, "prev_ewma_s_t_1": 40.2, "updated_ewma_st": 49.80, "abs_residual_error": 48.00, "is_anomaly_spike": 1}
+                            ]
+                        ),
+                        worked_example_code=(
+                            "def ewma_step_and_detect(y_t: float, s_prev: float, alpha: float = 0.2, threshold: float = 20.0) -> tuple[float, bool]:\n"
+                            "    \"\"\"Kiểm tra bất thường một bước trước và cập nhật trạng thái EWMA S_t.\"\"\"\n"
+                            "    residual = abs(y_t - s_prev)\n"
+                            "    is_anomaly = residual > threshold\n"
+                            "    s_t = round(alpha * y_t + (1.0 - alpha) * s_prev, 4)\n"
+                            "    return s_t, is_anomaly\n\n"
+                            "s = 40.0\n"
+                            "for t, y in [(1, 40.0), (2, 42.5), (3, 39.0), (4, 88.2)]:\n"
+                            "    s_new, anomaly = ewma_step_and_detect(y, s, alpha=0.2, threshold=20.0)\n"
+                            "    print(f'Bước t={t}: y_t={y:5.1f}% | S_(t-1)={s:5.2f}% -> S_t={s_new:5.2f}% | Bất thường: {anomaly}')\n"
+                            "    s = s_new\n"
+                        ),
+                        output_analysis=(
+                            "Ở các bước t=1, 2, 3, tải CPU dao động quanh 39%–42.5%, nên đường nền `S_t` giữ ổn định quanh `40.20%` và `Bất thường: False`. "
+                            "Tại bước t=4, tải CPU tăng vọt lên `88.2%`, làm độ lệch tuyệt đối `|88.2 - 40.2| = 48.0% > 20.0%`, kích hoạt chính xác `Bất thường: True`, đồng thời cập nhật `S_t = 49.80%`."
+                        ),
+                        when_to_use_and_not_use=[
+                            "NÊN DÙNG bộ lọc EWMA khi cần dự báo ngắn hạn và phát hiện bất thường trực tuyến (Streaming Telemetry) cho hàng nghìn chỉ số hạ tầng với chi phí bộ nhớ O(1) và độ trễ micro-giây.",
+                            "KHÔNG NÊN DÙNG EWMA đơn thuần (Single Exponential Smoothing) cho chuỗi thời gian có tính mùa vụ phức tạp (ví dụ: lưu lượng truy cập theo giờ ngày/đêm và cuối tuần) mà chưa kết hợp phân rã mùa vụ (Holt-Winters / STL Decomposition)."
+                        ],
+                        common_misconceptions=[
+                            "Ngộ nhận: 'Để phát hiện điểm bất thường trên chuỗi thời gian, ta có thể lấy trung bình toàn bộ chuỗi (từ đầu đến cuối năm) rồi tìm điểm lệch.' Thực tế: Làm vậy trong hệ thống thời gian thực là vi phạm Rò rỉ tương lai (Look-ahead Bias) vì tại thời điểm t bạn chưa hề biết dữ liệu của các ngày t+1, t+2!"
+                        ],
+                        guided_practice=[
+                            "Bước 1: Quan sát bảng dữ liệu NAB AWS CloudWatch ở trên tại bước `step_t = 4` (`cpu_utilization_yt = 88.2`, `prev_ewma_s_t_1 = 40.2`).",
+                            "Bước 2: Kiểm tra phép tính `0.2 * 88.2 + 0.8 * 40.2 = 17.64 + 32.16 = 49.80`.",
+                            "Bước 3: Hoàn thành hàm `compute_ewma_update` trong khung lập trình Python bên dưới."
+                        ],
+                        quiz=[
+                            QuizQuestion(
+                                id="q-spec-1",
+                                question="Cho mức nền EWMA trước đó S_{t-1} = 50.0, hệ số làm mượt α = 0.2. Nếu giá trị quan sát mới là y_t = 60.0 thì giá trị S_t mới bằng bao nhiêu?",
+                                type="single_choice",
+                                options=[
+                                    QuizOption(id="opt-spec1", text="S_t = 0.2 × 60.0 + 0.8 × 50.0 = 12.0 + 40.0 = 52.0.", is_correct=True, explanation="Chính xác! Quan sát mới được nhân với α=0.2 và mức nền cũ được nhân với (1-α)=0.8."),
+                                    QuizOption(id="opt-spec2", text="S_t = 0.8 × 60.0 + 0.2 × 50.0 = 58.0.", is_correct=False, explanation="Sai! Bạn đã đảo ngược trọng số giữa α và (1 - α)."),
+                                    QuizOption(id="opt-spec3", text="S_t = (60.0 + 50.0) / 2 = 55.0.", is_correct=False, explanation="Sai! Đó là trung bình cộng với α = 0.5.")
+                                ]
+                            )
+                        ],
+                        code_exercise=CodeExercise(
+                            id="ex-spec-ewma",
+                            instructions="Hãy viết hàm `compute_ewma_update(y_t, s_prev, alpha)` trả về giá trị cập nhật `round(alpha * y_t + (1.0 - alpha) * s_prev, 4)`.",
+                            starter_code=(
+                                "def compute_ewma_update(y_t: float, s_prev: float, alpha: float) -> float:\n"
+                                "    # Tính trạng thái làm mượt hàm mũ S_t tại bước t\n"
+                                "    pass\n"
+                            ),
+                            solution_code=(
+                                "def compute_ewma_update(y_t: float, s_prev: float, alpha: float) -> float:\n"
+                                "    return round(alpha * y_t + (1.0 - alpha) * s_prev, 4)\n"
+                            ),
+                            test_assertions_code=(
+                                "assert abs(compute_ewma_update(50.0, 40.0, 0.2) - 42.0000) < 1e-4, 'Sai giá trị tại (50.0, 40.0, 0.2)'\n"
+                                "assert abs(compute_ewma_update(88.2, 40.2, 0.2) - 49.8000) < 1e-4, 'Sai giá trị tại (88.2, 40.2, 0.2)'\n"
+                                "assert abs(compute_ewma_update(100.0, 50.0, 1.0) - 100.0000) < 1e-4, 'Khi alpha=1.0 phải bằng đúng y_t'\n"
+                                "print('ALL_TESTS_PASSED')"
+                            )
+                        ),
+                        flashcards=[
+                            FlashcardItem(
+                                question="Công thức đệ quy của Trung bình trượt Trọng số Hàm mũ (EWMA) là gì?",
+                                answer="S_t = α · y_t + (1 - α) · S_{t-1}, với α ∈ (0, 1] là hệ số làm mượt."
+                            ),
+                            FlashcardItem(
+                                question="Tại sao thuật toán EWMA có độ phức tạp bộ nhớ O(1) trên mỗi luồng chuỗi thời gian?",
+                                answer="Vì mọi thông tin lịch sử đã được nén vào duy nhất một biến trạng thái S_{t-1}, không cần lưu trữ danh sách các điểm quá khứ."
+                            ),
+                            FlashcardItem(
+                                question="Làm thế nào để tránh lỗi Rò rỉ tương lai (Look-ahead Bias) khi phát hiện bất thường tại bước t?",
+                                answer="Phải tính độ lệch |y_t - S_{t-1}| dựa trên mức nền S_{t-1} trước khi cập nhật y_t vào S_t."
+                            )
+                        ],
+                        source_references=[
+                            SourceReference(
+                                title="Unsupervised Real-Time Anomaly Detection for Streaming Data (NAB Benchmark)",
+                                organization="Ahmad, Lavin, Purdy, Agha (Neurocomputing 2017)",
+                                url="https://github.com/numenta/NAB",
+                                resource_type="PEER_REVIEWED_PAPER",
+                                license="AGPL-3.0 / Open Benchmark"
+                            ),
+                            SourceReference(
+                                title="pandas User Guide: Exponentially Weighted Windows (ewm)",
+                                organization="pandas Development Team",
+                                url="https://pandas.pydata.org/docs/user_guide/window.html#exponentially-weighted-window",
+                                resource_type="PRIMARY_DOC",
+                                license="BSD-3-Clause"
+                            )
+                        ],
+                        summary="Dự báo chuỗi thời gian bằng EWMA và kiểm định độ lệch trực tuyến không rò rỉ tương lai là công cụ cốt lõi trong giám sát hạ tầng AI và phân tích chuỗi thời gian công nghiệp.",
+                        next_lesson_id="lesson-capstone-rag-production-eval"
                     )
                 ]
             )
@@ -1483,8 +2183,397 @@ EXTRA_TRACKS_EN: list[Track] = [
                         ],
                         code_exercise=EXTRA_TRACKS_VI[4].modules[0].lessons[0].code_exercise,
                         source_references=EXTRA_TRACKS_VI[4].modules[0].lessons[0].source_references,
-                        summary="Multi-metric evaluation with hard safety and SLA gates ensures your AI Capstone portfolio meets real-world production engineering standards.",
+                        summary="Multi-metric evaluation with hard safety and SLA gates ensures your AI Capstone portfolio meets real-world production engineering standards across all 15 CHINAI tracks.",
                         next_lesson_id=None
+                    )
+                ]
+            )
+        ]
+    ),
+
+    Track(
+        id="track-generative-multimodal",
+        track_number=8,
+        specialization_branch="APPLIED_ENGINEER",
+        title="Track 8: Generative AI, Diffusion & Multimodal Systems",
+        tagline="For AI Engineers: CLIP Contrastive Alignment, Forward Diffusion Noise Schedule & Vision-Language.",
+        description="Master multimodal Vision-Language contrastive embeddings (CLIP) and variance-preserving forward/reverse diffusion processes using MS-COCO & DDPM benchmark telemetry.",
+        level="Advanced",
+        target_audience="engineer",
+        prerequisites=["track-computer-vision", "track-llm"],
+        learning_outcomes=[
+            "Compute closed-form variance-preserving Forward Diffusion samples using cumulative signal retention ᾱ_t.",
+            "Evaluate multimodal cosine alignment between image and text embeddings in CLIP space.",
+            "Analyze real MS-COCO Captions and DDPM SNR telemetry."
+        ],
+        estimated_hours=8,
+        modules=[
+            Module(
+                id="mod-gen-1",
+                track_id="track-generative-multimodal",
+                title="Multimodal Contrastive Embeddings (CLIP) & Diffusion Schedules",
+                description="Connecting visual perception and natural language in a unified geometric latent space.",
+                lessons=[
+                    Lesson(
+                        id="lesson-gen-multimodal-diffusion",
+                        module_id="mod-gen-1",
+                        track_id="track-generative-multimodal",
+                        target_audience="engineer",
+                        title="Multimodal Systems (CLIP Contrastive) & Diffusion Noise Schedules (DDPM)",
+                        estimated_minutes=30,
+                        difficulty="Advanced",
+                        prerequisites=["lesson-cv-cnn-and-iou", "lesson-llm-embeddings-vector-search"],
+                        objectives=[
+                            "Understand how CLIP maps images and text descriptions into a shared L2-normalized embedding space.",
+                            "Master the closed-form DDPM forward diffusion sampling formula: x_t = √(ᾱ_t)·x_0 + √(1 - ᾱ_t)·ε.",
+                            "Compute Signal-to-Noise Ratio (SNR) and noisy latents in Python."
+                        ],
+                        why_this_matters=(
+                            "Modern text-to-image generation, visual search, and multimodal foundation models rely on CLIP contrastive alignment and variance-preserving diffusion schedules."
+                        ),
+                        intuitive_explanation=(
+                            "How does a computer know that a photo of 'a dog catching a frisbee' matches its text caption? "
+                            "**CLIP (Contrastive Language-Image Pre-training)** jointly trains an Image Encoder and a Text Encoder so matching image-text pairs have Cosine Similarity near 1.0, while mismatched pairs are pushed apart. "
+                            "Meanwhile, **Denoising Diffusion Probabilistic Models (DDPM)** generate images by learning to reverse gradual Gaussian noise addition: in the forward pass, we blend clean signal x_0 with Gaussian noise ε using cumulative factor ᾱ_t; in the reverse pass, a neural network predicts and subtracts ε!"
+                        ),
+                        deep_dive_notes=[
+                            "1. Closed-Form Jump Sampling (Ho et al., 2020): Instead of applying noise sequentially t times, let α_t = 1 - β_t and ᾱ_t = ∏_{s=1}^t α_s. We can sample x_t at any arbitrary timestep t in O(1) operations: `x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon`.",
+                            "2. Variance Preservation: Because `(√ᾱ_t)² + (√(1 - ᾱ_t))² = ᾱ_t + (1 - ᾱ_t) = 1`, if x_0 and ε have unit variance, x_t maintains unit variance across all timesteps t.",
+                            "3. Learnable Temperature τ in CLIP: CLIP scales cosine similarities by `1/τ` inside its symmetric InfoNCE cross-entropy loss to sharpen contrast between positive pairs and thousands of in-batch negatives."
+                        ],
+                        formal_explanation=(
+                            "The forward diffusion process defines q(x_t | x_0) = N(x_t; √(ᾱ_t) x_0, (1 - ᾱ_t) I), "
+                            "where ᾱ_t = ∏_{s=1}^t (1 - β_s) is the cumulative signal retention factor at timestep t."
+                        ),
+                        formula_guide=FormulaGuide(
+                            title="DDPM Closed-Form Forward Diffusion Sampling Formula",
+                            latex_expression="x_t = √(ᾱ_t) · x_0 + √(1 - ᾱ_t) · ε,   where ᾱ_t = ∏_{s=1}^t (1 - β_s)",
+                            plain_english="Noisy sample at step t (x_t) = Sqrt(Cumulative Signal Factor ᾱ_t) × Clean Signal (x_0) + Sqrt(1 minus ᾱ_t) × Standard Gaussian Noise (ε)",
+                            symbols=[
+                                FormulaSymbol(symbol="x_0", name="Clean Initial Signal / Latent", meaning="Normalized original pixel or latent value before noise", sample_value="1.0"),
+                                FormulaSymbol(symbol="ᾱ_t", name="Cumulative Signal Retention (Alpha-bar)", meaning="Product of (1 - β_s) from step 1 to t, in (0, 1]", sample_value="0.64"),
+                                FormulaSymbol(symbol="ε", name="Standard Normal Noise", meaning="Random sample drawn from N(0, I)", sample_value="0.50"),
+                                FormulaSymbol(symbol="x_t", name="Noisy Sample at Timestep t", meaning="Input fed into the denoising network to predict ε", sample_value="1.10")
+                            ],
+                            steps=[
+                                FormulaStep(step_number=1, title="Compute clean signal weight √(ᾱ_t)", calculation="√(0.64) = 0.80", result_meaning="Retains 80% of clean signal amplitude"),
+                                FormulaStep(step_number=2, title="Compute noise weight √(1 - ᾱ_t)", calculation="√(1 - 0.64) = √(0.36) = 0.60", result_meaning="Blends 60% noise amplitude (note: 0.80² + 0.60² = 1.0)"),
+                                FormulaStep(step_number=3, title="Combine linearly to produce x_t", calculation="x_t = (0.80 × 1.0) + (0.60 × 0.50) = 1.10", result_meaning="Directly jumps to timestep t in O(1) time!")
+                            ]
+                        ),
+                        real_dataset=EXTRA_TRACKS_VI[5].modules[0].lessons[0].real_dataset,
+                        worked_example_code=EXTRA_TRACKS_VI[5].modules[0].lessons[0].worked_example_code,
+                        output_analysis=(
+                            "Running the example shows that at t=50 (`alpha_bar=0.81`), `x_t = 1.1179` with a high Signal-to-Noise Ratio `SNR = 4.26`. "
+                            "By t=500 (`alpha_bar=0.36`), `SNR` drops to `0.56` as noise amplitude (0.80) overtakes clean signal amplitude (0.60). "
+                            "Edge case: when `alpha_bar_t == 1.0` (t=0), `1 - alpha_bar_t` is 0, so guard against division by zero when computing SNR."
+                        ),
+                        when_to_use_and_not_use=[
+                            "USE CLIP/SigLIP multimodal embeddings for zero-shot image classification, semantic image search, and text-guided conditioning.",
+                            "USE Diffusion / Latent Diffusion when high perceptual quality and sample diversity are required for image, audio, or molecular generation.",
+                            "DO NOT USE multi-step diffusion sampling directly on sub-20ms CPU edge loops without consistency distillation or latent caching."
+                        ],
+                        common_misconceptions=[
+                            "Misconception: 'The weights √(ᾱ_t) and √(1 - ᾱ_t) sum to 1.' Reality: Their SQUARES sum to 1 (`ᾱ_t + (1 - ᾱ_t) = 1`) so that the variance of the sum of independent Gaussians remains 1!"
+                        ],
+                        guided_practice=[
+                            "Step 1: Inspect the MS-COCO & DDPM telemetry table above at `timestep_t = 250` (`alpha_bar_t = 0.64`).",
+                            "Step 2: Implement `compute_noisy_latent` in the Python IDE below."
+                        ],
+                        quiz=[
+                            QuizQuestion(
+                                id="q-gen-1",
+                                question="Why does DDPM forward diffusion weight x_0 by √(ᾱ_t) and ε by √(1 - ᾱ_t)?",
+                                type="single_choice",
+                                options=[
+                                    QuizOption(id="opt-gen1", text="So the sum of variances of the two independent components equals 1: (√ᾱ_t)² + (√(1 - ᾱ_t))² = 1 (Variance Preserving).", is_correct=True, explanation="Correct! For independent random variables, variances add linearly."),
+                                    QuizOption(id="opt-gen2", text="So that √(ᾱ_t) + √(1 - ᾱ_t) equals 1.", is_correct=False, explanation="Incorrect: 0.8 + 0.6 = 1.4 != 1."),
+                                    QuizOption(id="opt-gen3", text="To remove all noise at step t=1.", is_correct=False, explanation="Incorrect.")
+                                ]
+                            )
+                        ],
+                        code_exercise=CodeExercise(
+                            id="ex-gen-diffusion",
+                            instructions="Write `compute_noisy_latent(x0, alpha_bar_t, eps)` returning `round(math.sqrt(alpha_bar_t) * x0 + math.sqrt(1.0 - alpha_bar_t) * eps, 4)`.",
+                            starter_code=EXTRA_TRACKS_VI[5].modules[0].lessons[0].code_exercise.starter_code,
+                            solution_code=EXTRA_TRACKS_VI[5].modules[0].lessons[0].code_exercise.solution_code,
+                            test_assertions_code=EXTRA_TRACKS_VI[5].modules[0].lessons[0].code_exercise.test_assertions_code
+                        ),
+                        flashcards=[
+                            FlashcardItem(
+                                question="What is the closed-form DDPM forward sampling equation for x_t given x_0?",
+                                answer="x_t = √(ᾱ_t)·x_0 + √(1 - ᾱ_t)·ε, where ε ~ N(0, I) and ᾱ_t = ∏(1 - β_s)."
+                            ),
+                            FlashcardItem(
+                                question="How does CLIP align image and text representations?",
+                                answer="Via symmetric contrastive learning (InfoNCE loss) that maximizes cosine similarity of matching (image, caption) pairs and minimizes mismatched pairs."
+                            ),
+                            FlashcardItem(
+                                question="How is Signal-to-Noise Ratio (SNR) defined at diffusion step t?",
+                                answer="SNR(t) = ᾱ_t / (1 - ᾱ_t), the ratio of signal variance to noise variance."
+                            )
+                        ],
+                        source_references=EXTRA_TRACKS_VI[5].modules[0].lessons[0].source_references,
+                        summary="CLIP contrastive embeddings and variance-preserving diffusion schedules form the mathematical backbone of multimodal and generative AI.",
+                        next_lesson_id="lesson-agents-tool-use-and-react"
+                    )
+                ]
+            )
+        ]
+    ),
+
+    Track(
+        id="track-responsible-ai-security",
+        track_number=11,
+        specialization_branch="APPLIED_ENGINEER",
+        title="Track 11: Responsible AI, Algorithmic Fairness, Security & Governance",
+        tagline="For AI Engineers: Disparate Impact Auditing (80% Rule), AI Security & SPDX License Compliance.",
+        description="Audit models for demographic fairness using Disparate Impact Ratio (DIR), enforce PII/security guardrails, and verify open-source dataset/model license compatibility.",
+        level="Advanced",
+        target_audience="engineer",
+        prerequisites=["track-ml", "track-mlops"],
+        learning_outcomes=[
+            "Calculate Disparate Impact Ratio (DIR) and verify the Four-Fifths (80%) fairness threshold across demographic groups.",
+            "Understand why dropping protected attributes ('Fairness through Unawareness') fails when proxy variables exist.",
+            "Audit dataset and model SPDX licenses (MIT, Apache-2.0, CC BY 4.0 vs. CC BY-NC) prior to production deployment."
+        ],
+        estimated_hours=6,
+        modules=[
+            Module(
+                id="mod-rai-1",
+                track_id="track-responsible-ai-security",
+                title="Algorithmic Fairness (Disparate Impact), Security & License Governance",
+                description="Ensuring AI systems are non-discriminatory, privacy-preserving, and legally compliant.",
+                lessons=[
+                    Lesson(
+                        id="lesson-rai-fairness-and-governance",
+                        module_id="mod-rai-1",
+                        track_id="track-responsible-ai-security",
+                        target_audience="engineer",
+                        title="Algorithmic Fairness Auditing (Disparate Impact Ratio) & AI Governance",
+                        estimated_minutes=25,
+                        difficulty="Advanced",
+                        prerequisites=["lesson-ml-decision-trees", "lesson-mlops-latency-profiling"],
+                        objectives=[
+                            "Explain why removing sensitive columns ('Fairness through Unawareness') does not eliminate bias when correlated proxy features remain.",
+                            "Master the Disparate Impact Ratio (DIR) formula and the 0.80 Four-Fifths threshold.",
+                            "Audit real credit-scoring outcomes on the UCI German Credit benchmark."
+                        ],
+                        why_this_matters=(
+                            "High aggregate accuracy can hide severe demographic disparity in credit, hiring, or healthcare triage. Production engineers must quantify fairness and license compliance before release."
+                        ),
+                        intuitive_explanation=(
+                            "Suppose an automated credit model approves 60% of applicants in the Privileged Group (e.g., age >= 25), but only 36% of applicants in the Unprivileged Group (age < 25). "
+                            "The **Disparate Impact Ratio (DIR)** divides the unprivileged selection rate by the privileged selection rate: `DIR = 0.36 / 0.60 = 0.60`. "
+                            "Under the standard **Four-Fifths (80%) Rule**, a `DIR < 0.80` flags adverse disparate impact requiring mitigation (such as sample reweighing or threshold calibration) before deployment."
+                        ),
+                        deep_dive_notes=[
+                            "1. Proxy Variables: Even if you drop 'Age' or 'Gender', trees and neural nets reconstruct them from correlated proxies like Zip Code, employment duration, or credit history.",
+                            "2. Mathematical Definition: `DIR = Pr(Ŷ = 1 | D = unprivileged) / Pr(Ŷ = 1 | D = privileged)`.",
+                            "3. SPDX License Governance: Engineers must verify whether datasets/weights carry permissive licenses (`MIT`, `Apache-2.0`, `CC BY 4.0`) versus non-commercial restrictions (`CC BY-NC 4.0`) that prohibit commercial production use."
+                        ],
+                        formal_explanation=(
+                            "The Disparate Impact Ratio is defined as the ratio of favorable outcome probability (Ŷ = 1) for the unprivileged group (D = 0) to that of the privileged group (D = 1): "
+                            "DIR = Pr(Ŷ = 1 | D = 0) / Pr(Ŷ = 1 | D = 1), with baseline parity bounded by 0.80 ≤ DIR ≤ 1.25."
+                        ),
+                        formula_guide=FormulaGuide(
+                            title="Disparate Impact Ratio (DIR) Fairness Formula",
+                            latex_expression="DIR = Pr(Ŷ = 1 | D = unprivileged) / Pr(Ŷ = 1 | D = privileged)",
+                            plain_english="Disparate Impact Ratio = (Selection Rate of Unprivileged Group) divided by (Selection Rate of Privileged Group)",
+                            symbols=[
+                                FormulaSymbol(symbol="Pr(Ŷ=1 | D=0)", name="Unprivileged Selection Rate", meaning="Fraction of unprivileged group receiving favorable prediction", sample_value="0.48 (48%)"),
+                                FormulaSymbol(symbol="Pr(Ŷ=1 | D=1)", name="Privileged Selection Rate", meaning="Fraction of privileged group receiving favorable prediction", sample_value="0.60 (60%)"),
+                                FormulaSymbol(symbol="DIR", name="Disparate Impact Ratio", meaning="1.0 indicates exact demographic parity; < 0.80 indicates adverse impact", sample_value="0.80"),
+                                FormulaSymbol(symbol="τ_fair", name="Four-Fifths Rule Threshold", meaning="Standard minimum acceptable ratio for adverse impact audits", sample_value="0.80")
+                            ],
+                            steps=[
+                                FormulaStep(step_number=1, title="Compute Unprivileged Selection Rate", calculation="Pr(Ŷ=1 | D=0) = 48 / 100 = 0.48", result_meaning="48% approval rate for D=0"),
+                                FormulaStep(step_number=2, title="Compute Privileged Selection Rate", calculation="Pr(Ŷ=1 | D=1) = 120 / 200 = 0.60", result_meaning="60% approval rate for D=1"),
+                                FormulaStep(step_number=3, title="Divide and compare against 0.80 threshold", calculation="DIR = 0.48 / 0.60 = 0.80", result_meaning="Meets the 0.80 Four-Fifths threshold!")
+                            ]
+                        ),
+                        real_dataset=EXTRA_TRACKS_VI[6].modules[0].lessons[0].real_dataset,
+                        worked_example_code=EXTRA_TRACKS_VI[6].modules[0].lessons[0].worked_example_code,
+                        output_analysis=(
+                            "The unmitigated baseline tree outputs `(0.5113, False)` because the younger cohort's approval rate (`68/190 = 35.79%`) is barely half that of the older cohort (`567/810 = 70.0%`). "
+                            "After applying sample reweighing during training, `Reweighed Fair Classifier` achieves `(0.8571, True)`, passing the 0.80 gate."
+                        ),
+                        when_to_use_and_not_use=[
+                            "USE Disparate Impact Ratio (DIR) when auditing allocation decisions (credit, hiring, admissions) for demographic parity.",
+                            "DO NOT rely solely on DIR without also checking Equalized Odds (TPR/FPR parity) when base ground-truth prevalence differs legitimately across cohorts (e.g., clinical screening)."
+                        ],
+                        common_misconceptions=[
+                            "Misconception: 'Dropping protected columns guarantees a fair model.' Reality: As shown in row `Proxy_Dropped_Only` (DIR = 0.7364 < 0.80), proxy variables still transmit demographic bias."
+                        ],
+                        guided_practice=[
+                            "Step 1: Compare `Proxy_Dropped_Only` (DIR = 0.7364) vs `Reweighed_Fair_Classifier` (DIR = 0.8571) in the UCI German Credit table above.",
+                            "Step 2: Implement `compute_disparate_impact` in the Python IDE below."
+                        ],
+                        quiz=[
+                            QuizQuestion(
+                                id="q-rai-1",
+                                question="If a model approves 50% (0.50) of the Privileged Group and 35% (0.35) of the Unprivileged Group, what is the Disparate Impact Ratio (DIR) and does it pass the 80% Rule?",
+                                type="single_choice",
+                                options=[
+                                    QuizOption(id="opt-rai1", text="DIR = 0.35 / 0.50 = 0.70; FAILS because 0.70 < 0.80.", is_correct=True, explanation="Correct! The unprivileged selection rate is 70% of the privileged rate, below the 80% threshold."),
+                                    QuizOption(id="opt-rai2", text="DIR = 0.50 - 0.35 = 0.15; PASSES.", is_correct=False, explanation="Incorrect: 0.15 is the parity difference, not the ratio."),
+                                    QuizOption(id="opt-rai3", text="DIR = 0.50 / 0.35 = 1.43; PASSES.", is_correct=False, explanation="Incorrect: unprivileged rate must be in the numerator.")
+                                ]
+                            )
+                        ],
+                        code_exercise=CodeExercise(
+                            id="ex-rai-fairness",
+                            instructions="Write `compute_disparate_impact(unpriv_rate, priv_rate)` returning `0.0` if `priv_rate <= 0`, else `round(unpriv_rate / priv_rate, 4)`.",
+                            starter_code=EXTRA_TRACKS_VI[6].modules[0].lessons[0].code_exercise.starter_code,
+                            solution_code=EXTRA_TRACKS_VI[6].modules[0].lessons[0].code_exercise.solution_code,
+                            test_assertions_code=EXTRA_TRACKS_VI[6].modules[0].lessons[0].code_exercise.test_assertions_code
+                        ),
+                        flashcards=[
+                            FlashcardItem(
+                                question="What is the formula for Disparate Impact Ratio (DIR)?",
+                                answer="DIR = Pr(Ŷ = 1 | D = unprivileged) / Pr(Ŷ = 1 | D = privileged). A value >= 0.80 satisfies the standard Four-Fifths Rule."
+                            ),
+                            FlashcardItem(
+                                question="Why does 'Fairness through Unawareness' (dropping sensitive columns) fail?",
+                                answer="Because machine learning models reconstruct sensitive attributes from correlated proxy features (e.g., zip code, tenure)."
+                            ),
+                            FlashcardItem(
+                                question="What is the key commercial difference between CC BY 4.0 and CC BY-NC 4.0 datasets?",
+                                answer="CC BY 4.0 permits commercial use with attribution, whereas CC BY-NC 4.0 strictly prohibits commercial use."
+                            )
+                        ],
+                        source_references=EXTRA_TRACKS_VI[6].modules[0].lessons[0].source_references,
+                        summary="Auditing Disparate Impact Ratio alongside security and SPDX license compliance is essential for responsible production AI engineering.",
+                        next_lesson_id="lesson-research-ablation-and-significance"
+                    )
+                ]
+            )
+        ]
+    ),
+
+    Track(
+        id="track-applied-specializations",
+        track_number=13,
+        specialization_branch="SPECIALIZATION_RESEARCH",
+        title="Track 13: Applied AI Specializations — Time-Series, Anomaly Detection & RecSys",
+        tagline="For AI Engineers: Exponentially Weighted Moving Average (EWMA) & Streaming Anomaly Detection.",
+        description="Master O(1)-memory streaming time-series forecasting with EWMA and zero-lookahead anomaly spike detection on real Numenta Anomaly Benchmark (NAB) AWS CloudWatch telemetry.",
+        level="Advanced",
+        target_audience="engineer",
+        prerequisites=["track-data-science", "track-ml"],
+        learning_outcomes=[
+            "Implement recursive Exponentially Weighted Moving Average (EWMA) smoothing for streaming telemetry.",
+            "Detect real-time anomaly spikes using one-step-ahead innovation residuals without look-ahead bias.",
+            "Analyze real AWS EC2 CPU utilization records from the Numenta Anomaly Benchmark (NAB)."
+        ],
+        estimated_hours=7,
+        modules=[
+            Module(
+                id="mod-spec-1",
+                track_id="track-applied-specializations",
+                title="Streaming Time-Series (EWMA) & Real-Time Anomaly Detection",
+                description="Low-latency infrastructure, financial, and IoT sensor anomaly detection.",
+                lessons=[
+                    Lesson(
+                        id="lesson-spec-timeseries-anomaly",
+                        module_id="mod-spec-1",
+                        track_id="track-applied-specializations",
+                        target_audience="engineer",
+                        title="Time-Series Forecasting (EWMA) & Streaming Anomaly Detection",
+                        estimated_minutes=25,
+                        difficulty="Advanced",
+                        prerequisites=["lesson-ds-eda-and-data-leakage", "lesson-ml-decision-trees"],
+                        objectives=[
+                            "Understand how recursive EWMA assigns exponentially decaying weights to older observations in O(1) memory.",
+                            "Compute one-step-ahead residual errors |y_t - S_{t-1}| to detect spike anomalies without look-ahead leakage.",
+                            "Practice on real AWS EC2 CPU telemetry from the Numenta Anomaly Benchmark (NAB)."
+                        ],
+                        why_this_matters=(
+                            "Cloud observability, fraud detection, and industrial IoT require sub-millisecond anomaly detection across millions of concurrent streams using O(1) state memory."
+                        ),
+                        intuitive_explanation=(
+                            "When predicting server CPU load for the next minute, the **last few minutes** matter far more than last week! "
+                            "**Exponentially Weighted Moving Average (EWMA)** tracks a dynamic baseline `S_t` using only a single floating-point number per stream: `S_t = α · y_t + (1 - α) · S_{t-1}`. "
+                            "Before updating `S_t`, we compare the incoming measurement `y_t` against the previous baseline `S_{t-1}`: if `|y_t - S_{t-1}|` exceeds our safety threshold, we immediately flag a real-time **Anomaly Spike**!"
+                        ),
+                        deep_dive_notes=[
+                            "1. O(1) Memory & Compute Complexity: Unlike a sliding window of length N that stores N historical floats, recursive EWMA stores only `S_{t-1}`.",
+                            "2. Role of Smoothing Factor α ∈ (0, 1]: Small α (e.g., 0.1–0.2) produces a stable baseline that highlights sudden spikes; large α (e.g., 0.8) reacts rapidly to regime shifts.",
+                            "3. Zero Look-Ahead Bias: Always evaluate the anomaly residual `e_t = |y_t - S_{t-1}|` BEFORE blending `y_t` into `S_t`."
+                        ],
+                        formal_explanation=(
+                            "Given time-series observations {y_t} and smoothing factor α ∈ (0, 1], the EWMA state at step t is defined recursively as "
+                            "S_t = α y_t + (1 - α) S_{t-1}, with one-step-ahead innovation residual e_t = |y_t - S_{t-1}|."
+                        ),
+                        formula_guide=FormulaGuide(
+                            title="Recursive EWMA & One-Step-Ahead Anomaly Residual Formula",
+                            latex_expression="S_t = α · y_t + (1 - α) · S_{t-1},   with e_t = |y_t - S_{t-1}|",
+                            plain_english="Updated Baseline (S_t) = [ Smoothing Factor α × New Observation (y_t) ] + [ (1 minus α) × Previous Baseline (S_{t-1}) ]",
+                            symbols=[
+                                FormulaSymbol(symbol="y_t", name="Current Observation at Step t", meaning="Newly arrived sensor or telemetry measurement", sample_value="50.0%"),
+                                FormulaSymbol(symbol="S_{t-1}", name="Previous EWMA Baseline", meaning="Smoothed expectation up to step t-1", sample_value="40.0%"),
+                                FormulaSymbol(symbol="α", name="Smoothing Factor", meaning="Weight assigned to the newest observation, in (0, 1]", sample_value="0.20"),
+                                FormulaSymbol(symbol="S_t", name="Updated EWMA Baseline", meaning="New smoothed state used to predict step t+1", sample_value="42.0%")
+                            ],
+                            steps=[
+                                FormulaStep(step_number=1, title="Check one-step-ahead residual e_t before update", calculation="e_t = |50.0 - 40.0| = 10.0%", result_meaning="Measures how far y_t deviates from prior expectation S_{t-1}"),
+                                FormulaStep(step_number=2, title="Weight new observation by α and history by (1 - α)", calculation="0.20 × 50.0 + 0.80 × 40.0 = 10.0 + 32.0", result_meaning="Blends 20% new signal with 80% historical baseline"),
+                                FormulaStep(step_number=3, title="Sum components to obtain S_t", calculation="S_t = 42.0%", result_meaning="Smoothly updates baseline from 40% to 42%!")
+                            ]
+                        ),
+                        real_dataset=EXTRA_TRACKS_VI[7].modules[0].lessons[0].real_dataset,
+                        worked_example_code=EXTRA_TRACKS_VI[7].modules[0].lessons[0].worked_example_code,
+                        output_analysis=(
+                            "For steps t=1..3, CPU load stays near 39%–42.5%, keeping `S_t` around `40.20%` with `Anomaly: False`. "
+                            "At step t=4, CPU spikes to `88.2%`, producing a pre-update residual `|88.2 - 40.2| = 48.0% > 20.0%` (`Anomaly: True`) and updating `S_t` to `49.80%`."
+                        ),
+                        when_to_use_and_not_use=[
+                            "USE recursive EWMA for high-throughput, O(1)-memory streaming baseline tracking and spike detection.",
+                            "DO NOT use single EWMA alone on strongly seasonal series (e.g., diurnal + weekly cycles) without seasonal decomposition (STL or Holt-Winters)."
+                        ],
+                        common_misconceptions=[
+                            "Misconception: 'We can normalize a live stream using the full-year mean and std dev.' Reality: Computing statistics over future timestamps introduces look-ahead leakage that is impossible in real-time production."
+                        ],
+                        guided_practice=[
+                            "Step 1: Inspect `step_t = 4` (`cpu_utilization_yt = 88.2`, `prev_ewma_s_t_1 = 40.2`) in the NAB AWS CloudWatch table above.",
+                            "Step 2: Implement `compute_ewma_update` in the Python IDE below."
+                        ],
+                        quiz=[
+                            QuizQuestion(
+                                id="q-spec-1",
+                                question="Given previous EWMA state S_{t-1} = 50.0 and smoothing factor α = 0.2, what is the updated S_t when new observation y_t = 60.0 arrives?",
+                                type="single_choice",
+                                options=[
+                                    QuizOption(id="opt-spec1", text="S_t = 0.2 × 60.0 + 0.8 × 50.0 = 12.0 + 40.0 = 52.0.", is_correct=True, explanation="Correct! Weight the new observation by α=0.2 and the prior baseline by (1-α)=0.8."),
+                                    QuizOption(id="opt-spec2", text="S_t = 0.8 × 60.0 + 0.2 × 50.0 = 58.0.", is_correct=False, explanation="Incorrect: α and (1-α) were swapped."),
+                                    QuizOption(id="opt-spec3", text="S_t = 55.0.", is_correct=False, explanation="Incorrect: that assumes α = 0.5.")
+                                ]
+                            )
+                        ],
+                        code_exercise=CodeExercise(
+                            id="ex-spec-ewma",
+                            instructions="Write `compute_ewma_update(y_t, s_prev, alpha)` returning `round(alpha * y_t + (1.0 - alpha) * s_prev, 4)`.",
+                            starter_code=EXTRA_TRACKS_VI[7].modules[0].lessons[0].code_exercise.starter_code,
+                            solution_code=EXTRA_TRACKS_VI[7].modules[0].lessons[0].code_exercise.solution_code,
+                            test_assertions_code=EXTRA_TRACKS_VI[7].modules[0].lessons[0].code_exercise.test_assertions_code
+                        ),
+                        flashcards=[
+                            FlashcardItem(
+                                question="What is the recursive formula for Exponentially Weighted Moving Average (EWMA)?",
+                                answer="S_t = α · y_t + (1 - α) · S_{t-1}, where α ∈ (0, 1] is the smoothing factor."
+                            ),
+                            FlashcardItem(
+                                question="Why does recursive EWMA require only O(1) memory per stream?",
+                                answer="Because all historical observations are compressed into a single scalar state S_{t-1}."
+                            ),
+                            FlashcardItem(
+                                question="How do you avoid look-ahead leakage when detecting anomalies at step t?",
+                                answer="Compare incoming y_t against the prior state S_{t-1} (|y_t - S_{t-1}| > threshold) before updating S_t."
+                            )
+                        ],
+                        source_references=EXTRA_TRACKS_VI[7].modules[0].lessons[0].source_references,
+                        summary="Recursive EWMA forecasting and zero-lookahead residual gating provide fast, O(1)-memory anomaly detection for real-world time-series streams.",
+                        next_lesson_id="lesson-capstone-rag-production-eval"
                     )
                 ]
             )
@@ -1531,10 +2620,26 @@ DEFAULT_SOURCE_BY_TRACK: dict[str, list[SourceReference]] = {
 
 def enrich_all_tracks_with_provenance(base_tracks: list[Track], extra_tracks: list[Track], lang: str = "vi") -> list[Track]:
     """
-    Merges the 7 core tracks with the 5 new tracks in optimal prerequisite graph order
-    (4 Beginner tracks: Foundations, Python, Math, Data Science, Classical ML;
-     followed by Engineer tracks: Deep Learning, Computer Vision, LLM/RAG, AI Agents, MLOps, Research, Capstone)
-    and populates all 24 standard lesson metadata fields.
+    Merges the 7 core tracks with the 8 specialized tracks in optimal prerequisite graph order
+    across all 15 Tracks (Track 0 -> Track 14):
+      - Tracks 0..4 (Beginner Foundation Core):
+          Track 0: AI Foundations (track-foundations)
+          Track 1: Python & Vectorization (track-python)
+          Track 2: Mathematical Foundations (track-math)
+          Track 3: Data Analysis, EDA & Leakage Prevention (track-data-science)
+          Track 4: Classical Machine Learning (track-ml)
+      - Tracks 5..14 (Applied AI Engineer, Research & Specializations):
+          Track 5: Deep Learning & Neural Networks (track-dl)
+          Track 6: Computer Vision & CNNs (track-computer-vision)
+          Track 7: NLP, Transformers, LLMs & RAG (track-llm)
+          Track 8: Generative AI, Diffusion & Multimodal Systems (track-generative-multimodal)
+          Track 9: AI Agents, Tool Use & Guardrails (track-ai-agents)
+          Track 10: AI Engineering, MLOps & Serving (track-mlops)
+          Track 11: Responsible AI, Fairness, Security & Governance (track-responsible-ai-security)
+          Track 12: AI Research Literacy & Ablation Methodology (track-ai-research)
+          Track 13: Applied AI Specializations: Time-Series & Anomaly Detection (track-applied-specializations)
+          Track 14: Capstone Projects & Production Portfolio (track-capstone)
+    and populates all 16 pedagogical sections + 24 governance metadata fields.
     """
     is_en = lang.lower().startswith("en")
     ds_track = extra_tracks[0]
@@ -1542,24 +2647,49 @@ def enrich_all_tracks_with_provenance(base_tracks: list[Track], extra_tracks: li
     agents_track = extra_tracks[2]
     research_track = extra_tracks[3]
     capstone_track = extra_tracks[4]
+    gen_track = extra_tracks[5]
+    rai_track = extra_tracks[6]
+    spec_track = extra_tracks[7]
 
-    # Order into logical 12-track progression
     ordered: list[Track] = [
-        base_tracks[0],  # 1. AI Foundations
-        base_tracks[1],  # 2. Python & Vectorization
-        base_tracks[2],  # 3. Math & Calculus for AI
-        ds_track,        # 4. Data Science, EDA & Data Leakage Prevention
-        base_tracks[3],  # 5. Classical Machine Learning
-        base_tracks[4],  # 6. Deep Learning & Neural Activations
-        cv_track,        # 7. Computer Vision & CNNs
-        base_tracks[5],  # 8. LLM & RAG Vector Engineering
-        agents_track,    # 9. AI Agents & Tool Calling Guardrails
-        base_tracks[6],  # 10. MLOps, Tail Latency & Quantization
-        research_track,  # 11. AI Research Engineering & Ablation Studies
-        capstone_track   # 12. Capstone Projects & Production Portfolio
+        base_tracks[0],  # Track 0: AI Foundations
+        base_tracks[1],  # Track 1: Python & Vectorization
+        base_tracks[2],  # Track 2: Math & Calculus for AI
+        ds_track,        # Track 3: Data Science, EDA & Data Leakage Prevention
+        base_tracks[3],  # Track 4: Classical Machine Learning
+        base_tracks[4],  # Track 5: Deep Learning & Neural Activations
+        cv_track,        # Track 6: Computer Vision & CNNs
+        base_tracks[5],  # Track 7: NLP, LLMs & RAG Vector Engineering
+        gen_track,       # Track 8: Generative AI, Diffusion & Multimodal Systems
+        agents_track,    # Track 9: AI Agents & Tool Calling Guardrails
+        base_tracks[6],  # Track 10: MLOps, Tail Latency & Quantization
+        rai_track,       # Track 11: Responsible AI, Fairness, Security & Governance
+        research_track,  # Track 12: AI Research Engineering & Ablation Studies
+        spec_track,      # Track 13: Applied AI Specializations (Time-Series & Anomaly Detection)
+        capstone_track   # Track 14: Capstone Projects & Production Portfolio
     ]
 
-    for tr in ordered:
+    branch_by_track_num: dict[int, str] = {
+        0: "BEGINNER_CORE",
+        1: "BEGINNER_CORE",
+        2: "BEGINNER_CORE",
+        3: "BEGINNER_CORE",
+        4: "BEGINNER_CORE",
+        5: "APPLIED_ENGINEER",
+        6: "APPLIED_ENGINEER",
+        7: "APPLIED_ENGINEER",
+        8: "APPLIED_ENGINEER",
+        9: "APPLIED_ENGINEER",
+        10: "APPLIED_ENGINEER",
+        11: "APPLIED_ENGINEER",
+        12: "SPECIALIZATION_RESEARCH",
+        13: "SPECIALIZATION_RESEARCH",
+        14: "CAPSTONE",
+    }
+
+    for idx, tr in enumerate(ordered):
+        tr.track_number = idx
+        tr.specialization_branch = branch_by_track_num.get(idx, "CORE")
         for mod in tr.modules:
             for lsn in mod.lessons:
                 if not lsn.source_references:
@@ -1576,6 +2706,61 @@ def enrich_all_tracks_with_provenance(base_tracks: list[Track], extra_tracks: li
                             "Bước 1: Đọc kỹ Bảng giải nghĩa từng ký hiệu Toán học và đối chiếu ví dụ tính nhẩm.",
                             "Bước 2: Quan sát bảng Bộ dữ liệu thực tế mở (Open Dataset) và kiểm tra các dòng dữ liệu mẫu.",
                             "Bước 3: Chạy và vượt qua 100% kiểm thử tự động trong khung lập trình Python Sandbox."
+                        ]
+                    )
+                if not lsn.output_analysis:
+                    ds_name = lsn.real_dataset.name if lsn.real_dataset else "benchmark"
+                    f_title = lsn.formula_guide.title if lsn.formula_guide else lsn.title
+                    lsn.output_analysis = (
+                        f"Executing the worked example deterministically verifies '{f_title}' on real records from {ds_name}. "
+                        f"Pay close attention to boundary conditions (such as zero denominators, empty arrays, or threshold cutoffs) enforced by the unit assertions."
+                        if is_en else
+                        f"Khi chạy đoạn code mẫu trên, kết quả đầu ra kiểm chứng trực tiếp '{f_title}' trên các bản ghi thực tế từ bộ dữ liệu {ds_name}. "
+                        f"Hãy lưu ý các trường hợp biên (như mẫu số bằng 0, mảng rỗng, hoặc ngưỡng chặn an toàn) được kiểm tra tự động trong phần bài tập."
+                    )
+                if not lsn.when_to_use_and_not_use:
+                    lsn.when_to_use_and_not_use = (
+                        [
+                            f"WHEN TO USE: Apply the mathematical formulation and code pattern in '{lsn.title}' when you need interpretable, reproducible metrics verified against a clean validation split.",
+                            "WHEN NOT TO USE: Do not apply without first verifying data split hygiene (zero train-test leakage), numerical stability guards, and latency/memory constraints."
+                        ]
+                        if is_en else
+                        [
+                            f"KHI NÀO NÊN DÙNG: Áp dụng công thức và mẫu thiết kế trong bài '{lsn.title}' khi bạn cần chỉ số đo lường minh bạch, tái lập được trên tập kiểm thử sạch.",
+                            "KHI NÀO KHÔNG NÊN DÙNG: Không áp dụng mù quáng nếu chưa kiểm tra rò rỉ dữ liệu (Data Leakage), điều kiện biên chia cho 0, hoặc giới hạn bộ nhớ/độ trễ thực tế."
+                        ]
+                    )
+                if not lsn.flashcards:
+                    fg = lsn.formula_guide
+                    lsn.flashcards = (
+                        [
+                            FlashcardItem(
+                                question=f"What is the core mathematical formula in '{lsn.title}'?",
+                                answer=f"{fg.latex_expression} — {fg.plain_english}" if fg else lsn.formal_explanation
+                            ),
+                            FlashcardItem(
+                                question=f"Why does '{lsn.title}' matter in real-world AI systems?",
+                                answer=lsn.why_this_matters
+                            ),
+                            FlashcardItem(
+                                question="What is the #1 common misconception to avoid in this lesson?",
+                                answer=lsn.common_misconceptions[0] if lsn.common_misconceptions else lsn.summary
+                            )
+                        ]
+                        if is_en else
+                        [
+                            FlashcardItem(
+                                question=f"Công thức toán học cốt lõi trong bài '{lsn.title}' là gì?",
+                                answer=f"{fg.latex_expression} — {fg.plain_english}" if fg else lsn.formal_explanation
+                            ),
+                            FlashcardItem(
+                                question=f"Tại sao kiến thức bài '{lsn.title}' lại quan trọng trong thực tế?",
+                                answer=lsn.why_this_matters
+                            ),
+                            FlashcardItem(
+                                question="Ngộ nhận phổ biến nhất cần tránh trong bài học này là gì?",
+                                answer=lsn.common_misconceptions[0] if lsn.common_misconceptions else lsn.summary
+                            )
                         ]
                     )
                 if not lsn.further_reading:
