@@ -1870,13 +1870,22 @@ CURRICULUM_TRACKS_EN: list[Track] = [
                         ],
                         code_exercise=CURRICULUM_TRACKS_VI[6].modules[0].lessons[0].code_exercise,
                         summary="MLOps transitions machine learning from prototype to resilient production infrastructure via tail-latency profiling and quantization.",
-                        next_lesson_id=None
+                        next_lesson_id="lesson-research-ablation-and-reproducibility"
                     )
                 ]
             )
         ]
     )
 ]
+
+from app.services.curriculum_governance import (
+    EXTRA_TRACKS_VI,
+    EXTRA_TRACKS_EN,
+    enrich_all_tracks_with_provenance
+)
+
+CURRICULUM_TRACKS_VI = enrich_all_tracks_with_provenance(CURRICULUM_TRACKS_VI, EXTRA_TRACKS_VI, "vi")
+CURRICULUM_TRACKS_EN = enrich_all_tracks_with_provenance(CURRICULUM_TRACKS_EN, EXTRA_TRACKS_EN, "en")
 
 # Default alias for backward compatibility with existing tests
 CURRICULUM_TRACKS: list[Track] = CURRICULUM_TRACKS_VI

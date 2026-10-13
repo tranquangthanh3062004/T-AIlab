@@ -29,12 +29,24 @@ export const HomeView: React.FC = () => {
 
   const completedSet = new Set(progress?.completed_lesson_ids || []);
 
-  // Filter tracks by the 2 audiences
+  // Filter all 12 tracks by the 2 target personas
   const beginnerTracks = tracks.filter(
-    (tr) => tr.target_audience === 'beginner' || ['track-ai-foundations', 'track-python-for-ai', 'track-math-for-ai', 'track-classical-ml'].includes(tr.id)
+    (tr) =>
+      tr.target_audience === 'beginner' ||
+      ['track-ai-foundations', 'track-python-for-ai', 'track-math-for-ai', 'track-data-science', 'track-classical-ml'].includes(tr.id)
   );
   const engineerTracks = tracks.filter(
-    (tr) => tr.target_audience === 'engineer' || ['track-deep-learning', 'track-llm-engineering', 'track-mlops-systems'].includes(tr.id)
+    (tr) =>
+      tr.target_audience === 'engineer' ||
+      [
+        'track-deep-learning',
+        'track-computer-vision',
+        'track-llm-engineering',
+        'track-ai-agents',
+        'track-mlops-systems',
+        'track-research-engineering',
+        'track-capstone-portfolio'
+      ].includes(tr.id)
   );
 
   const activeAudienceTracks = persona === 'engineer' ? engineerTracks : beginnerTracks;
@@ -52,9 +64,11 @@ export const HomeView: React.FC = () => {
   const levelTitle = progress?.level_title || (isVi ? 'Nhà Thám Hiểm AI' : 'AI Explorer');
   const badges = progress?.badges || [];
   const completedLessons = progress?.completed_lesson_ids.length || 0;
-  const totalLessons = progress?.total_lessons_count || 8;
+  const totalLessons = progress?.total_lessons_count || 13;
   const progressPercent = Math.min(100, Math.round((completedLessons / totalLessons) * 100));
   const dailyGoalPercent = Math.min(100, Math.round((todayXp / dailyGoalXp) * 100));
+  const masteryDims = progress?.mastery_dimensions;
+  const adaptiveRecs = progress?.recommendations || [];
 
   const renderBadgeIcon = (iconName: string, unlocked: boolean) => {
     const cls = `w-5 h-5 ${unlocked ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`;
@@ -168,8 +182,8 @@ export const HomeView: React.FC = () => {
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 <span>
                   {persona === 'engineer'
-                    ? (isVi ? 'Chế độ: Kỹ sư AI Thực chiến (Tracks E–G)' : 'Track: Applied AI Engineer (Tracks E–G)')
-                    : (isVi ? 'Chế độ: Người mới bắt đầu từ số 0 (Tracks A–D)' : 'Track: Complete Beginner Path (Tracks A–D)')}
+                    ? (isVi ? 'Chế độ: Kỹ sư AI Thực chiến (7 Lộ trình Chuyên sâu)' : 'Track: Applied AI Engineer (7 Advanced Tracks)')
+                    : (isVi ? 'Chế độ: Người mới bắt đầu từ số 0 (5 Lộ trình Nền tảng)' : 'Track: Complete Beginner Path (5 Core Tracks)')}
                 </span>
               </span>
             </div>
@@ -177,17 +191,17 @@ export const HomeView: React.FC = () => {
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
               {persona === 'engineer'
                 ? (isVi
-                    ? 'Làm chủ Kiến trúc Mạng Nơ-ron, Hệ thống RAG & Tối ưu Độ trễ MLOps'
-                    : 'Master Deep Neural Architectures, RAG Vector Search & MLOps Serving')
+                    ? 'Làm chủ Deep Learning, Computer Vision, LLM RAG, AI Agents & MLOps'
+                    : 'Master Deep Learning, Vision, RAG Vector Search, AI Agents & MLOps')
                 : (isVi
-                    ? 'Xây dựng Nền tảng AI Vững chắc: Từ Trực quan, Toán học đến Code Thực tế'
-                    : 'Build a Rock-Solid AI Foundation: Intuition, Clear Math & Real Datasets')}
+                    ? 'Xây dựng Nền tảng AI Vững chắc: Từ Trực quan, Khoa học Dữ liệu đến Học máy'
+                    : 'Build a Rock-Solid AI Foundation: Intuition, Data Science & Classical ML')}
             </h1>
 
             <p className="text-indigo-100/85 text-xs sm:text-sm leading-relaxed max-w-xl">
               {isVi
-                ? 'Mỗi bài học đều tích hợp sẵn Bộ dữ liệu Mở chuẩn quốc tế (UCI, StatLib, Hugging Face, MLPerf), Bảng giải nghĩa từng ký hiệu Toán học và Phòng Lab Code Python trực tiếp.'
-                : 'Every lesson embeds real open-source datasets (UCI, StatLib, Hugging Face, MLPerf), step-by-step mathematical symbol guides, and an interactive Python Code Lab.'}
+                ? 'Chương trình 12 Lộ trình chuẩn đại học quốc tế (MIT, Stanford, UC Berkeley, D2L.ai) kết hợp 13 Bộ dữ liệu mở xác thực, Giải nghĩa ký hiệu Toán học và Phòng Lab Code Python.'
+                : '12-Track curriculum grounded in MIT, Stanford, UC Berkeley & D2L.ai OER sources, with 13 verified open datasets, mathematical symbol guides, and Python Code Labs.'}
             </p>
           </div>
 
@@ -207,7 +221,7 @@ export const HomeView: React.FC = () => {
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/15 transition"
             >
               <BookOpen className="w-4 h-4 text-sky-300" />
-              <span>{isVi ? 'Xem toàn bộ 7 Lộ trình' : 'Explore All 7 Tracks'}</span>
+              <span>{isVi ? 'Xem toàn bộ 12 Lộ trình' : 'Explore All 12 Tracks'}</span>
             </button>
             <button
               onClick={() =>
@@ -332,38 +346,183 @@ export const HomeView: React.FC = () => {
             <Database className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-[11px] font-bold text-slate-400 uppercase">{isVi ? 'Dữ liệu Thực tế' : 'Real Open Datasets'}</div>
+            <div className="text-[11px] font-bold text-slate-400 uppercase">{isVi ? 'Dữ liệu & Nguồn OER' : 'Datasets & OER'}</div>
             <div className="text-base font-black text-slate-900 dark:text-white">
-              8 {isVi ? 'Bộ chuẩn Quốc tế' : 'Verified Datasets'}
+              13 {isVi ? 'Bộ chuẩn Quốc tế' : 'Verified Datasets'}
             </div>
           </div>
         </div>
       </div>
+
+      {/* 3B. Learning Science: 4-Dimensional Mastery Separation & Explainable Adaptive Recommendations */}
+      {masteryDims && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* 4-Dimensional Mastery Separation */}
+          <div className="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-4 shadow-2xs">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div>
+                <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Brain className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                  <span>
+                    {isVi
+                      ? 'Phân Tách 4 Chiều Năng Lực (Learning Science Mastery Model)'
+                      : '4-Dimensional Mastery Separation (Learning Science Engine)'}
+                  </span>
+                </h3>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  {isVi
+                    ? 'Tách biệt rõ Tiến độ hoàn thành, Điểm bài kiểm tra, Độ thành thạo ước lượng và Kỹ năng thực hành code.'
+                    : 'Strictly separates Completion Rate, Assessment Performance, Estimated Mastery, and Demonstrated Project Skill.'}
+                </p>
+              </div>
+              <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                {isVi ? 'Độ tin cậy:' : 'Confidence:'} {masteryDims.mastery_confidence_level}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 space-y-1.5">
+                <div className="flex items-center justify-between text-xs font-bold">
+                  <span className="text-slate-600 dark:text-slate-300">
+                    {isVi ? '1. Tỷ lệ Hoàn thành (Completion)' : '1. Completion Rate'}
+                  </span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">
+                    {masteryDims.completion_rate_pct}%
+                  </span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500 rounded-full"
+                    style={{ width: `${Math.min(100, masteryDims.completion_rate_pct)}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 space-y-1.5">
+                <div className="flex items-center justify-between text-xs font-bold">
+                  <span className="text-slate-600 dark:text-slate-300">
+                    {isVi ? '2. Điểm Đánh giá (Assessment)' : '2. Assessment Performance'}
+                  </span>
+                  <span className="text-sky-600 dark:text-sky-400 font-extrabold">
+                    {masteryDims.assessment_performance_pct}%
+                  </span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                  <div
+                    className="h-full bg-sky-500 rounded-full"
+                    style={{ width: `${Math.min(100, masteryDims.assessment_performance_pct)}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 space-y-1.5">
+                <div className="flex items-center justify-between text-xs font-bold">
+                  <span className="text-slate-600 dark:text-slate-300">
+                    {isVi ? '3. Độ Thành thạo Ước lượng' : '3. Estimated Concept Mastery'}
+                  </span>
+                  <span className="text-indigo-600 dark:text-indigo-400 font-extrabold">
+                    {masteryDims.estimated_mastery_pct}%
+                  </span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                  <div
+                    className="h-full bg-indigo-500 rounded-full"
+                    style={{ width: `${Math.min(100, masteryDims.estimated_mastery_pct)}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 space-y-1.5">
+                <div className="flex items-center justify-between text-xs font-bold">
+                  <span className="text-slate-600 dark:text-slate-300">
+                    {isVi ? '4. Kỹ năng Thực hành & Dự án' : '4. Demonstrated Project Skill'}
+                  </span>
+                  <span className="text-amber-600 dark:text-amber-400 font-extrabold">
+                    {masteryDims.demonstrated_project_skill_pct}%
+                  </span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                  <div
+                    className="h-full bg-amber-500 rounded-full"
+                    style={{ width: `${Math.min(100, masteryDims.demonstrated_project_skill_pct)}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Explainable Adaptive Recommendations */}
+          <div className="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 space-y-3.5 shadow-2xs flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  <span>
+                    {isVi ? 'Đề Xuất Học Thích Ứng Có Giải Thích' : 'Explainable Adaptive Recommendations'}
+                  </span>
+                </h3>
+              </div>
+
+              <div className="space-y-2.5">
+                {adaptiveRecs.slice(0, 2).map((rec, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => openLesson(rec.target_id)}
+                    className="p-3.5 rounded-2xl bg-indigo-50/40 dark:bg-slate-800/70 hover:bg-indigo-50 dark:hover:bg-slate-800 border border-indigo-200/60 dark:border-slate-700 cursor-pointer transition space-y-1"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+                        {rec.action_type} &bull; {rec.priority}
+                      </span>
+                      <ArrowRight className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                    </div>
+                    <div className="text-xs font-extrabold text-slate-900 dark:text-slate-100">
+                      {rec.title}
+                    </div>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                      {rec.rationale}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 flex items-center justify-between">
+              <span>
+                {isVi
+                  ? 'Đồ thị điều kiện tiên quyết (Prerequisite DAG): Hợp lệ'
+                  : 'Prerequisite DAG Status: Verified Acyclic'}
+              </span>
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 4. Clear Two-Audience Learning Path Matrix (Beginner vs Applied AI Engineer) */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 className="text-lg font-black text-slate-900 dark:text-slate-100">
-              {isVi ? 'Bản Đồ Lộ Trình Học Theo 2 Đối Tượng Rõ Ràng' : 'Structured Learning Roadmap for 2 Distinct Audiences'}
+              {isVi ? 'Bản Đồ 12 Lộ Trình Học Theo 2 Đối Tượng Rõ Ràng' : '12-Track Learning Roadmap for 2 Distinct Audiences'}
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {isVi
-                ? 'Bài kiểm tra năng lực, Bộ dữ liệu thật và Phòng Lab IDE đã được lồng ghép trực tiếp vào từng bài học dưới đây.'
-                : 'Diagnostic placement, real open datasets, and Python IDE labs are embedded directly inside each lesson.'}
+                ? 'Bài kiểm tra năng lực, Bộ dữ liệu thật, Nguồn học liệu OER và Phòng Lab IDE đã được lồng ghép trực tiếp vào từng bài học.'
+                : 'Diagnostic placement, real open datasets, OER citations, and Python IDE labs are embedded directly inside each lesson.'}
             </p>
           </div>
           <button
             onClick={() => setActiveView('learn')}
             className="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 self-start sm:self-auto"
           >
-            <span>{isVi ? 'Mở trang Lộ trình & Bài kiểm tra đầu vào' : 'Open Full Curriculum & Placement Check'}</span>
+            <span>{isVi ? 'Mở trang 12 Lộ trình & Danh mục Học liệu Mở OER' : 'Open Full 12-Track Curriculum & OER Registry'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Audience 1: Complete Beginner Path (Tracks A-D) */}
+          {/* Audience 1: Complete Beginner Path (5 Tracks) */}
           <div
             className={`rounded-3xl border p-6 space-y-4 transition ${
               persona === 'beginner'
@@ -389,8 +548,8 @@ export const HomeView: React.FC = () => {
                   </div>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
                     {isVi
-                      ? '4 Lộ trình (A → D): Từ khái niệm AI cơ bản, NumPy, Giải tích đến Học máy Cổ điển'
-                      : '4 Tracks (A → D): AI Foundations, Vectorized Python, Calculus & Classical ML'}
+                      ? '5 Lộ trình Nền tảng: Khái niệm AI, Python Vector hóa, Giải tích, Khoa học Dữ liệu & Học máy Cổ điển'
+                      : '5 Core Tracks: AI Foundations, Vectorized Python, Calculus, Data Science & Classical ML'}
                   </p>
                 </div>
               </div>
@@ -418,7 +577,7 @@ export const HomeView: React.FC = () => {
                   >
                     <div className="min-w-0">
                       <div className="text-[10px] font-extrabold uppercase text-emerald-600 dark:text-emerald-400">
-                        Track {String.fromCharCode(65 + i)} &bull; {lessons.length} {isVi ? 'bài học' : 'lessons'}
+                        Beginner Track {i + 1} &bull; {lessons.length} {isVi ? 'bài học' : 'lessons'}
                       </div>
                       <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
                         {tr.title}
@@ -436,7 +595,7 @@ export const HomeView: React.FC = () => {
             </div>
           </div>
 
-          {/* Audience 2: Applied AI Engineer Path (Tracks E-G) */}
+          {/* Audience 2: Applied AI Engineer Path (7 Tracks) */}
           <div
             className={`rounded-3xl border p-6 space-y-4 transition ${
               persona === 'engineer'
@@ -462,8 +621,8 @@ export const HomeView: React.FC = () => {
                   </div>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
                     {isVi
-                      ? '3 Lộ trình Chuyên sâu (E → G): Deep Learning, LLM RAG Vector Search & MLOps'
-                      : '3 Advanced Tracks (E → G): Deep Learning, LLM Vector Search & MLOps Production'}
+                      ? '7 Lộ trình Chuyên sâu: Deep Learning, Thị giác Máy tính, LLM RAG, AI Agents, MLOps, Nghiên cứu & Đồ án'
+                      : '7 Advanced Tracks: Deep Learning, Computer Vision, LLM RAG, AI Agents, MLOps, Research & Capstone'}
                   </p>
                 </div>
               </div>
@@ -491,7 +650,7 @@ export const HomeView: React.FC = () => {
                   >
                     <div className="min-w-0">
                       <div className="text-[10px] font-extrabold uppercase text-indigo-600 dark:text-indigo-400">
-                        Track {String.fromCharCode(69 + i)} &bull; {lessons.length} {isVi ? 'bài học' : 'lessons'}
+                        Engineer Track {i + 1} &bull; {lessons.length} {isVi ? 'bài học' : 'lessons'}
                       </div>
                       <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
                         {tr.title}

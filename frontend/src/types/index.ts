@@ -89,6 +89,30 @@ export interface LessonDataset {
   sample_rows: Record<string, any>[];
 }
 
+export interface SourceReference {
+  title: string;
+  author_or_org: string;
+  url: string;
+  source_type: string;
+  license: string;
+  usage_right: string;
+  lifecycle_state: string;
+}
+
+export interface CapstoneProjectSpec {
+  id: string;
+  title: string;
+  problem_statement: string;
+  input_data_source: string;
+  architecture_deliverables: string[];
+  evaluation_metrics: string[];
+  rubric_functionality_pct: number;
+  rubric_code_quality_pct: number;
+  rubric_ml_rigor_pct: number;
+  rubric_safety_pct: number;
+  rubric_documentation_pct: number;
+}
+
 export interface Lesson {
   id: string;
   module_id: string;
@@ -99,16 +123,26 @@ export interface Lesson {
   target_audience?: 'beginner' | 'engineer';
   prerequisites: string[];
   objectives: string[];
+  why_this_matters?: string;
   intuitive_explanation: string;
   formal_explanation: string;
   deep_dive_notes?: string[];
   formula_guide?: FormulaGuide;
   real_dataset?: LessonDataset;
   worked_example_code?: string;
+  guided_practice?: string;
   common_misconceptions: string[];
   interactive_widget?: LessonInteractiveWidget;
   quiz: QuizQuestion[];
   code_exercise?: CodeExercise;
+  capstone_spec?: CapstoneProjectSpec;
+  mastery_criteria?: string[];
+  further_reading?: string[];
+  source_references?: SourceReference[];
+  content_version?: string;
+  review_status?: string;
+  last_verified_date?: string;
+  license_provenance?: string;
   summary: string;
   next_lesson_id?: string;
 }
@@ -222,6 +256,36 @@ export interface BadgeInfo {
   unlocked: boolean;
 }
 
+export interface MasteryDimensionBreakdown {
+  completion_rate_pct: number;
+  assessment_performance_pct: number;
+  estimated_mastery_pct: number;
+  mastery_confidence_level: string;
+  demonstrated_project_skill_pct: number;
+}
+
+export interface AdaptiveRecommendationItem {
+  action_type: 'UNLOCK_NEXT' | 'REMEDIATE_PREREQUISITE' | 'SPACED_REVIEW' | 'CAPSTONE_READINESS';
+  target_id: string;
+  title: string;
+  rationale: string;
+  priority: 'HIGH' | 'MEDIUM' | 'LOW';
+}
+
+export interface OERResourceSchema {
+  id: string;
+  title: string;
+  source_org: string;
+  canonical_url: string;
+  license_spdx: string;
+  usage_classification: string;
+  lifecycle_state: string;
+  target_track_id: string;
+  target_persona: string;
+  pedagogical_summary: string;
+  verified_at: string;
+}
+
 export interface LearnerProgress {
   completed_lesson_ids: string[];
   quiz_scores: Record<string, number>;
@@ -235,4 +299,7 @@ export interface LearnerProgress {
   daily_goal_xp: number;
   today_xp: number;
   badges: BadgeInfo[];
+  mastery_dimensions?: MasteryDimensionBreakdown;
+  recommendations?: AdaptiveRecommendationItem[];
 }
+

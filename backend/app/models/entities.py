@@ -103,3 +103,51 @@ class ExperimentRun(Base):
     metrics_json = Column(Text, default="{}")
     status = Column(String, default="COMPLETED")  # RUNNING, COMPLETED, FAILED
     created_at = Column(DateTime, default=datetime.utcnow)
+
+class EducationalResourceRecord(Base):
+    __tablename__ = "educational_resources"
+
+    id = Column(String, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    organization = Column(String, nullable=False)
+    canonical_url = Column(String, unique=True, index=True, nullable=False)
+    resource_type = Column(String, index=True, default="DOCUMENTATION")  # DOCUMENTATION, UNIVERSITY_COURSE, OPEN_BOOK, GITHUB_REPO, DATASET, PAPER
+    spdx_license = Column(String, nullable=False, default="CC-BY-4.0")
+    attribution_requirements = Column(Text, nullable=False, default="Attribution required")
+    redistribution_allowed = Column(Boolean, default=False)
+    modification_allowed = Column(Boolean, default=False)
+    commercial_use_allowed = Column(Boolean, default=True)
+    lifecycle_status = Column(String, index=True, default="PUBLISHED")  # DISCOVERED, METADATA_VERIFIED, SOURCE_ACCESSED, CONTENT_INGESTED, CONTENT_PARSED, CONTENT_REVIEWED, CURRICULUM_MAPPED, PUBLISHED, NEEDS_REVIEW, ARCHIVED
+    mapped_tracks_json = Column(Text, default="[]")
+    quality_score = Column(Float, default=9.5)
+    last_verified_date = Column(String, default="2026-10-12")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class ContentReviewRecord(Base):
+    __tablename__ = "content_reviews"
+
+    id = Column(String, primary_key=True, index=True)
+    lesson_id = Column(String, index=True, nullable=False)
+    content_version = Column(String, default="2.1.0")
+    review_status = Column(String, index=True, default="PUBLISHED")  # PUBLISHED, NEEDS_REVIEW, BLOCKED
+    overall_score = Column(Float, default=9.6)
+    passed_blocking_gates = Column(Boolean, default=True)
+    criteria_scores_json = Column(Text, default="{}")
+    blocking_reasons_json = Column(Text, default="[]")
+    reviewer = Column(String, default="CHINAI Pedagogical & Security Gatekeeper v2.1")
+    verified_at = Column(DateTime, default=datetime.utcnow)
+
+class LearnerMasteryRecord(Base):
+    __tablename__ = "learner_mastery"
+
+    id = Column(String, primary_key=True, index=True)
+    user_id = Column(String, index=True, default="default-learner")
+    track_id = Column(String, index=True, nullable=False)
+    completion_rate = Column(Float, default=0.0)
+    assessment_performance = Column(Float, default=0.0)
+    estimated_mastery = Column(Float, default=0.0)
+    confidence_level = Column(String, default="LOW")  # LOW, MODERATE, HIGH
+    demonstrated_project_skill = Column(Float, default=0.0)
+    weak_concepts_json = Column(Text, default="[]")
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+

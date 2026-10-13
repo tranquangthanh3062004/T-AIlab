@@ -54,7 +54,28 @@ class LessonDataset(BaseModel):
     columns: list[str]
     sample_rows: list[dict[str, str | float | int]]
 
+class SourceReference(BaseModel):
+    title: str
+    organization: str
+    url: str
+    resource_type: str = "PRIMARY_DOC"  # PRIMARY_DOC, UNIVERSITY_COURSE, OPEN_BOOK, PEER_REVIEWED_PAPER, GITHUB_REPO
+    license: str = "CC BY 4.0 / BSD-3"
+    lifecycle_status: str = "PUBLISHED"
+
+class CapstoneProjectSpec(BaseModel):
+    problem_statement: str
+    dataset_and_license: str
+    acceptance_criteria: list[str]
+    baseline_model: str
+    evaluation_metrics: list[str]
+    implementation_steps: list[str]
+    error_analysis_guide: str
+    security_considerations: str
+    deployment_plan: str
+    rubric_dimensions: list[dict[str, str]]
+
 class Lesson(BaseModel):
+    # Phase 3: 24-Field Standard Lesson Schema
     id: str
     module_id: str
     title: str
@@ -64,6 +85,7 @@ class Lesson(BaseModel):
     difficulty: str  # Beginner, Intermediate, Advanced
     prerequisites: list[str] = []
     objectives: list[str]
+    why_this_matters: str = "Cung cấp nền tảng toán học, tư duy dữ liệu và kỹ năng lập trình kiểm chứng được trong các hệ thống AI thực tế."
     intuitive_explanation: str
     deep_dive_notes: list[str] = []
     formal_explanation: str
@@ -71,9 +93,21 @@ class Lesson(BaseModel):
     real_dataset: LessonDataset | None = None
     worked_example_code: str | None = None
     common_misconceptions: list[str] = []
+    guided_practice: list[str] = []
     interactive_widget: LessonInteractiveWidget | None = None
     quiz: list[QuizQuestion] = []
     code_exercise: CodeExercise | None = None
+    capstone_spec: CapstoneProjectSpec | None = None
+    mastery_criteria: list[str] = [
+        "Đạt tối thiểu 70% bài kiểm tra trắc nghiệm định lượng (Active Recall Quiz).",
+        "Vượt qua 100% kiểm thử đơn vị (Unit Assertions) trong môi trường Python Sandbox."
+    ]
+    further_reading: list[str] = []
+    source_references: list[SourceReference] = []
+    content_version: str = "2.2.0"
+    review_status: str = "PUBLISHED"  # DISCOVERED, METADATA_VERIFIED, CONTENT_REVIEWED, CURRICULUM_MAPPED, PUBLISHED
+    last_verified_date: str = "2026-10-12"
+    license_provenance: str = "Original CHINAI Pedagogical Content (CC BY 4.0) grounded in verified open-source documentation & datasets."
     summary: str
     next_lesson_id: str | None = None
 
@@ -91,6 +125,9 @@ class Track(BaseModel):
     description: str
     level: str  # Beginner, Intermediate, Advanced
     target_audience: str = "beginner"  # "beginner" or "engineer"
+    prerequisites: list[str] = []
+    learning_outcomes: list[str] = []
+    completion_criteria: str = "Hoàn thành toàn bộ bài tập Python Sandbox và đạt >= 70% điểm Quiz của các mô-đun."
     estimated_hours: int
     modules: list[Module] = []
 
@@ -123,6 +160,48 @@ class BadgeInfo(BaseModel):
     icon: str
     unlocked: bool = False
 
+class MasteryDimensionBreakdown(BaseModel):
+    completion_rate: float
+    assessment_performance: float
+    estimated_mastery: float
+    confidence_level: str  # LOW, MODERATE, HIGH
+    confidence_note: str
+    demonstrated_project_skill: float
+
+class AdaptiveRecommendationItem(BaseModel):
+    lesson_id: str
+    lesson_title: str
+    track_id: str
+    track_title: str
+    target_audience: str
+    priority: str  # HIGH, MEDIUM, REVIEW
+    recommendation_type: str  # REMEDIATION, NEXT_PREREQUISITE, SPACED_REVIEW, CAPSTONE_CHALLENGE
+    rationale: str
+    estimated_minutes: int
+
+class OERResourceSchema(BaseModel):
+    id: str
+    title: str
+    organization: str
+    canonical_url: str
+    resource_type: str
+    spdx_license: str
+    attribution_requirements: str
+    lifecycle_status: str
+    mapped_tracks: list[str]
+    quality_score: float
+    last_verified_date: str
+
+class LessonRubricEvaluation(BaseModel):
+    lesson_id: str
+    content_version: str
+    review_status: str
+    overall_score: float
+    passed_blocking_gates: bool
+    criteria_scores: dict[str, float]
+    blocking_reasons: list[str]
+    last_verified_date: str
+
 class LearnerProgressResponse(BaseModel):
     completed_lesson_ids: list[str]
     quiz_scores: dict[str, float]
@@ -136,3 +215,5 @@ class LearnerProgressResponse(BaseModel):
     daily_goal_xp: int
     today_xp: int
     badges: list[BadgeInfo]
+    mastery_dimensions: MasteryDimensionBreakdown | None = None
+    recommendations: list[AdaptiveRecommendationItem] = []

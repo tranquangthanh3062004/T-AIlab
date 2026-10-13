@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { api } from '../services/api';
-import type { Track } from '../types';
+import type { Track, OERResourceSchema } from '../types';
 import {
   Clock, CheckCircle2, GraduationCap, AlertCircle, BookOpen,
   Zap, Search, Sprout, Code2, Compass, Database, Calculator,
-  Terminal, ChevronDown, ChevronUp, Sparkles, ArrowRight
+  Terminal, ChevronDown, ChevronUp, Sparkles, ArrowRight,
+  ExternalLink, ShieldCheck
 } from 'lucide-react';
 
 export const LearnView: React.FC = () => {
@@ -13,6 +14,9 @@ export const LearnView: React.FC = () => {
   const isVi = language === 'vi';
 
   const [tracks, setTracks] = useState<Track[]>([]);
+  const [oerResources, setOerResources] = useState<OERResourceSchema[]>([]);
+  const [governanceAudit, setGovernanceAudit] = useState<any | null>(null);
+  const [oerOpen, setOerOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [audienceTab, setAudienceTab] = useState<'beginner' | 'engineer' | 'all'>(persona);
@@ -33,12 +37,16 @@ export const LearnView: React.FC = () => {
     const fetchCurriculum = async () => {
       try {
         setLoading(true);
-        const [trackData, qData] = await Promise.all([
+        const [trackData, qData, oerData, govData] = await Promise.all([
           api.getTracks(language),
-          api.getDiagnosticQuestions(language).catch(() => [])
+          api.getDiagnosticQuestions(language).catch(() => []),
+          api.getOerResources().catch(() => []),
+          api.getGovernanceAudit(language).catch(() => null)
         ]);
         setTracks(trackData);
         setDiagQuestions(qData);
+        setOerResources(oerData);
+        setGovernanceAudit(govData);
       } catch (err: any) {
         setError(err.message || (isVi ? 'Không thể tải danh sách lộ trình học' : 'Unable to load syllabus'));
       } finally {
@@ -70,7 +78,7 @@ export const LearnView: React.FC = () => {
       <div className="max-w-5xl mx-auto px-4 py-20 text-center">
         <div className="w-9 h-9 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
         <p className="text-xs text-slate-500">
-          {isVi ? 'Đang tải lộ trình đào tạo chuẩn hóa và bộ dữ liệu thực tế...' : 'Loading structured curriculum and real datasets...'}
+          {isVi ? 'Đang tải lộ trình đào tạo 12 Tracks chuẩn hóa và bộ dữ liệu thực tế...' : 'Loading 12-Track structured curriculum and real datasets...'}
         </p>
       </div>
     );
@@ -90,7 +98,7 @@ export const LearnView: React.FC = () => {
 
   const isBeginnerTrack = (tr: Track) =>
     tr.target_audience === 'beginner' ||
-    ['track-ai-foundations', 'track-python-for-ai', 'track-math-for-ai', 'track-classical-ml'].includes(tr.id);
+    ['track-ai-foundations', 'track-python-for-ai', 'track-math-for-ai', 'track-data-science', 'track-classical-ml'].includes(tr.id);
 
   const filteredTracks = tracks.filter((track) => {
     if (audienceTab === 'beginner' && !isBeginnerTrack(track)) return false;
@@ -170,10 +178,10 @@ export const LearnView: React.FC = () => {
             </div>
             <div className="min-w-0">
               <div className="text-xs font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <span>{isVi ? '1. Người Mới Bắt Đầu' : '1. Complete Beginner'}</span>
+                <span>{isVi ? '1. Người Mới Bắt Đầu (5 Lộ Trình)' : '1. Complete Beginner (5 Tracks)'}</span>
               </div>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">
-                {isVi ? 'Tracks A, B, C, D (Nền tảng → ML)' : 'Tracks A, B, C, D (Foundations → ML)'}
+                {isVi ? 'AI Foundations, Python, Giải tích, Data Science & ML' : 'Foundations, Python, Calculus, Data Science & ML'}
               </p>
             </div>
           </button>
@@ -195,10 +203,10 @@ export const LearnView: React.FC = () => {
             </div>
             <div className="min-w-0">
               <div className="text-xs font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <span>{isVi ? '2. Kỹ Sư AI Thực Chiến' : '2. Applied AI Engineer'}</span>
+                <span>{isVi ? '2. Kỹ Sư AI Thực Chiến (7 Lộ Trình)' : '2. Applied AI Engineer (7 Tracks)'}</span>
               </div>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">
-                {isVi ? 'Tracks E, F, G (Deep Learning, LLM, MLOps)' : 'Tracks E, F, G (DL, LLM, MLOps)'}
+                {isVi ? 'DL, Computer Vision, LLM RAG, Agents, MLOps & Đồ án' : 'DL, Vision, LLM RAG, Agents, MLOps, Research & Capstone'}
               </p>
             </div>
           </button>
@@ -217,14 +225,101 @@ export const LearnView: React.FC = () => {
             </div>
             <div className="min-w-0">
               <div className="text-xs font-extrabold text-slate-900 dark:text-white">
-                {isVi ? 'Tất Cả 7 Lộ Trình (A–G)' : 'All 7 Tracks (A–G)'}
+                {isVi ? 'Tất Cả 12 Lộ Trình Chuẩn Hóa' : 'All 12 Curriculum Tracks'}
               </div>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">
-                {isVi ? 'Toàn bộ chương trình đào tạo' : 'Complete end-to-end syllabus'}
+                {isVi ? 'Đồ thị tiên quyết DAG & Học liệu mở OER' : 'Full Prerequisite DAG & Verified OER'}
               </p>
             </div>
           </button>
         </div>
+
+        {/* 2B. Authoritative OER, University & GitHub Source Governance Registry */}
+        {oerResources.length > 0 && (
+          <div className="rounded-2xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 overflow-hidden">
+            <div
+              onClick={() => setOerOpen(!oerOpen)}
+              className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-white/60 dark:hover:bg-white/5 transition"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-extrabold text-slate-900 dark:text-white flex items-center gap-2 flex-wrap">
+                    <span>
+                      {isVi
+                        ? 'Danh Mục Học Liệu Mở (OER), Đại Học & GitHub Đã Xác Thực Bản Quyền'
+                        : 'Verified OER, University & GitHub Source Provenance Registry'}
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold">
+                      {oerResources.length} {isVi ? 'Nguồn Chuẩn Quốc Tế' : 'Verified Sources'}
+                    </span>
+                    {governanceAudit?.dag_integrity?.is_valid_dag && (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-mono font-bold">
+                        DAG: {governanceAudit.passed_blocking_gates_count}/{governanceAudit.total_lessons} PASS ({governanceAudit.average_rubric_score}/10)
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    {isVi
+                      ? 'MIT 6.036, Stanford CS229/CS231n, UC Berkeley CS188, D2L.ai, MML Book, Karpathy micrograd/nanoGPT — Đầy đủ giấy phép SPDX & trạng thái vòng đời.'
+                      : 'MIT 6.036, Stanford CS229/CS231n, UC Berkeley CS188, D2L.ai, MML Book, Karpathy micrograd/nanoGPT — Full SPDX licenses & lifecycle states.'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 shrink-0">
+                <span>{oerOpen ? (isVi ? 'Thu gọn' : 'Hide') : (isVi ? 'Xem Nguồn OER' : 'Inspect Registry')}</span>
+                {oerOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </div>
+            </div>
+
+            {oerOpen && (
+              <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-3">
+                {oerResources.map((res) => (
+                  <div
+                    key={res.id}
+                    className="p-3.5 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-800 flex flex-col justify-between gap-2"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <span className="text-[10px] font-extrabold uppercase text-indigo-600 dark:text-indigo-400">
+                          {res.source_org}
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                            {res.lifecycle_state}
+                          </span>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                            {res.license_spdx}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-xs font-extrabold text-slate-900 dark:text-slate-100">
+                        {res.title}
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        {res.pedagogical_summary}
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between pt-1.5 border-t border-slate-200/60 dark:border-slate-700/60 text-[10px]">
+                      <span className="font-mono text-slate-400">{res.usage_classification}</span>
+                      <a
+                        href={res.canonical_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
+                      >
+                        <span>{isVi ? 'Mở Nguồn Gốc' : 'Canonical Source'}</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* 2. Embedded Diagnostic Placement Assessment Banner (Lồng ghép trực tiếp vào Lộ trình bài học) */}
         <div className="rounded-2xl bg-gradient-to-r from-amber-50/80 via-indigo-50/50 to-sky-50/70 dark:from-slate-800/90 dark:via-slate-800/70 dark:to-indigo-950/40 border border-amber-200/80 dark:border-slate-700 overflow-hidden">

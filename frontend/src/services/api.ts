@@ -140,9 +140,29 @@ export const api = {
     return res.json();
   },
 
-  async getProgress(): Promise<LearnerProgress> {
-    const res = await fetch(`${API_BASE}/learn/progress`, { headers: getAuthHeaders() });
+  async getProgress(lang?: string, persona?: string): Promise<LearnerProgress> {
+    const activeLang = lang || localStorage.getItem('chinai_lang') || 'vi';
+    const activePersona = persona || localStorage.getItem('chinai_persona') || 'beginner';
+    const res = await fetch(
+      `${API_BASE}/learn/progress?lang=${encodeURIComponent(activeLang)}&persona=${encodeURIComponent(activePersona)}`,
+      { headers: getAuthHeaders() }
+    );
     if (!res.ok) throw new Error('Failed to fetch progress');
+    return res.json();
+  },
+
+  async getOerResources(): Promise<any[]> {
+    const res = await fetch(`${API_BASE}/learn/oer/resources`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch OER resources');
+    return res.json();
+  },
+
+  async getGovernanceAudit(lang?: string): Promise<any> {
+    const activeLang = lang || localStorage.getItem('chinai_lang') || 'vi';
+    const res = await fetch(`${API_BASE}/learn/governance/audit?lang=${encodeURIComponent(activeLang)}`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to fetch governance audit');
     return res.json();
   },
 

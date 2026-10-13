@@ -172,7 +172,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const refreshProgress = async () => {
     try {
-      const p = await api.getProgress();
+      const p = await api.getProgress(language, persona);
       setProgress(p);
     } catch (e) {
       console.error('Error fetching progress:', e);
@@ -198,7 +198,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   useEffect(() => {
     refreshProgress();
-  }, [user]);
+  }, [user, language, persona]);
 
   return (
     <AppContext.Provider

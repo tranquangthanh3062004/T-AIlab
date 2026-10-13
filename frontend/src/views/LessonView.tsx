@@ -226,9 +226,31 @@ export const LessonView: React.FC = () => {
 
       {/* Lesson Header & Learning Objectives */}
       <div className="space-y-4">
+        <div className="flex flex-wrap items-center gap-2">
+          {lesson.content_version && (
+            <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+              v{lesson.content_version} &bull; {lesson.review_status || 'PUBLISHED'}
+            </span>
+          )}
+          {lesson.last_verified_date && (
+            <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">
+              {isVi ? 'Xác minh:' : 'Verified:'} {lesson.last_verified_date}
+            </span>
+          )}
+        </div>
+
         <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight leading-tight">
           {lesson.title}
         </h1>
+
+        {lesson.why_this_matters && (
+          <div className="p-4 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/80 dark:border-indigo-900/60 text-xs sm:text-sm text-indigo-950 dark:text-indigo-200 leading-relaxed">
+            <strong className="font-extrabold uppercase tracking-wider text-[11px] text-indigo-600 dark:text-indigo-400 block mb-1">
+              {isVi ? 'Tại Sao Chủ Đề Này Quan Trọng (Why This Matters):' : 'Why This Matters in Real Systems:'}
+            </strong>
+            {lesson.why_this_matters}
+          </div>
+        )}
 
         <div className="bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200/80 dark:border-sky-900/60 rounded-2xl p-5 space-y-2.5">
           <h3 className="text-xs font-extrabold text-sky-900 dark:text-sky-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -412,6 +434,54 @@ export const LessonView: React.FC = () => {
             <pre>
               <code>{lesson.worked_example_code}</code>
             </pre>
+          </div>
+          {lesson.guided_practice && (
+            <div className="p-4 rounded-2xl bg-sky-50/70 dark:bg-sky-950/25 border border-sky-200/80 dark:border-sky-800/60 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+              <strong className="font-extrabold text-sky-800 dark:text-sky-300 block mb-1">
+                {isVi ? 'Hướng Dẫn Thực Hành Có Định Hướng (Guided Practice):' : 'Guided Practice Walkthrough:'}
+              </strong>
+              {lesson.guided_practice}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Section 3B: Capstone Project Specification & 5-Dimension Rubric */}
+      {lesson.capstone_spec && (
+        <div className="p-6 rounded-3xl bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-900 text-white border border-indigo-500/30 space-y-4 shadow-md">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
+              {isVi ? 'Đặc Tả Đồ Án Thực Chiến (Capstone Specification & Rubric)' : 'Production Capstone Specification & Rubric'}
+            </span>
+            <span className="text-xs font-mono text-emerald-300">100% Multi-Metric Evaluation</span>
+          </div>
+          <h3 className="text-lg font-black">{lesson.capstone_spec.title}</h3>
+          <p className="text-xs sm:text-sm text-indigo-100/90 leading-relaxed">
+            {lesson.capstone_spec.problem_statement}
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1.5">
+              <div className="font-extrabold text-indigo-300 uppercase text-[10px]">
+                {isVi ? 'Hạng mục Kiến trúc Bàn giao:' : 'Architecture Deliverables:'}
+              </div>
+              <ul className="space-y-1 text-slate-200">
+                {lesson.capstone_spec.architecture_deliverables.map((item, i) => (
+                  <li key={i}>&bull; {item}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1.5">
+              <div className="font-extrabold text-emerald-300 uppercase text-[10px]">
+                {isVi ? 'Thang Điểm Rubric 5 Chiều:' : '5-Dimension Grading Rubric:'}
+              </div>
+              <div className="grid grid-cols-2 gap-1.5 text-[11px] font-mono">
+                <div>Functionality: {lesson.capstone_spec.rubric_functionality_pct}%</div>
+                <div>Code Quality: {lesson.capstone_spec.rubric_code_quality_pct}%</div>
+                <div>ML Rigor: {lesson.capstone_spec.rubric_ml_rigor_pct}%</div>
+                <div>Safety/Guardrails: {lesson.capstone_spec.rubric_safety_pct}%</div>
+                <div>Documentation: {lesson.capstone_spec.rubric_documentation_pct}%</div>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -653,6 +723,69 @@ export const LessonView: React.FC = () => {
               {t('submitQuizBtn')}
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Section 7: Mastery Criteria & Verified OER / Academic Source Provenance */}
+      {((lesson.mastery_criteria && lesson.mastery_criteria.length > 0) ||
+        (lesson.source_references && lesson.source_references.length > 0)) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-200/80 dark:border-slate-800">
+          {lesson.mastery_criteria && lesson.mastery_criteria.length > 0 && (
+            <div className="p-5 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-800/60 space-y-2.5">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>{isVi ? 'Tiêu Chí Đạt Chuẩn Thành Thạo (Mastery Criteria)' : 'Mastery Criteria'}</span>
+              </h3>
+              <ul className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+                {lesson.mastery_criteria.map((mc, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="font-bold text-emerald-600">&bull;</span>
+                    <span>{mc}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {lesson.source_references && lesson.source_references.length > 0 && (
+            <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-2.5">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
+                <BookOpen className="w-4 h-4" />
+                <span>
+                  {isVi
+                    ? 'Nguồn Học Liệu Mở & Trích Dẫn Học Thuật (Verified OER)'
+                    : 'Verified Academic & OER Source Citations'}
+                </span>
+              </h3>
+              <div className="space-y-2">
+                {lesson.source_references.map((src, i) => (
+                  <div
+                    key={i}
+                    className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700 text-xs flex items-center justify-between gap-2"
+                  >
+                    <div className="min-w-0">
+                      <div className="font-bold text-slate-900 dark:text-slate-100 truncate">{src.title}</div>
+                      <div className="text-[10px] text-slate-500 font-mono">
+                        {src.author_or_org} &bull; {src.license} &bull; {src.usage_right}
+                      </div>
+                    </div>
+                    <a
+                      href={src.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline shrink-0"
+                    >
+                      <span>{isVi ? 'Nguồn' : 'Source'}</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                ))}
+              </div>
+              {lesson.license_provenance && (
+                <p className="text-[10px] text-slate-400 pt-1">{lesson.license_provenance}</p>
+              )}
+            </div>
+          )}
         </div>
       )}
 
