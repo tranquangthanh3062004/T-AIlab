@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: t-ailab-backend
+    runtime: python
+    region: singapore
+    plan: free
+    rootDir: backend
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHONPATH
+        value: .
+      - key: PROJECT_NAME
+        value: CHINAI AI Learning OS
+      - key: CORS_ORIGINS
+        value: https://t-ailab.vercel.app,https://*.vercel.app,http://localhost:5173
