@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: t-ailab-backend
+    name: t-lab-ai-backend
     runtime: python
     region: singapore
     plan: free
@@ -12,6 +12,6 @@ services:
       - key: PYTHONPATH
         value: .
       - key: PROJECT_NAME
-        value: CHINAI AI Learning OS
+        value: T Lab AI
       - key: CORS_ORIGINS
-        value: https://t-ailab.vercel.app,https://*.vercel.app,http://localhost:5173
+        value: https://t-lab-ai.pages.dev,https://*.pages.dev,http://localhost:5173,http://localhost:3000

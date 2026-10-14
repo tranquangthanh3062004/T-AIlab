@@ -5,8 +5,8 @@ import { api } from '../services/api';
 import type { Track } from '../types';
 import {
   Newspaper, ArrowRight, Flame, Award, BookOpen, Sparkles,
-  Rocket, Code, Brain, CheckCircle2, UserPlus, ShieldCheck,
-  Sprout, Code2, Database, Clock, PlayCircle, Bot, Terminal
+  Rocket, Code, Brain, CheckCircle2, UserPlus,
+  Sprout, Code2, Database, Clock, PlayCircle, Bot, Terminal, XCircle
 } from 'lucide-react';
 
 export const HomeView: React.FC = () => {
@@ -29,22 +29,25 @@ export const HomeView: React.FC = () => {
 
   const completedSet = new Set(progress?.completed_lesson_ids || []);
 
-  // Filter all 12 tracks by the 2 target personas
+  // Filter all 15 tracks by the 2 target personas
   const beginnerTracks = tracks.filter(
     (tr) =>
       tr.target_audience === 'beginner' ||
-      ['track-ai-foundations', 'track-python-for-ai', 'track-math-for-ai', 'track-data-science', 'track-classical-ml'].includes(tr.id)
+      ['track-foundations', 'track-python', 'track-math', 'track-data-science', 'track-ml'].includes(tr.id)
   );
   const engineerTracks = tracks.filter(
     (tr) =>
       tr.target_audience === 'engineer' ||
       [
-        'track-deep-learning',
+        'track-dl',
         'track-computer-vision',
-        'track-llm-engineering',
+        'track-llm',
+        'track-generative-multimodal',
         'track-ai-agents',
-        'track-mlops-systems',
+        'track-mlops',
+        'track-responsible-ai-security',
         'track-research-engineering',
+        'track-applied-specializations',
         'track-capstone-portfolio'
       ].includes(tr.id)
   );
@@ -64,7 +67,7 @@ export const HomeView: React.FC = () => {
   const levelTitle = progress?.level_title || (isVi ? 'Nhà Thám Hiểm AI' : 'AI Explorer');
   const badges = progress?.badges || [];
   const completedLessons = progress?.completed_lesson_ids.length || 0;
-  const totalLessons = progress?.total_lessons_count || 13;
+  const totalLessons = progress?.total_lessons_count || 16;
   const progressPercent = Math.min(100, Math.round((completedLessons / totalLessons) * 100));
   const dailyGoalPercent = Math.min(100, Math.round((todayXp / dailyGoalXp) * 100));
   const masteryDims = progress?.mastery_dimensions;
@@ -92,8 +95,24 @@ export const HomeView: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-7 space-y-8">
-      {/* 1. User Account & Registered Persona Banner */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+      {/* 1. Marketing Trust & Social Proof Strip */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-50/80 via-white to-sky-50/80 dark:from-slate-900/90 dark:via-indigo-950/40 dark:to-slate-900/90 border border-indigo-200/60 dark:border-indigo-800/40 text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+          <strong className="text-indigo-700 dark:text-indigo-300 font-extrabold uppercase tracking-wider">
+            T Lab AI
+          </strong>
+          <span>• {isVi ? '100% Học Miễn Phí Trên Dữ Liệu Thật' : '100% Free Hands-on AI with Real Data'}</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] text-slate-500 dark:text-slate-400">
+          <span className="flex items-center gap-1">⚡ Monaco Sandbox</span>
+          <span className="flex items-center gap-1">🎓 21 OER Sources (Stanford/MIT/Google)</span>
+          <span className="flex items-center gap-1">🛡️ 15 Tracks DAG</span>
+        </div>
+      </div>
+
+      {/* 2. User Account & Frictionless Persona Activation Banner */}
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-5 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
         {user ? (
           <>
             <div className="flex items-center gap-3.5">
@@ -110,16 +129,16 @@ export const HomeView: React.FC = () => {
                   <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800">
                     {persona === 'engineer' ? <Code2 className="w-3 h-3" /> : <Sprout className="w-3 h-3" />}
                     {persona === 'engineer'
-                      ? (isVi ? 'Đối tượng: Kỹ sư AI Thực chiến' : 'Persona: Applied AI Engineer')
-                      : (isVi ? 'Đối tượng: Người mới bắt đầu' : 'Persona: Beginner Explorer')}
+                      ? (isVi ? 'Đối tượng: Kỹ sư AI Thực chiến' : 'Role: Applied AI Engineer')
+                      : (isVi ? 'Đối tượng: Người mới bắt đầu' : 'Role: Beginner Explorer')}
                   </span>
                   <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800">
                     <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                    {isVi ? 'Đã đồng bộ' : 'Synced'}
+                    {isVi ? 'Đã lưu tiến độ' : 'Synced'}
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  {user.email} &bull; {isVi ? 'Lộ trình học được cá nhân hóa theo đăng ký của bạn' : 'Curriculum personalized to your registered role'}
+                  {user.email} &bull; {isVi ? 'Tiến độ học và mã nguồn Python đã được lưu trữ an toàn' : 'Progress & Python code saved securely'}
                 </p>
               </div>
             </div>
@@ -129,79 +148,82 @@ export const HomeView: React.FC = () => {
                 className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 text-xs font-bold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition"
               >
                 <GoogleLogoSvg className="w-3.5 h-3.5" />
-                <span>{isVi ? 'Tài khoản Google' : 'Google Account'}</span>
+                <span>{isVi ? 'Đổi tài khoản Google' : 'Google Account'}</span>
               </button>
             </div>
           </>
         ) : (
           <>
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-200/60 dark:border-indigo-800">
-                <ShieldCheck className="w-5 h-5" />
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-500 to-sky-500 text-white flex items-center justify-center shrink-0 shadow-md">
+                <Sparkles className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100">
+                <h2 className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-slate-100">
                   {isVi
-                    ? 'Đăng ký tài khoản để hệ thống thiết lập Chế độ học (Người mới / Kỹ sư AI)'
-                    : 'Register to personalize your learning track (Beginner vs Applied AI Engineer)'}
+                    ? 'Đăng nhập 1-Click để lưu tiến độ, mở khóa 15 Phòng Lab Python & nhận Huy hiệu AI'
+                    : '1-Click Login to sync your 15 Python Labs, XP streak & official Capstone certificate'}
                 </h2>
-                <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   {isVi
-                    ? 'Tự động phân bổ lộ trình, lưu tiến độ bài tập Python, điểm XP và đồng bộ đa tài khoản Google.'
-                    : 'Automatically configures your path, saves Python exercises, XP, and syncs across Google accounts.'}
+                    ? 'Hoàn toàn miễn phí, không yêu cầu thẻ tín dụng. Tự động cá nhân hóa lộ trình phù hợp với bạn.'
+                    : '100% Free, no credit card required. Instantly tailors your learning roadmap.'}
                 </p>
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2 shrink-0">
               <button
                 onClick={() => openAuthModal('google')}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-800 dark:text-slate-100 font-bold text-xs border border-slate-300 dark:border-slate-700 shadow-2xs transition"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-800 dark:text-slate-100 font-extrabold text-xs border border-slate-300 dark:border-slate-700 shadow-2xs transition"
               >
-                <GoogleLogoSvg className="w-3.5 h-3.5" />
-                <span>Google</span>
+                <GoogleLogoSvg className="w-4 h-4" />
+                <span>Google Sign-in</span>
               </button>
               <button
                 onClick={() => openAuthModal('register')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-2xs transition"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs shadow-md transition"
               >
                 <UserPlus className="w-3.5 h-3.5" />
-                <span>{isVi ? 'Đăng ký Đối tượng Học' : 'Register Learning Path'}</span>
+                <span>{isVi ? 'Tạo tài khoản miễn phí' : 'Start Free'}</span>
               </button>
             </div>
           </>
         )}
       </div>
 
-      {/* 2. Minimalist Senior Hero + Up-Next Lesson Spotlight */}
+      {/* 3. High-Converting Hero Banner + Active Spotlight */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        {/* Left 7 cols: Welcome & Persona Path Overview */}
-        <div className="lg:col-span-7 relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-7 sm:p-8 flex flex-col justify-between shadow-lg border border-indigo-500/20">
+        {/* Left 7 cols: Marketing Value Hook & Personas */}
+        <div className="lg:col-span-7 relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white p-7 sm:p-9 flex flex-col justify-between shadow-xl border border-indigo-500/30">
           <div className="relative z-10 space-y-4">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-xs font-bold text-indigo-200 border border-white/15">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/20 backdrop-blur-xs text-xs font-extrabold text-indigo-300 border border-indigo-400/30">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 <span>
                   {persona === 'engineer'
-                    ? (isVi ? 'Chế độ: Kỹ sư AI Thực chiến (10 Lộ trình Chuyên sâu: Tracks 5–14)' : 'Track: Applied AI Engineer (10 Advanced Tracks: Tracks 5–14)')
-                    : (isVi ? 'Chế độ: Người mới bắt đầu từ số 0 (5 Lộ trình Nền tảng: Tracks 0–4)' : 'Track: Complete Beginner Path (5 Core Tracks: Tracks 0–4)')}
+                    ? (isVi ? 'Lộ trình: Kỹ Sư AI Thực Chiến (Tracks 5–14)' : 'Path: Applied AI Engineer (Tracks 5–14)')
+                    : (isVi ? 'Lộ trình: Người Mới Bắt Đầu Từ Số 0 (Tracks 0–4)' : 'Path: Complete Beginner Core (Tracks 0–4)')}
                 </span>
+              </span>
+              <span className="text-[11px] font-mono text-emerald-300 bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-700/50">
+                ✓ 100% Real Datasets
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight leading-tight">
               {persona === 'engineer'
                 ? (isVi
-                    ? 'Làm chủ Deep Learning, Vision, LLM RAG, Diffusion, AI Agents, MLOps & Responsible AI'
-                    : 'Master Deep Learning, Vision, RAG, Diffusion, AI Agents, MLOps & Responsible AI')
+                    ? 'Làm Chủ Deep Learning, Vision, LLM RAG, AI Agents & MLOps Sản Xuất'
+                    : 'Master Deep Learning, Vision, LLM RAG, AI Agents & Production MLOps')
                 : (isVi
-                    ? 'Xây dựng Nền tảng AI Vững chắc: Từ Trực quan, Python, Toán AI đến Khoa học Dữ liệu & ML'
-                    : 'Build a Rock-Solid AI Foundation: Intuition, Python, Math, Data Science & Classical ML')}
+                    ? 'Học Trí Tuệ Nhân Tạo Từ Số 0 — Thực Hành Trực Tiếp Trên Dữ Liệu Thật'
+                    : 'Master AI From Zero — 100% Hands-On Code with Real Datasets')}
             </h1>
 
-            <p className="text-indigo-100/85 text-xs sm:text-sm leading-relaxed max-w-xl">
+            <p className="text-indigo-100/90 text-xs sm:text-sm leading-relaxed max-w-xl">
               {isVi
-                ? 'Chương trình 15 Lộ trình (Track 0 → Track 14) chuẩn đại học quốc tế (MIT, Stanford, UC Berkeley, D2L.ai, Google, Hugging Face) kết hợp 16 Bộ dữ liệu mở xác thực, 21 Nguồn OER và Phòng Lab Code Python.'
-                : '15-Track curriculum (Track 0 → Track 14) grounded in 21 verified OER sources (MIT, Stanford, UC Berkeley, D2L.ai, Google, Hugging Face), with 16 open datasets and Python Code Labs.'}
+                ? 'Không học vẹt lý thuyết, không dữ liệu giả lập. Giáo trình 15 Chặng chuẩn đại học hàng đầu (Stanford, MIT, UC Berkeley, Google), phòng Lab Monaco IDE thực thi Python an toàn ngay trên trình duyệt và trợ lý AI Socratic đồng hành 24/7.'
+                : 'No dry theory, zero mock data. A rigorous 15-track curriculum grounded in Stanford, MIT, and Google research, featuring browser Python sandboxes and 24/7 Socratic AI mentoring.'}
             </p>
           </div>
 
@@ -209,36 +231,36 @@ export const HomeView: React.FC = () => {
             {nextRecommendedLesson && (
               <button
                 onClick={() => openLesson(nextRecommendedLesson.id)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-xs sm:text-sm shadow-md transition"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-indigo-500 hover:bg-indigo-400 text-white font-extrabold text-xs sm:text-sm shadow-lg hover:shadow-indigo-500/40 transition-all hover:-translate-y-0.5"
               >
                 <PlayCircle className="w-4 h-4" />
-                <span>{isVi ? 'Học tiếp bài hiện tại' : 'Continue Active Lesson'}</span>
+                <span>{isVi ? '🚀 Bắt Đầu Học Thử Miễn Phí' : '🚀 Start Free Lesson'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             )}
             <button
               onClick={() => setActiveView('learn')}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/15 transition"
+              className="inline-flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 transition"
             >
               <BookOpen className="w-4 h-4 text-sky-300" />
-              <span>{isVi ? 'Xem toàn bộ 15 Lộ trình (Tracks 0–14)' : 'Explore All 15 Tracks (0–14)'}</span>
+              <span>{isVi ? 'Khám phá 15 Lộ trình' : 'Browse 15 Tracks'}</span>
             </button>
             <button
               onClick={() =>
                 openAgentWithPrompt(
                   isVi
-                    ? 'Hãy phân tích tiến độ hiện tại của tôi và gợi ý bài học tiếp theo phù hợp nhất.'
-                    : 'Analyze my current progress and recommend the best next lesson.'
+                    ? 'Chào bạn, tôi muốn bắt đầu học AI tại T Lab AI. Hãy tư vấn lộ trình học phù hợp nhất cho tôi.'
+                    : 'Hi! I want to master AI on T Lab AI. Please recommend the best learning pathway for me.'
                 )
               }
-              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 font-bold text-xs border border-emerald-400/30 transition"
+              className="inline-flex items-center gap-1.5 px-3.5 py-3 rounded-2xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 font-bold text-xs border border-emerald-400/30 transition"
             >
               <Bot className="w-4 h-4 text-emerald-300" />
-              <span>{isVi ? 'Hỏi Trợ lý Agent' : 'Ask AI Agent'}</span>
+              <span>{isVi ? 'Hỏi Trợ lý T Lab AI' : 'Ask AI Tutor'}</span>
             </button>
           </div>
 
-          <div className="absolute -right-12 -bottom-12 w-64 h-64 rounded-full bg-indigo-500/20 blur-3xl pointer-events-none" />
+          <div className="absolute -right-12 -bottom-12 w-64 h-64 rounded-full bg-indigo-500/25 blur-3xl pointer-events-none" />
         </div>
 
         {/* Right 5 cols: Active Lesson & Real Dataset Spotlight Card */}
@@ -596,7 +618,7 @@ export const HomeView: React.FC = () => {
             </div>
           </div>
 
-          {/* Audience 2: Applied AI Engineer Path (7 Tracks) */}
+          {/* Audience 2: Applied AI Engineer Path (10 Tracks) */}
           <div
             className={`rounded-3xl border p-6 space-y-4 transition ${
               persona === 'engineer'
@@ -622,8 +644,8 @@ export const HomeView: React.FC = () => {
                   </div>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
                     {isVi
-                      ? '7 Lộ trình Chuyên sâu: Deep Learning, Thị giác Máy tính, LLM RAG, AI Agents, MLOps, Nghiên cứu & Đồ án'
-                      : '7 Advanced Tracks: Deep Learning, Computer Vision, LLM RAG, AI Agents, MLOps, Research & Capstone'}
+                      ? '10 Lộ trình Chuyên sâu (Tracks 5–14): Deep Learning, Thị giác Máy tính, LLM RAG, Khuếch tán Multimodal, AI Agents, MLOps, AI Có trách nhiệm, Nghiên cứu Ablation, Chuỗi thời gian & Đồ án Capstone'
+                      : '10 Advanced Tracks (Tracks 5–14): Deep Learning, Vision, LLM RAG, Diffusion, AI Agents, MLOps, Responsible AI, Research Ablations, Time-Series & Capstone'}
                   </p>
                 </div>
               </div>
@@ -685,6 +707,122 @@ export const HomeView: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* 4.5 Marketing Value Proposition & Comparison Matrix ("Tại Sao Chọn T Lab AI?") */}
+      <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl relative overflow-hidden">
+        <div className="relative z-10 max-w-2xl space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/30 text-indigo-300 text-[11px] font-extrabold uppercase tracking-wider border border-indigo-400/30">
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <span>{isVi ? 'Tại Sao Nên Chọn T Lab AI?' : 'Why Choose T Lab AI?'}</span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-snug">
+            {isVi
+              ? 'Khác Biệt Hoàn Toàn Với Cách Học AI Truyền Thống'
+              : 'Fundamentally Different From Passive AI Tutorials'}
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            {isVi
+              ? 'Không chỉ là xem video thụ động. T Lab AI mang đến một Hệ điều hành học tập hoàn chỉnh — kết hợp giữa giáo trình cấu trúc chuẩn đại học, thực hành code trên dữ liệu thực tế và AI Mentor đồng hành.'
+              : 'Not just another video course. T Lab AI gives you a full learning operating system — combining university-grade syllabus, browser Python IDE with real datasets, and 24/7 AI mentoring.'}
+          </p>
+        </div>
+
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Card 1: Khóa học Video Truyền thống */}
+          <div className="p-5 rounded-2xl bg-slate-800/60 border border-slate-700/60 space-y-3 flex flex-col justify-between">
+            <div className="space-y-2.5">
+              <div className="text-xs font-extrabold uppercase text-rose-400 tracking-wider">
+                {isVi ? 'Khóa Học Video Truyền Thống' : 'Passive Video Courses'}
+              </div>
+              <ul className="space-y-2.5 text-xs text-slate-300">
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                  <span>{isVi ? 'Xem video thụ động, dễ nản và nhanh quên' : 'Passive watching, low retention rate'}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                  <span>{isVi ? 'Dữ liệu mock giả lập, không sát thực tế doanh nghiệp' : 'Synthetic toy datasets disconnected from production'}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                  <span>{isVi ? 'Tốn hàng giờ cài đặt môi trường Python bị lỗi' : 'Painful local setup hurdles and dependency conflicts'}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                  <span>{isVi ? 'Học phí đắt đỏ ($50 - $500/khóa)' : 'Costly subscription fees ($50-$500/course)'}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Card 2: T Lab AI - The Winner Card */}
+          <div className="p-5 rounded-2xl bg-gradient-to-b from-indigo-900/90 to-indigo-950 border-2 border-indigo-400/80 space-y-3 flex flex-col justify-between relative shadow-lg shadow-indigo-950/50">
+            <div className="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full bg-indigo-500 text-[10px] font-black uppercase tracking-wider text-white shadow-xs">
+              {isVi ? 'Lựa chọn tối ưu' : 'Recommended'}
+            </div>
+            <div className="space-y-2.5">
+              <div className="text-xs font-extrabold uppercase text-indigo-300 tracking-wider flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                <span>T Lab AI Learning OS</span>
+              </div>
+              <ul className="space-y-2.5 text-xs text-white">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <span className="font-semibold">{isVi ? '15 Lộ trình chuẩn Stanford / MIT / Google' : '15 Tracks aligned with Stanford & MIT curricula'}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <span className="font-semibold">{isVi ? '100% dữ liệu thực tế từ 21 nguồn OER mở' : '100% real-world open datasets from 21 OER sources'}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <span className="font-semibold">{isVi ? 'Monaco IDE Sandbox chạy Python trực tiếp trên web' : 'Browser Monaco IDE with safe Python AST sandbox'}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <span className="font-semibold">{isVi ? 'Trợ lý AI Socratic 24/7 & 100% Miễn phí trọn đời' : '24/7 Socratic AI mentor, 100% Free forever'}</span>
+                </li>
+              </ul>
+            </div>
+            <button
+              onClick={() => (nextRecommendedLesson ? openLesson(nextRecommendedLesson.id) : setActiveView('learn'))}
+              className="w-full mt-2 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-extrabold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>{isVi ? 'Bắt Đầu Trải Nghiệm Ngay' : 'Get Started Now'}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Card 3: Tự Prompt Chatbot đơn thuần */}
+          <div className="p-5 rounded-2xl bg-slate-800/60 border border-slate-700/60 space-y-3 flex flex-col justify-between">
+            <div className="space-y-2.5">
+              <div className="text-xs font-extrabold uppercase text-amber-400 tracking-wider">
+                {isVi ? 'Chỉ Tự Prompt Chatbot' : 'Ad-hoc Chatbot Prompting'}
+              </div>
+              <ul className="space-y-2.5 text-xs text-slate-300">
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <span>{isVi ? 'Không có lộ trình thứ tự, dễ bị hổng kiến thức gốc' : 'No structured prerequisite knowledge graph'}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <span>{isVi ? 'Dễ bị ảo giác (hallucination) trong thuật toán toán học' : 'Prone to mathematical and architectural hallucinations'}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <span>{isVi ? 'Không có môi trường chạy code đa file và trực quan hóa' : 'No multi-file code execution or interactive graphs'}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <span>{isVi ? 'Không theo dõi chuỗi ngày học (streak) và lưu tiến độ' : 'No learning streak or verified project portfolio'}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="absolute -left-12 -top-12 w-64 h-64 rounded-full bg-indigo-600/20 blur-3xl pointer-events-none" />
       </div>
 
       {/* 5. Earned Achievements & Badges */}

@@ -243,7 +243,7 @@ async def ingest_upstream_feeds(db: Session) -> NewsIngestionTriggerResponse:
                         summary_what=clean_summary[:450] + ("..." if len(clean_summary) > 450 else ""),
                         summary_new=f"Cập nhật trực tiếp từ nguồn chính thức {src['name']} ({src['tier']}).",
                         summary_impact="Đóng góp dữ liệu thực nghiệm, kiến trúc mô hình và phương pháp tối ưu hóa mới nhất cho cộng đồng AI.",
-                        summary_action="Đối chiếu với các Lộ trình học trên T AIlab hoặc hỏi trực tiếp AI Agent ở góc phải màn hình để giải thích sâu hơn.",
+                        summary_action="Đối chiếu với các Lộ trình học trên T Lab AI hoặc hỏi trực tiếp AI Agent ở góc phải màn hình để giải thích sâu hơn.",
                         claim_status="VERIFIED" if "arxiv" in src["id"] else "VENDOR_CLAIM",
                         content_hash=content_hash,
                         bookmarked=False

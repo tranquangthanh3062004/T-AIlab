@@ -53,6 +53,6 @@ app.include_router(workspace_router, prefix="/api")
 def health_check():
     return {
         "status": "healthy",
-        "service": "chinai",
+        "service": "t_lab_ai",
         "version": settings.VERSION
     }

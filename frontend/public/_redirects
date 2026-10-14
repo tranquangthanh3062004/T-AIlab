@@ -1,0 +1,3 @@
+# Cloudflare Pages SPA Routing and API Proxy Configuration
+/api/* https://t-lab-ai-backend.onrender.com/api/:splat 200
+/* /index.html 200

@@ -113,7 +113,7 @@ def generate_grounded_tutor_response(req: TutorQueryRequest, db: Session) -> Tut
                 ]
             else:
                 answer = (
-                    f"### Giải đáp Sư phạm cùng CHINAI Tutor: {primary.title}\n\n"
+                    f"### Giải đáp Sư phạm cùng T Lab AI Tutor: {primary.title}\n\n"
                     f"Tài liệu phù hợp nhất cho câu hỏi của bạn nằm ở bài: **{primary.title}** ([Xem bài học]({primary.url_or_ref})).\n\n"
                     f"**1. Giải thích Dễ hiểu (Intuition):**\n{primary.excerpt}\n\n"
                     + (f"**2. Công thức Diễn giải bằng Lời:**\n{formula_line}\n\n" if formula_line else "")
@@ -128,7 +128,7 @@ def generate_grounded_tutor_response(req: TutorQueryRequest, db: Session) -> Tut
             if is_engineer:
                 answer = (
                     f"### Grounded Engineering Analysis: {primary.title}\n\n"
-                    f"Retrieved from verified CHINAI records ([{primary.type.upper()}: {primary.id}]({primary.url_or_ref})):\n\n"
+                    f"Retrieved from verified T Lab AI records ([{primary.type.upper()}: {primary.id}]({primary.url_or_ref})):\n\n"
                     f"**1. Core Mechanism:**\n{primary.excerpt}\n\n"
                     + (f"**2. Mathematical Formulation:**\n{formula_line}\n\n" if formula_line else "")
                     + (f"**3. Practical Engineering Trade-off:**\n- {tradeoff_line}\n\n" if tradeoff_line else "")
@@ -156,9 +156,9 @@ def generate_grounded_tutor_response(req: TutorQueryRequest, db: Session) -> Tut
     else:
         if is_vietnamese:
             answer = (
-                f"### Hướng dẫn Học tập Có Kiểm chứng (Grounded Tutor)\n\n"
+                f"### Hướng dẫn Học tập Có Kiểm chứng (T Lab AI Tutor)\n\n"
                 f"Về câu hỏi `{req.query}`: Hiện chưa có đoạn trích khớp từ khóa trực tiếp trong câu truy vấn.\n\n"
-                f"**Lộ trình 15 Track của CHINAI gợi ý cho bạn:**\n"
+                f"**Lộ trình 15 Track của T Lab AI gợi ý cho bạn:**\n"
                 f"- **Người mới bắt đầu (Tracks 0–4):** Bắt đầu từ *Track 0: Nền tảng Tư duy AI*, *Track 1: Python Vector hóa*, *Track 2: Toán AI*, *Track 3: Khoa học Dữ liệu (Chống Data Leakage)* và *Track 4: Học máy Cổ điển*.\n"
                 f"- **Kỹ sư AI Ứng dụng (Tracks 5–14):** Khám phá *Deep Learning*, *Computer Vision*, *LLM & RAG*, *Generative & Diffusion*, *AI Agents*, *MLOps*, *Responsible AI*, *Nghiên cứu Ablation*, *Chuỗi thời gian EWMA* và *Dự án Capstone*."
             )
@@ -167,7 +167,7 @@ def generate_grounded_tutor_response(req: TutorQueryRequest, db: Session) -> Tut
             answer = (
                 f"### Grounded Learning Guidance\n\n"
                 f"Regarding `{req.query}`: No exact keyword match was found in the local index.\n\n"
-                f"**Recommended across CHINAI's 15 Tracks (Track 0 – Track 14):**\n"
+                f"**Recommended across T Lab AI's 15 Tracks (Track 0 – Track 14):**\n"
                 f"- **Beginner Core (Tracks 0–4):** Start with *Track 0: AI Foundations*, *Track 1: Python Vectorization*, *Track 2: Math for AI*, *Track 3: Data Science & Leakage Prevention*, and *Track 4: Classical ML*.\n"
                 f"- **Applied Engineer & Specializations (Tracks 5–14):** Explore *Deep Learning*, *Computer Vision*, *LLM & RAG*, *Generative/Diffusion*, *AI Agents*, *MLOps*, *Responsible AI*, *Research Ablation*, *Time-Series EWMA*, and *Capstone*."
             )

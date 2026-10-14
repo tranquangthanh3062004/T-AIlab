@@ -1,4 +1,4 @@
-name: T AIlab CI Pipeline
+name: T Lab AI CI Pipeline
 
 on:
   push:

@@ -1,17 +1,17 @@
-# T AIlab — CHINAI AI Learning Operating System (v2.0.0)
+# T Lab AI — Nền Tảng Học & Kỹ Thuật Trí Tuệ Nhân Tạo Thực Chiến (v2.0.0)
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/tranquangthanh3062004/T-AIlab)
 [![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.143-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tests](https://img.shields.io/badge/Pytest-14%2F14%20Passing-10B981)](docs/TESTING.md)
+[![Tests](https://img.shields.io/badge/Pytest-22%2F22%20Passing-10B981)](docs/TESTING.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 > **"Học AI từ số 0. Xây dựng hệ thống AI thực chiến. Cập nhật nhịp đập nghiên cứu toàn cầu."**  
 > *"Learn AI from zero. Build real AI systems. Stay current with the global AI ecosystem."*
 
-**T AIlab (CHINAI — AI Learning OS)** is a production-grade AI education platform, professional IDE engineering workspace, and source-grounded AI research intelligence system. Designed to bridge the gap between passive video courses and enterprise AI engineering, it unifies pedagogical scaffolding, interactive mathematical simulations, an AST-firewalled Python execution sandbox, and citation-verified RAG tutoring.
+**T Lab AI** is a production-grade AI education platform, professional browser Monaco IDE engineering workspace, and source-grounded AI research intelligence system. Designed to bridge the gap between passive video courses and enterprise AI engineering, it unifies 15 structured curriculum tracks, interactive mathematical simulations, an AST-firewalled Python execution sandbox, and citation-verified RAG tutoring.
 
 ---
 
@@ -60,15 +60,25 @@
 
 ## ✨ Core Pillars & Key Features
 
-### 1. 🎓 Pillar 1: Learn Mode (Beginner-Friendly AI Education)
-- **7 Comprehensive Curriculum Tracks:**
-  1. `Track A`: AI Foundations (Paradigms, Generalization, Overfitting)
-  2. `Track B`: Python for AI & Numerical Computing (Vectorization, SIMD)
-  3. `Track C`: Mathematics for AI (Vectors, Calculus, Gradient Descent)
-  4. `Track D`: Classical Machine Learning (Decision Trees, Shannon Entropy)
-  5. `Track E`: Deep Learning & Neural Architectures (Perceptrons, ReLU, Sigmoid, GELU)
-  6. `Track F`: LLM Engineering (Embeddings, Vector Search, Cosine Similarity, RAG)
-  7. `Track G`: AI Systems & MLOps (P99 Tail Latency, Throughput, Quantization)
+### 1. 🎓 Pillar 1: Learn Mode (Structured AI Education — 15 Tracks)
+- **15 Comprehensive Curriculum Tracks (Tracks 0–14):**
+  - **Path 1: Complete Beginner (Tracks 0–4):**
+    1. `Track 0`: AI Foundations (Paradigms, Generalization, Overfitting, Mental Models)
+    2. `Track 1`: Python for AI & Numerical Computing (Vectorization, NumPy, Memory Layout)
+    3. `Track 2`: Mathematics for AI (Linear Algebra, Calculus, Gradient Descent Intuition)
+    4. `Track 3`: Data Science & Exploratory Analysis (Pandas, Real Open Datasets, Missing Imputation)
+    5. `Track 4`: Classical Machine Learning (Linear/Logistic, Decision Trees, Ensembles)
+  - **Path 2: Applied AI Engineer (Tracks 5–14):**
+    6. `Track 5`: Deep Learning & Neural Architectures (MLP, Backpropagation, Activations)
+    7. `Track 6`: Computer Vision (CNNs, Vision Transformers, Object Detection)
+    8. `Track 7`: LLM Engineering & RAG (Attention, Tokenization, Embeddings, BM25/Vector RAG)
+    9. `Track 8`: Generative AI & Multimodal Diffusion (DDPM, Latent Diffusion, CLIP)
+    10. `Track 9`: AI Agents & Tool Calling (ReAct, Planning, Memory, Function Calling)
+    11. `Track 10`: MLOps & Production Systems (FastAPI, Docker, Latency P99, Model Registry)
+    12. `Track 11`: Responsible AI, Ethics & Security (Bias, Jailbreak Defense, Data Privacy)
+    13. `Track 12`: Research Engineering & Ablations (Reproducibility, Hyperparameter Sweeps)
+    14. `Track 13`: Applied AI Specializations (Time-Series, Audio, Tabular Deep Learning)
+    15. `Track 14`: Capstone Portfolio Project (End-to-End Production AI System)
 - **Mathematical Formula Scaffolding (`FormulaGuide`):** Every equation is unpacked into standardized mathematical notation, intuitive plain-language meaning, an interactive symbol-by-symbol breakdown table, and a concrete numerical walkthrough.
 - **Interactive 2D HTML5 Canvas Simulators:** Real-time Perceptron decision boundary explorer and Gradient Descent loss landscape visualizer.
 - **Duolingo-Style Gamification:** Daily streaks 🔥, XP points ⚡, 5 progression tiers 🏆, and achievement badges.

@@ -11,7 +11,7 @@ export const TutorView: React.FC = () => {
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
-  const initialGreetingVi = "Xin chào bạn! Tôi là Trợ lý AI Gia Sư của CHINAI. Mọi câu trả lời của tôi đều được trích xuất và kiểm chứng dựa trên 7 Lộ trình học và các bài báo khoa học chính thức (arXiv, DeepMind, OpenAI).\n\nBạn có thể hỏi bất kỳ chủ đề nào: Thuật toán Tối ưu Gradient Descent, Overfitting, Vector Embeddings, Activation Functions, RAG Pipelines hoặc Triển khai MLOps!";
+  const initialGreetingVi = "Xin chào bạn! Tôi là Trợ lý AI Gia Sư của T Lab AI. Mọi câu trả lời của tôi đều được trích xuất và kiểm chứng dựa trên 15 Lộ trình học và các bài báo khoa học chính thức (arXiv, DeepMind, OpenAI).\n\nBạn có thể hỏi bất kỳ chủ đề nào: Thuật toán Tối ưu Gradient Descent, Overfitting, Vector Embeddings, Activation Functions, RAG Pipelines hoặc Triển khai MLOps!";
   const initialActionsVi = [
     "Giải thích thuật toán Gradient Descent bằng ví dụ trực quan",
     "Sự khác biệt giữa Supervised và Unsupervised Learning là gì?",
@@ -19,7 +19,7 @@ export const TutorView: React.FC = () => {
     "Vector Embeddings và Cosine Similarity hoạt động ra sao trong RAG?"
   ];
 
-  const initialGreetingEn = "Hello! I am your CHINAI AI Knowledge Tutor. All my explanations are strictly grounded in our 7 Core Curriculum tracks and verified scientific literature (arXiv, DeepMind, OpenAI).\n\nAsk me anything about: Gradient Descent Optimization, Overfitting, Vector Embeddings, Activation Functions, RAG Pipelines, or MLOps Deployment!";
+  const initialGreetingEn = "Hello! I am your T Lab AI Knowledge Tutor. All my explanations are strictly grounded in our 15 Core Curriculum tracks and verified scientific literature (arXiv, DeepMind, OpenAI).\n\nAsk me anything about: Gradient Descent Optimization, Overfitting, Vector Embeddings, Activation Functions, RAG Pipelines, or MLOps Deployment!";
   const initialActionsEn = [
     "Explain Gradient Descent with a clear step-by-step intuition",
     "What is the key difference between Supervised and Unsupervised Learning?",
@@ -89,7 +89,7 @@ export const TutorView: React.FC = () => {
         <div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-amber-500" />
-            <span>{isVi ? 'Trợ Lý AI Gia Sư CHINAI' : 'AI Tutor & Knowledge Retrieval'}</span>
+            <span>{isVi ? 'Trợ Lý AI Gia Sư T Lab AI' : 'T Lab AI Tutor & Knowledge Retrieval'}</span>
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             {isVi
@@ -172,7 +172,7 @@ export const TutorView: React.FC = () => {
           <div className="flex justify-start">
             <div className="p-4 rounded-2xl bg-white dark:bg-slate-850 border border-slate-200/80 dark:border-slate-750 flex items-center gap-3 text-xs text-slate-500 shadow-xs">
               <RefreshCw className="w-4 h-4 text-indigo-600 animate-spin" />
-              <span>{isVi ? 'Đang tra cứu cơ sở kiến thức 7 lộ trình và tin tức khoa học...' : 'Retrieving grounded knowledge from syllabus and research records...'}</span>
+              <span>{isVi ? 'Đang tra cứu cơ sở kiến thức 15 lộ trình và tin tức khoa học...' : 'Retrieving grounded knowledge from syllabus and research records...'}</span>
             </div>
           </div>
         )}

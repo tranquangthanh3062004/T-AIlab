@@ -1,6 +1,6 @@
-# Contributing to T AIlab (CHINAI AI Learning OS)
+# Contributing to T Lab AI
 
-Thank you for your interest in contributing to **T AIlab**! We follow senior engineering standards to maintain high code quality, security, and educational clarity across our bilingual (Vietnamese & English) AI learning platform.
+Thank you for your interest in contributing to **T Lab AI**! We follow senior engineering standards to maintain high code quality, security, and educational clarity across our bilingual (Vietnamese & English) AI learning platform.
 
 ---
 

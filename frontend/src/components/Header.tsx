@@ -44,6 +44,7 @@ export const Header: React.FC = () => {
   const handleQuickSwitchGoogle = async (email: string, name: string, avatar?: string) => {
     try {
       const res = await api.loginWithGoogle(email, name, avatar);
+      localStorage.setItem('tlab_token', res.access_token);
       localStorage.setItem('chinai_token', res.access_token);
       setUser(res.user);
       await refreshProgress();

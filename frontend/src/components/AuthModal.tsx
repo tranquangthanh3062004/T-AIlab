@@ -21,13 +21,13 @@ const DEFAULT_GOOGLE_ACCOUNTS: PresetGoogleAccount[] = [
     avatar_url: 'https://api.dicebear.com/7.x/initials/svg?seed=Tran%20Quang%20Thanh&backgroundColor=4f46e5'
   },
   {
-    email: 'thanh.ailab.research@gmail.com',
-    name: 'Thanh T-AIlab Research',
+    email: 'thanh.tlab.ai@gmail.com',
+    name: 'Thanh T Lab AI Research',
     role: 'Deep Learning Researcher',
     avatar_url: 'https://api.dicebear.com/7.x/initials/svg?seed=Thanh%20AI&backgroundColor=0284c7'
   },
   {
-    email: 'learner.chinai.vn@gmail.com',
+    email: 'learner.tlab.ai@gmail.com',
     name: 'Học Viên AI Mới',
     role: 'Beginner AI Explorer',
     avatar_url: 'https://api.dicebear.com/7.x/initials/svg?seed=Hoc%20Vien&backgroundColor=059669'
@@ -86,7 +86,7 @@ export const AuthModal: React.FC = () => {
   // Saved Google accounts in localStorage
   const [savedGoogleAccounts, setSavedGoogleAccounts] = useState<PresetGoogleAccount[]>(() => {
     try {
-      const raw = localStorage.getItem('chinai_google_accounts');
+      const raw = localStorage.getItem('tlab_google_accounts') || localStorage.getItem('chinai_google_accounts');
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -118,6 +118,7 @@ export const AuthModal: React.FC = () => {
     if (!exists) {
       const updated = [acc, ...savedGoogleAccounts];
       setSavedGoogleAccounts(updated);
+      localStorage.setItem('tlab_google_accounts', JSON.stringify(updated));
       localStorage.setItem('chinai_google_accounts', JSON.stringify(updated));
     }
   };
@@ -131,6 +132,7 @@ export const AuthModal: React.FC = () => {
       setLoading(true);
       if (authModalTab === 'register') {
         const res = await api.register(email, fullName || email.split('@')[0], password, role);
+        localStorage.setItem('tlab_token', res.access_token);
         localStorage.setItem('chinai_token', res.access_token);
         setUser(res.user);
         await refreshProgress();
@@ -138,6 +140,7 @@ export const AuthModal: React.FC = () => {
         setTimeout(() => closeAuthModal(), 700);
       } else {
         const res = await api.login(email, password);
+        localStorage.setItem('tlab_token', res.access_token);
         localStorage.setItem('chinai_token', res.access_token);
         setUser(res.user);
         await refreshProgress();
@@ -173,6 +176,7 @@ export const AuthModal: React.FC = () => {
       }
 
       const res = await api.loginWithGoogle(acc.email, acc.name, acc.avatar_url);
+      localStorage.setItem('tlab_token', res.access_token);
       localStorage.setItem('chinai_token', res.access_token);
       setUser(res.user);
       await refreshProgress();
@@ -228,20 +232,20 @@ export const AuthModal: React.FC = () => {
           {/* Header Brand */}
           <div className="flex items-center gap-3 mb-5">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-600 via-indigo-600 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-sm">
-              CH
+              T
             </div>
             <div>
               <h2 className="text-lg font-extrabold text-slate-900 dark:text-slate-100 leading-tight">
                 {authModalTab === 'google'
                   ? (isVi ? 'Kết nối Tài khoản Google' : 'Sign in with Google')
                   : authModalTab === 'register'
-                  ? (isVi ? 'Tạo Tài Khoản Học Viên AI' : 'Create Your AI Account')
-                  : (isVi ? 'Chào mừng trở lại CHINAI' : 'Welcome back to CHINAI')}
+                  ? (isVi ? 'Tạo Tài Khoản Học Viên T Lab AI' : 'Create Your T Lab AI Account')
+                  : (isVi ? 'Chào mừng trở lại T Lab AI' : 'Welcome back to T Lab AI')}
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 {isVi
-                  ? 'Lưu tiến độ 7 lộ trình, điểm XP, chuỗi ngày học & dự án IDE'
-                  : 'Sync your 7-track progress, XP, streaks & IDE projects'}
+                  ? 'Lưu tiến độ 15 lộ trình, điểm XP, chuỗi ngày học & phòng Lab Python'
+                  : 'Sync your 15-track progress, XP, streaks & Python labs'}
               </p>
             </div>
           </div>

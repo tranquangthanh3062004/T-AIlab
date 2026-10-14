@@ -50,7 +50,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUserState] = useState<UserProfile | null>(() => {
     try {
-      const cached = localStorage.getItem('chinai_user');
+      const cached = localStorage.getItem('tlab_user') || localStorage.getItem('chinai_user');
       return cached ? JSON.parse(cached) : null;
     } catch {
       return null;
@@ -58,7 +58,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [persona, setPersonaState] = useState<LearnerPersona>(() => {
-    const saved = localStorage.getItem('chinai_persona');
+    const saved = localStorage.getItem('tlab_persona') || localStorage.getItem('chinai_persona');
     if (saved === 'beginner' || saved === 'engineer') return saved;
     if (user?.role) return inferPersonaFromRole(user.role);
     return 'beginner';
@@ -67,7 +67,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [mode, setModeState] = useState<AppMode>(() => (persona === 'engineer' ? 'engineer' : 'learn'));
 
   const [theme, setThemeState] = useState<AppTheme>(() => {
-    const saved = localStorage.getItem('chinai_theme');
+    const saved = localStorage.getItem('tlab_theme') || localStorage.getItem('chinai_theme');
     if (saved === 'dark' || saved === 'light') return saved;
     if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       return 'dark';
@@ -92,13 +92,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [agentInitialPrompt, setAgentInitialPrompt] = useState<string | null>(null);
 
   const [language, setLanguageState] = useState<Language>(() => {
-    const saved = localStorage.getItem('chinai_lang');
+    const saved = localStorage.getItem('tlab_lang') || localStorage.getItem('chinai_lang');
     return (saved === 'en' || saved === 'vi') ? saved : 'vi';
   });
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem('chinai_lang', lang);
+    localStorage.setItem('tlab_lang', lang);
   };
 
   const toggleLanguage = () => {
@@ -111,7 +111,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const setPersona = (newPersona: LearnerPersona) => {
     setPersonaState(newPersona);
-    localStorage.setItem('chinai_persona', newPersona);
+    localStorage.setItem('tlab_persona', newPersona);
     setModeState(newPersona === 'engineer' ? 'engineer' : 'learn');
   };
 
@@ -119,12 +119,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setModeState(newMode);
     const mappedPersona: LearnerPersona = newMode === 'engineer' ? 'engineer' : 'beginner';
     setPersonaState(mappedPersona);
-    localStorage.setItem('chinai_persona', mappedPersona);
+    localStorage.setItem('tlab_persona', mappedPersona);
   };
 
   const setTheme = (newTheme: AppTheme) => {
     setThemeState(newTheme);
-    localStorage.setItem('chinai_theme', newTheme);
+    localStorage.setItem('tlab_theme', newTheme);
     if (newTheme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
@@ -139,10 +139,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const setUser = (newUser: UserProfile | null) => {
     setUserState(newUser);
     if (newUser) {
-      localStorage.setItem('chinai_user', JSON.stringify(newUser));
+      localStorage.setItem('tlab_user', JSON.stringify(newUser));
       const inferred = inferPersonaFromRole(newUser.role);
       setPersona(inferred);
     } else {
+      localStorage.removeItem('tlab_user');
       localStorage.removeItem('chinai_user');
     }
   };
@@ -164,7 +165,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const logout = () => {
+    localStorage.removeItem('tlab_token');
     localStorage.removeItem('chinai_token');
+    localStorage.removeItem('tlab_user');
     localStorage.removeItem('chinai_user');
     setUserState(null);
     refreshProgress();
@@ -185,11 +188,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('chinai_token');
+    const token = localStorage.getItem('tlab_token') || localStorage.getItem('chinai_token');
     if (token) {
       api.getMe()
         .then((u) => setUser(u))
         .catch(() => {
+          localStorage.removeItem('tlab_token');
           localStorage.removeItem('chinai_token');
           setUser(null);
         });

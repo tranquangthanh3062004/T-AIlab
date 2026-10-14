@@ -39,10 +39,10 @@ export function App() {
         <FloatingAgentWidget />
         <footer className="py-6 pb-20 md:pb-6 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 dark:text-slate-500">
           <p className="font-semibold text-slate-600 dark:text-slate-400">
-            T AIlab &middot; Nền tảng Học tập AI Phân tầng, Bộ Dữ liệu Mở Thực tế &amp; Radar Nghiên cứu AI
+            T Lab AI &middot; Nền tảng Học &amp; Kỹ thuật Trí tuệ Nhân tạo Thực chiến
           </p>
           <p className="mt-1 text-[11px] text-slate-400">
-            Lộ trình Người mới &amp; Kỹ sư AI Thực chiến &middot; Đồng bộ đa tài khoản Google &middot; Trợ lý AI Agent 24/7
+            15 Lộ trình Học tập &middot; Dữ liệu Mở Chuẩn OER &middot; Đồng bộ Google &middot; Trợ lý AI Agent 24/7
           </p>
         </footer>
       </div>

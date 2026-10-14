@@ -19,7 +19,7 @@ export const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
       className="flex items-center gap-3 cursor-pointer group select-none"
       role="button"
       tabIndex={0}
-      aria-label="T AIlab Home"
+      aria-label="T Lab AI Home"
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') onClick?.();
       }}
@@ -127,7 +127,7 @@ export const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
       <div className="leading-none">
         <div className="flex items-center gap-2">
           <span className="font-black tracking-tight text-lg sm:text-xl bg-gradient-to-r from-slate-900 via-indigo-700 to-sky-600 dark:from-white dark:via-indigo-300 dark:to-sky-400 bg-clip-text text-transparent group-hover:from-indigo-600 group-hover:to-purple-600 transition-all">
-            T AIlab
+            T Lab AI
           </span>
           <span className="inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-gradient-to-r from-indigo-500/10 to-sky-500/10 dark:from-indigo-500/20 dark:to-sky-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-700/70">
             <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />

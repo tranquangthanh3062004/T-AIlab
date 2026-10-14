@@ -7,9 +7,13 @@ import type {
 
 const API_BASE = (import.meta.env.VITE_API_URL as string) || '/api';
 
+const getStoredToken = (): string | null => localStorage.getItem('tlab_token') || localStorage.getItem('chinai_token');
+const getStoredLang = (): string => localStorage.getItem('tlab_lang') || localStorage.getItem('chinai_lang') || 'vi';
+const getStoredPersona = (): string => localStorage.getItem('tlab_persona') || localStorage.getItem('chinai_persona') || 'beginner';
+
 function getAuthHeaders(): Record<string, string> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-  const token = localStorage.getItem('chinai_token');
+  const token = getStoredToken();
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -88,21 +92,21 @@ export const api = {
 
   // Curriculum
   async getTracks(lang?: string): Promise<Track[]> {
-    const activeLang = lang || localStorage.getItem('chinai_lang') || 'vi';
+    const activeLang = lang || getStoredLang();
     const res = await fetch(`${API_BASE}/learn/tracks?lang=${encodeURIComponent(activeLang)}`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch tracks');
     return res.json();
   },
 
   async getLesson(lessonId: string, lang?: string): Promise<Lesson> {
-    const activeLang = lang || localStorage.getItem('chinai_lang') || 'vi';
+    const activeLang = lang || getStoredLang();
     const res = await fetch(`${API_BASE}/learn/lessons/${lessonId}?lang=${encodeURIComponent(activeLang)}`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch lesson');
     return res.json();
   },
 
   async submitQuiz(lessonId: string, selectedOptionIds: Record<string, string>, lang?: string): Promise<any> {
-    const activeLang = lang || localStorage.getItem('chinai_lang') || 'vi';
+    const activeLang = lang || getStoredLang();
     const res = await fetch(`${API_BASE}/learn/quiz/submit?lang=${encodeURIComponent(activeLang)}`, {
       method: 'POST',
       headers: getAuthHeaders(),
@@ -123,14 +127,14 @@ export const api = {
   },
 
   async getDiagnosticQuestions(lang?: string): Promise<any[]> {
-    const activeLang = lang || localStorage.getItem('chinai_lang') || 'vi';
+    const activeLang = lang || getStoredLang();
     const res = await fetch(`${API_BASE}/learn/diagnostic/questions?lang=${encodeURIComponent(activeLang)}`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to fetch diagnostic questions');
     return res.json();
   },
 
   async submitDiagnostic(answers: Record<string, string>, lang?: string): Promise<any> {
-    const activeLang = lang || localStorage.getItem('chinai_lang') || 'vi';
+    const activeLang = lang || getStoredLang();
     const res = await fetch(`${API_BASE}/learn/diagnostic/submit?lang=${encodeURIComponent(activeLang)}`, {
       method: 'POST',
       headers: getAuthHeaders(),
@@ -141,8 +145,8 @@ export const api = {
   },
 
   async getProgress(lang?: string, persona?: string): Promise<LearnerProgress> {
-    const activeLang = lang || localStorage.getItem('chinai_lang') || 'vi';
-    const activePersona = persona || localStorage.getItem('chinai_persona') || 'beginner';
+    const activeLang = lang || getStoredLang();
+    const activePersona = persona || getStoredPersona();
     const res = await fetch(
       `${API_BASE}/learn/progress?lang=${encodeURIComponent(activeLang)}&persona=${encodeURIComponent(activePersona)}`,
       { headers: getAuthHeaders() }
@@ -158,7 +162,7 @@ export const api = {
   },
 
   async getGovernanceAudit(lang?: string): Promise<any> {
-    const activeLang = lang || localStorage.getItem('chinai_lang') || 'vi';
+    const activeLang = lang || getStoredLang();
     const res = await fetch(`${API_BASE}/learn/governance/audit?lang=${encodeURIComponent(activeLang)}`, {
       headers: getAuthHeaders()
     });
