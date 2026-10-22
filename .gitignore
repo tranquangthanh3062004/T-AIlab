@@ -46,4 +46,5 @@ Thumbs.db
 *.swp
 *.swo
 backend/data/backups/
+backend/scratch/
 .wrangler/

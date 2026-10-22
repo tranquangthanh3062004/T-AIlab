@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
@@ -76,7 +76,7 @@ def create_file(project_id: str, req: FileCreateRequest, db: Session = Depends(g
     if not p:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    file_id = f"file-{int(datetime.utcnow().timestamp())}"
+    file_id = f"file-{int(datetime.now(timezone.utc).timestamp())}"
     new_file = ProjectFile(
         id=file_id,
         project_id=project_id,
@@ -102,7 +102,7 @@ def update_file(file_id: str, req: FileUpdateRequest, db: Session = Depends(get_
         raise HTTPException(status_code=404, detail="File not found")
 
     f.content = req.content
-    f.updated_at = datetime.utcnow()
+    f.updated_at = datetime.now(timezone.utc)
     db.commit()
     db.refresh(f)
     return ProjectFileSchema(

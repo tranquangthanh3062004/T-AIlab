@@ -4,46 +4,56 @@
 
 @layer base {
   :root {
-    --bg-primary: #f8fafc;
-    --bg-surface: #ffffff;
-    --bg-surface-elevated: #f1f5f9;
-    --border-subtle: #e2e8f0;
-    --border-strong: #cbd5e1;
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-muted: #64748b;
-    --accent-primary: #2563eb;
-    --accent-hover: #1d4ed8;
-    --accent-surface: #eff6ff;
-    --success: #059669;
-    --warning: #d97706;
-    --error: #dc2626;
+    /* Soft Light-First Palette (WCAG 2.2 AA compliant) */
+    --bg-primary: #F5F7FB;
+    --bg-surface: #FFFFFF;
+    --bg-surface-elevated: #F0F4FC;
+    --border-subtle: #E4E8F0;
+    --border-strong: #CBD5E1;
+    --text-primary: #202938;
+    --text-secondary: #667085;
+    --text-muted: #94A3B8;
+    --accent-primary: #4F6BED;
+    --accent-hover: #3D56D6;
+    --accent-surface: #E8EDFF;
+    --success: #16845B;
+    --warning: #A8640A;
+    --error: #C43D4B;
+    --info: #2673B8;
   }
 
   .dark {
-    --bg-primary: #0f172a;
-    --bg-surface: #1e293b;
-    --bg-surface-elevated: #334155;
+    /* Cohesive Dark Mode for Eye Comfort */
+    --bg-primary: #0F172A;
+    --bg-surface: #1E293B;
+    --bg-surface-elevated: #283548;
     --border-subtle: #334155;
     --border-strong: #475569;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
-    --accent-primary: #3b82f6;
-    --accent-hover: #60a5fa;
-    --accent-surface: #1e3a8a33;
-    --success: #10b981;
-    --warning: #f59e0b;
-    --error: #ef4444;
+    --text-primary: #F8FAFC;
+    --text-secondary: #CBD5E1;
+    --text-muted: #94A3B8;
+    --accent-primary: #637EF7;
+    --accent-hover: #8198FA;
+    --accent-surface: rgba(99, 126, 247, 0.15);
+    --success: #22C55E;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    --info: #38BDF8;
   }
 
   body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
 
   #root {

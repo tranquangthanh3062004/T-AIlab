@@ -1,7 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, String, Integer, Float, Boolean, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from app.core.database import Base
+
+def utc_now():
+    return datetime.now(timezone.utc)
 
 class UserAccount(Base):
     __tablename__ = "user_accounts"
@@ -14,8 +17,8 @@ class UserAccount(Base):
     avatar_url = Column(String, nullable=True)
     role = Column(String, default="AI Explorer")
     google_accounts_json = Column(Text, default="[]")
-    created_at = Column(DateTime, default=datetime.utcnow)
-    last_login_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now)
+    last_login_at = Column(DateTime, default=utc_now)
 
 class UserProgress(Base):
     __tablename__ = "user_progress"
@@ -27,7 +30,7 @@ class UserProgress(Base):
     quiz_score = Column(Float, nullable=True)
     code_exercise_passed = Column(Boolean, default=False)
     xp_earned = Column(Integer, default=0)
-    completed_at = Column(DateTime, default=datetime.utcnow)
+    completed_at = Column(DateTime, default=utc_now)
     notes = Column(Text, nullable=True)
 
 class LearnerProfile(Base):
@@ -46,7 +49,7 @@ class LearnerProfile(Base):
     badges_json = Column(Text, default='["first_step", "quiz_master"]')
     daily_goal_xp = Column(Integer, default=50)
     today_xp = Column(Integer, default=30)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now)
 
 class WorkspaceProject(Base):
     __tablename__ = "workspace_projects"
@@ -55,8 +58,8 @@ class WorkspaceProject(Base):
     user_id = Column(String, index=True, default="default-learner")
     name = Column(String, nullable=False)
     description = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now)
+    updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)
 
     files = relationship("ProjectFile", back_populates="project", cascade="all, delete-orphan")
 
@@ -68,7 +71,7 @@ class ProjectFile(Base):
     name = Column(String, nullable=False)
     content = Column(Text, default="")
     language = Column(String, default="python")
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)
 
     project = relationship("WorkspaceProject", back_populates="files")
 
@@ -81,7 +84,7 @@ class NewsArticle(Base):
     source = Column(String, index=True)
     author = Column(String, nullable=True)
     published_at = Column(String, nullable=False)  # ISO string or date
-    first_seen_at = Column(DateTime, default=datetime.utcnow)
+    first_seen_at = Column(DateTime, default=utc_now)
     category = Column(String, index=True)
     difficulty = Column(String, index=True)  # Beginner Friendly, Applied Engineering, Deep Research
     summary_what = Column(Text, nullable=False)
@@ -102,7 +105,7 @@ class ExperimentRun(Base):
     hyperparameters_json = Column(Text, default="{}")
     metrics_json = Column(Text, default="{}")
     status = Column(String, default="COMPLETED")  # RUNNING, COMPLETED, FAILED
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now)
 
 class EducationalResourceRecord(Base):
     __tablename__ = "educational_resources"
@@ -121,7 +124,7 @@ class EducationalResourceRecord(Base):
     mapped_tracks_json = Column(Text, default="[]")
     quality_score = Column(Float, default=9.5)
     last_verified_date = Column(String, default="2026-10-12")
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now)
 
 class ContentReviewRecord(Base):
     __tablename__ = "content_reviews"
@@ -134,8 +137,8 @@ class ContentReviewRecord(Base):
     passed_blocking_gates = Column(Boolean, default=True)
     criteria_scores_json = Column(Text, default="{}")
     blocking_reasons_json = Column(Text, default="[]")
-    reviewer = Column(String, default="CHINAI Pedagogical & Security Gatekeeper v2.1")
-    verified_at = Column(DateTime, default=datetime.utcnow)
+    reviewer = Column(String, default="T Lab AI Pedagogical & Security Gatekeeper v2.3")
+    verified_at = Column(DateTime, default=utc_now)
 
 class LearnerMasteryRecord(Base):
     __tablename__ = "learner_mastery"
@@ -149,5 +152,5 @@ class LearnerMasteryRecord(Base):
     confidence_level = Column(String, default="LOW")  # LOW, MODERATE, HIGH
     demonstrated_project_skill = Column(Float, default=0.0)
     weak_concepts_json = Column(Text, default="[]")
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)
 

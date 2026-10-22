@@ -1,7 +1,7 @@
 import hashlib
 import re
 import urllib.parse
-from datetime import datetime
+from datetime import datetime, timezone
 import feedparser
 import httpx
 from sqlalchemy.orm import Session
@@ -219,9 +219,9 @@ async def ingest_upstream_feeds(db: Session) -> NewsIngestionTriggerResponse:
                         try:
                             pub_date = f"{pub_parsed.tm_year:04d}-{pub_parsed.tm_mon:02d}-{pub_parsed.tm_mday:02d}"
                         except Exception:
-                            pub_date = datetime.utcnow().strftime("%Y-%m-%d")
+                            pub_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
                     else:
-                        pub_date = datetime.utcnow().strftime("%Y-%m-%d")
+                        pub_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
                     article_id = f"news-{hashlib.md5(canonical.encode()).hexdigest()[:10]}"
                     content_hash = compute_content_hash(raw_title + clean_summary)

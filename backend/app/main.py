@@ -1,5 +1,7 @@
+import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import engine, Base, SessionLocal
@@ -28,11 +30,25 @@ async def lifespan(app: FastAPI):
     yield
     # Shutdown
 
+logger = logging.getLogger("t_lab_ai")
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     lifespan=lifespan
 )
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled error processing {request.method} {request.url.path}: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": "Đã xảy ra lỗi máy chủ nội bộ. Vui lòng thử lại sau. (Internal Server Error)",
+            "path": str(request.url.path),
+            "status": "error"
+        }
+    )
 
 app.add_middleware(
     CORSMiddleware,

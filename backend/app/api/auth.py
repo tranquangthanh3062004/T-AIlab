@@ -2,8 +2,9 @@ import base64
 import hashlib
 import hmac
 import json
+import os
 import secrets
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy.orm import Session
@@ -17,7 +18,7 @@ from app.schemas.auth import (
 
 router = APIRouter(prefix="/auth", tags=["Authentication & Google OAuth"])
 
-SECRET_KEY = "chinai-t-ailab-production-hmac-key-2026"
+SECRET_KEY = os.getenv("JWT_SECRET", "chinai-t-ailab-production-hmac-key-2026")
 
 def _hash_password(password: str, salt: Optional[str] = None) -> str:
     if not salt:
@@ -36,7 +37,7 @@ def create_access_token(user_id: str, email: str) -> str:
     payload = {
         "sub": user_id,
         "email": email,
-        "iat": int(datetime.utcnow().timestamp()),
+        "iat": int(datetime.now(timezone.utc).timestamp()),
     }
     payload_b64 = base64.urlsafe_b64encode(json.dumps(payload).encode("utf-8")).decode("utf-8").rstrip("=")
     sig = hmac.new(SECRET_KEY.encode("utf-8"), payload_b64.encode("utf-8"), hashlib.sha256).hexdigest()
@@ -117,7 +118,7 @@ def _to_user_schema(user: UserAccount) -> UserProfileSchema:
         role=user.role or "AI Explorer",
         auth_provider=user.auth_provider or "local",
         connected_google_accounts=accounts,
-        created_at=user.created_at.isoformat() if user.created_at else datetime.utcnow().isoformat()
+        created_at=user.created_at.isoformat() if user.created_at else datetime.now(timezone.utc).isoformat()
     )
 
 @router.post("/register", response_model=AuthResponse)
@@ -141,7 +142,7 @@ def register_user(req: RegisterRequest, db: Session = Depends(get_db)):
             "name": req.full_name.strip(),
             "avatar_url": avatar,
             "is_primary": True,
-            "linked_at": datetime.utcnow().isoformat()
+            "linked_at": datetime.now(timezone.utc).isoformat()
         })
 
     new_user = UserAccount(
@@ -172,7 +173,7 @@ def login_user(req: LoginRequest, db: Session = Depends(get_db)):
             detail="Email hoặc mật khẩu không chính xác / Invalid email or password"
         )
 
-    user.last_login_at = datetime.utcnow()
+    user.last_login_at = datetime.now(timezone.utc)
     db.commit()
     db.refresh(user)
 
@@ -204,7 +205,7 @@ def google_oauth_login(req: GoogleAuthRequest, db: Session = Depends(get_db)):
     avatar = req.avatar_url or f"https://api.dicebear.com/7.x/initials/svg?seed={full_name or email}"
     user = db.query(UserAccount).filter(UserAccount.email == email).first()
 
-    now_iso = datetime.utcnow().isoformat()
+    now_iso = datetime.now(timezone.utc).isoformat()
     if not user:
         user_id = f"user-google-{secrets.token_hex(5)}"
         google_accounts = [{
@@ -228,7 +229,7 @@ def google_oauth_login(req: GoogleAuthRequest, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(user)
     else:
-        user.last_login_at = datetime.utcnow()
+        user.last_login_at = datetime.now(timezone.utc)
         if "google" not in (user.auth_provider or ""):
             user.auth_provider = "local+google"
         try:
@@ -277,7 +278,7 @@ def link_google_account(
             "name": req.full_name.strip() or g_email.split("@")[0],
             "avatar_url": avatar,
             "is_primary": len(accounts) == 0,
-            "linked_at": datetime.utcnow().isoformat()
+            "linked_at": datetime.now(timezone.utc).isoformat()
         })
         user.google_accounts_json = json.dumps(accounts)
         if "google" not in (user.auth_provider or ""):
