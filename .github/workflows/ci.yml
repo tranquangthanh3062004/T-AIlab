@@ -30,8 +30,10 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Pytest suite (Auth, AST Sandbox, Curriculum, Workspace)
+        env:
+          PYTHONPATH: .
         run: |
-          pytest -v
+          python -m pytest -v
 
   frontend-build:
     name: Frontend TypeScript & Vite Production Build

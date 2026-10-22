@@ -1,0 +1,9 @@
+{
+  "name": "t-lab-ai",
+  "version": "2.3.0",
+  "private": true,
+  "description": "T Lab AI — Nền Tảng Học & Kỹ Thuật Trí Tuệ Nhân Tạo Thực Chiến",
+  "scripts": {
+    "build": "node build.js"
+  }
+}
