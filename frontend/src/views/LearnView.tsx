@@ -9,6 +9,54 @@ import {
   ExternalLink, ShieldCheck
 } from 'lucide-react';
 
+interface CategoryChip {
+  id: string;
+  labelVi: string;
+  labelEn: string;
+  trackIds?: string[];
+}
+
+const CATEGORY_CHIPS: CategoryChip[] = [
+  { id: 'all', labelVi: 'Tất cả chủ đề', labelEn: 'All Topics' },
+  {
+    id: 'foundations',
+    labelVi: '🌱 Nền tảng & Toán',
+    labelEn: '🌱 Foundations & Math',
+    trackIds: ['track-foundations', 'track-ai-foundations', 'track-python', 'track-python-for-ai', 'track-math', 'track-math-for-ai']
+  },
+  {
+    id: 'data-ml',
+    labelVi: '📊 Data Science & ML',
+    labelEn: '📊 Data Science & ML',
+    trackIds: ['track-data-science', 'track-classical-ml', 'track-ml']
+  },
+  {
+    id: 'dl-vision',
+    labelVi: '🧠 Deep Learning & Thị giác',
+    labelEn: '🧠 Deep Learning & Vision',
+    trackIds: ['track-dl', 'track-deep-learning', 'track-computer-vision', 'track-vision']
+  },
+  {
+    id: 'llm-genai',
+    labelVi: '⚡ LLM, RAG & GenAI',
+    labelEn: '⚡ LLM, RAG & GenAI',
+    trackIds: ['track-llm', 'track-transformers-llm', 'track-generative-multimodal', 'track-genai']
+  },
+  {
+    id: 'agents-mlops',
+    labelVi: '🤖 AI Agents & MLOps',
+    labelEn: '🤖 AI Agents & MLOps',
+    trackIds: [
+      'track-ai-agents',
+      'track-mlops',
+      'track-responsible-ai-security',
+      'track-research-engineering',
+      'track-applied-specializations',
+      'track-capstone-portfolio'
+    ]
+  }
+];
+
 export const LearnView: React.FC = () => {
   const { openLesson, progress, refreshProgress, persona, setPersona, t, language } = useApp();
   const isVi = language === 'vi';
@@ -20,6 +68,7 @@ export const LearnView: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [audienceTab, setAudienceTab] = useState<'beginner' | 'engineer' | 'all'>(persona);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Embedded Diagnostic Assessment State
@@ -98,11 +147,28 @@ export const LearnView: React.FC = () => {
 
   const isBeginnerTrack = (tr: Track) =>
     tr.target_audience === 'beginner' ||
-    ['track-ai-foundations', 'track-python-for-ai', 'track-math-for-ai', 'track-data-science', 'track-classical-ml'].includes(tr.id);
+    [
+      'track-foundations',
+      'track-ai-foundations',
+      'track-python',
+      'track-python-for-ai',
+      'track-math',
+      'track-math-for-ai',
+      'track-data-science',
+      'track-classical-ml',
+      'track-ml'
+    ].includes(tr.id);
 
   const filteredTracks = tracks.filter((track) => {
     if (audienceTab === 'beginner' && !isBeginnerTrack(track)) return false;
     if (audienceTab === 'engineer' && isBeginnerTrack(track)) return false;
+
+    if (selectedCategory !== 'all') {
+      const chip = CATEGORY_CHIPS.find((c) => c.id === selectedCategory);
+      if (chip?.trackIds && !chip.trackIds.includes(track.id)) {
+        return false;
+      }
+    }
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -232,6 +298,30 @@ export const LearnView: React.FC = () => {
               </p>
             </div>
           </button>
+        </div>
+
+        {/* Category Quick Filter Chips */}
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <span className="text-xs font-bold text-slate-400 mr-1 hidden sm:inline">
+            {isVi ? 'Chủ đề chuyên sâu:' : 'Specialization:'}
+          </span>
+          {CATEGORY_CHIPS.map((chip) => {
+            const active = selectedCategory === chip.id;
+            return (
+              <button
+                key={chip.id}
+                type="button"
+                onClick={() => setSelectedCategory(chip.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                  active
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'bg-slate-100/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-700'
+                }`}
+              >
+                <span>{isVi ? chip.labelVi : chip.labelEn}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* 2B. Authoritative OER, University & GitHub Source Governance Registry */}
@@ -457,6 +547,35 @@ export const LearnView: React.FC = () => {
 
       {/* 3. Tracks & Lessons List */}
       <div className="space-y-6">
+        {filteredTracks.length === 0 && (
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-12 text-center space-y-4 shadow-2xs">
+            <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto">
+              <Search className="w-7 h-7" />
+            </div>
+            <div>
+              <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100">
+                {isVi ? 'Không tìm thấy lộ trình phù hợp' : 'No matching tracks found'}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
+                {isVi
+                  ? 'Không có bài học hoặc bộ dữ liệu nào khớp với điều kiện lọc hiện tại. Hãy thử từ khóa khác hoặc xóa bộ lọc.'
+                  : 'No lessons or datasets matched your current search filters. Try a different query or reset filters.'}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedCategory('all');
+                setAudienceTab('all');
+              }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition shadow-xs"
+            >
+              <span>{isVi ? 'Xóa toàn bộ bộ lọc' : 'Reset all filters'}</span>
+            </button>
+          </div>
+        )}
+
         {filteredTracks.map((track) => {
           const trackLessonIds = track.modules.flatMap((m) => m.lessons.map((l) => l.id));
           const completedInTrack = trackLessonIds.filter((id) => progress?.completed_lesson_ids.includes(id)).length;

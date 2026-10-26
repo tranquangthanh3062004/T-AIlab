@@ -67,9 +67,9 @@ export const NewsRadarView: React.FC = () => {
 
   useEffect(() => {
     // Auto-poll live RSS feeds once per session so newest articles appear automatically
-    const autoPolled = sessionStorage.getItem('chinai_news_autopolled');
+    const autoPolled = sessionStorage.getItem('tlab_news_autopolled');
     if (!autoPolled) {
-      sessionStorage.setItem('chinai_news_autopolled', '1');
+      sessionStorage.setItem('tlab_news_autopolled', '1');
       api.triggerNewsIngestion()
         .then((res) => {
           if (res && res.new_articles_persisted > 0) {

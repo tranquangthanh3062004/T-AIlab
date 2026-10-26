@@ -9,7 +9,7 @@ import { FormulaGuide } from '../components/FormulaGuide';
 import {
   BookOpen, Clock, Target, Lightbulb, Play, CheckCircle2,
   AlertTriangle, ArrowRight, ArrowLeft, Check, X, Zap,
-  Database, ExternalLink, Layers, Bot, Terminal, RotateCcw, Sparkles
+  Database, ExternalLink, Layers, Bot, Terminal, RotateCcw, Sparkles, Copy
 } from 'lucide-react';
 
 export const LessonView: React.FC = () => {
@@ -41,6 +41,32 @@ export const LessonView: React.FC = () => {
   const [quizScore, setQuizScore] = useState<number | null>(null);
   const [earnedXpToast, setEarnedXpToast] = useState<string | null>(null);
   const [revealedFlashcards, setRevealedFlashcards] = useState<Record<number, boolean>>({});
+  const [readingProgress, setReadingProgress] = useState<number>(0);
+  const [copiedCode, setCopiedCode] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      if (total > 0) {
+        setReadingProgress(Math.min(100, Math.round((window.scrollY / total) * 100)));
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleCopyCode = (codeText: string) => {
+    navigator.clipboard.writeText(codeText);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2000);
+  };
 
   useEffect(() => {
     if (!activeLessonId) return;
@@ -186,6 +212,74 @@ export const LessonView: React.FC = () => {
         </div>
       )}
 
+      {/* Sticky Quick-Jump Navigation Bar & Reading Progress */}
+      <div className="sticky top-16 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/90 dark:border-slate-800 rounded-2xl p-2.5 shadow-sm flex flex-wrap items-center justify-between gap-2.5">
+        <div className="flex items-center gap-1.5 overflow-x-auto text-[11px] font-bold">
+          <button
+            type="button"
+            onClick={() => scrollToSection('section-intuition')}
+            className="px-2.5 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition"
+          >
+            📖 {isVi ? 'Lý thuyết' : 'Theory'}
+          </button>
+          {lesson.formula_guide && (
+            <button
+              type="button"
+              onClick={() => scrollToSection('section-formula')}
+              className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800 hover:bg-indigo-100 transition"
+            >
+              📐 {isVi ? 'Công thức' : 'Math'}
+            </button>
+          )}
+          {lesson.real_dataset && (
+            <button
+              type="button"
+              onClick={() => scrollToSection('section-dataset')}
+              className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800 hover:bg-emerald-100 transition"
+            >
+              📊 {isVi ? 'Dữ liệu thật' : 'Dataset'}
+            </button>
+          )}
+          {lesson.code_exercise && (
+            <button
+              type="button"
+              onClick={() => scrollToSection('section-code-lab')}
+              className="px-2.5 py-1 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800 hover:bg-sky-100 transition"
+            >
+              💻 {isVi ? 'Phòng Lab Code' : 'Code Lab'}
+            </button>
+          )}
+          {lesson.quiz && (
+            <button
+              type="button"
+              onClick={() => scrollToSection('section-quiz')}
+              className="px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800 hover:bg-amber-100 transition"
+            >
+              📝 {isVi ? 'Trắc nghiệm' : 'Quiz'}
+            </button>
+          )}
+          {lesson.source_references && lesson.source_references.length > 0 && (
+            <button
+              type="button"
+              onClick={() => scrollToSection('section-oer')}
+              className="px-2.5 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition"
+            >
+              📚 {isVi ? 'Nguồn OER' : 'Sources'}
+            </button>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 font-mono text-[11px] text-slate-500 shrink-0 ml-auto">
+          <span>{readingProgress}%</span>
+          <div className="w-16 h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+            <div
+              className="h-full bg-indigo-600 rounded-full transition-all duration-150"
+              style={{ width: `${readingProgress}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Top Navigation & Breadcrumbs */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200/80 dark:border-slate-800">
         <button
@@ -271,7 +365,7 @@ export const LessonView: React.FC = () => {
       </div>
 
       {/* Section 1: Intuitive Explanation */}
-      <div className="space-y-3">
+      <div id="section-intuition" className="space-y-3 scroll-mt-28">
         <h2 className="text-lg font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2">
           <Lightbulb className="w-5 h-5 text-amber-500" />
           <span>{t('section1Intuition')}</span>
@@ -319,7 +413,7 @@ export const LessonView: React.FC = () => {
       )}
 
       {/* Section 2: Formal Formula Guide & Symbol Breakdown */}
-      <div className="space-y-3">
+      <div id="section-formula" className="space-y-3 scroll-mt-28">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <h2 className="text-lg font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-indigo-500" />
@@ -345,7 +439,7 @@ export const LessonView: React.FC = () => {
 
       {/* Section 2B: Embedded Real Open-Source Dataset Explorer (No Mock Data - Real Authoritative Sources) */}
       {lesson.real_dataset && (
-        <div className="rounded-3xl bg-white dark:bg-slate-900 border border-emerald-300/80 dark:border-emerald-800/70 overflow-hidden shadow-xs">
+        <div id="section-dataset" className="rounded-3xl bg-white dark:bg-slate-900 border border-emerald-300/80 dark:border-emerald-800/70 overflow-hidden shadow-xs scroll-mt-28">
           <div className="px-6 py-4 bg-gradient-to-r from-emerald-50/90 via-teal-50/60 to-sky-50/60 dark:from-emerald-950/40 dark:via-slate-900 dark:to-slate-900 border-b border-emerald-200/70 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-2">
@@ -555,7 +649,7 @@ export const LessonView: React.FC = () => {
 
       {/* Section 5: Embedded Monaco IDE Lab inside the Lesson */}
       {lesson.code_exercise && (
-        <div className="space-y-4 pt-4 border-t border-slate-200/80 dark:border-slate-800">
+        <div id="section-code-lab" className="space-y-4 pt-4 border-t border-slate-200/80 dark:border-slate-800 scroll-mt-28">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2 flex-wrap">
@@ -601,6 +695,14 @@ export const LessonView: React.FC = () => {
                 <span className="font-bold">exercise_solution.py</span>
               </div>
               <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleCopyCode(learnerCode)}
+                  className="inline-flex items-center gap-1 text-slate-400 hover:text-white transition"
+                >
+                  <Copy className="w-3 h-3" />
+                  <span>{copiedCode ? (isVi ? 'Đã chép!' : 'Copied!') : (isVi ? 'Chép mã' : 'Copy')}</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => setLearnerCode(lesson.code_exercise!.starter_code)}
@@ -729,7 +831,7 @@ export const LessonView: React.FC = () => {
 
       {/* Section 6: Deterministic Knowledge Check Quiz */}
       {lesson.quiz.length > 0 && (
-        <div className="space-y-5 pt-6 border-t border-slate-200/80 dark:border-slate-800">
+        <div id="section-quiz" className="space-y-5 pt-6 border-t border-slate-200/80 dark:border-slate-800 scroll-mt-28">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-indigo-600" />
@@ -816,7 +918,21 @@ export const LessonView: React.FC = () => {
             })}
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-3 items-center">
+            {quizSubmitted && (
+              <button
+                type="button"
+                onClick={() => {
+                  setQuizSubmitted(false);
+                  setQuizFeedback([]);
+                  setQuizScore(null);
+                  setSelectedAnswers({});
+                }}
+                className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              >
+                {isVi ? 'Làm lại bài kiểm tra' : 'Retake Quiz'}
+              </button>
+            )}
             <button
               onClick={handleQuizSubmit}
               disabled={Object.keys(selectedAnswers).length < lesson.quiz.length}
@@ -831,7 +947,7 @@ export const LessonView: React.FC = () => {
       {/* Section 7: Mastery Criteria & Verified OER / Academic Source Provenance */}
       {((lesson.mastery_criteria && lesson.mastery_criteria.length > 0) ||
         (lesson.source_references && lesson.source_references.length > 0)) && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-200/80 dark:border-slate-800">
+        <div id="section-oer" className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-200/80 dark:border-slate-800 scroll-mt-28">
           {lesson.mastery_criteria && lesson.mastery_criteria.length > 0 && (
             <div className="p-5 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-800/60 space-y-2.5">
               <h3 className="text-xs font-extrabold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">

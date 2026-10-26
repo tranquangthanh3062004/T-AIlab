@@ -36,8 +36,8 @@ export const FloatingAgentWidget: React.FC = () => {
       role: 'assistant',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       content: isVi
-        ? 'Xin chào! Tôi là **T-AIlab Agent** — Trợ lý Học tập & Kỹ thuật AI cá nhân của bạn.\n\nTôi luôn theo dõi bài học hiện tại của bạn để hỗ trợ:\n- Giải thích trực quan các khái niệm & ký hiệu công thức Toán học.\n- Phân tích bộ dữ liệu thực tế (UCI, StatLib, Hugging Face, MLPerf).\n- Gợi ý & gỡ lỗi (Debug) trực tiếp bài tập lập trình Python.'
-        : 'Hello! I am **T-AIlab Agent** — your personal AI Learning & Engineering Assistant.\n\nI stay synced with your active lesson to help you:\n- Break down mathematical formulas and symbols step by step.\n- Analyze real-world open datasets (UCI, StatLib, Hugging Face, MLPerf).\n- Guide and debug your Python code exercises.'
+        ? 'Xin chào! Tôi là **T Lab AI Agent** — Trợ lý Học tập & Kỹ thuật AI cá nhân của bạn.\n\nTôi luôn theo dõi bài học hiện tại của bạn để hỗ trợ:\n- Giải thích trực quan các khái niệm & ký hiệu công thức Toán học.\n- Phân tích bộ dữ liệu thực tế (UCI, StatLib, Hugging Face, MLPerf).\n- Gợi ý & gỡ lỗi (Debug) trực tiếp bài tập lập trình Python.'
+        : 'Hello! I am **T Lab AI Agent** — your personal AI Learning & Engineering Assistant.\n\nI stay synced with your active lesson to help you:\n- Break down mathematical formulas and symbols step by step.\n- Analyze real-world open datasets (UCI, StatLib, Hugging Face, MLPerf).\n- Guide and debug your Python code exercises.'
     }
   ]);
 
@@ -158,7 +158,7 @@ export const FloatingAgentWidget: React.FC = () => {
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
                   <span className="font-extrabold text-xs sm:text-sm tracking-tight truncate">
-                    T-AIlab Agent
+                    T Lab AI Agent
                   </span>
                   <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
                     RAG Verified
@@ -318,7 +318,7 @@ export const FloatingAgentWidget: React.FC = () => {
       <button
         type="button"
         onClick={() => setAgentOpen(!agentOpen)}
-        aria-label="Toggle T-AIlab Assistant Agent"
+        aria-label="Toggle T Lab AI Assistant Agent"
         className="group relative flex items-center gap-2.5 pl-3 pr-4 py-2.5 rounded-full bg-gradient-to-r from-indigo-600 via-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white shadow-xl hover:shadow-indigo-500/30 border border-white/20 transition-all duration-300 hover:scale-105"
       >
         <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-indigo-500 to-sky-500 opacity-35 blur-md group-hover:opacity-60 transition" />
