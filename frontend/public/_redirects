@@ -1,3 +1,3 @@
 # Cloudflare Pages SPA Routing and API Proxy Configuration
-/api/* https://forum-bernard-matrix-connecticut.trycloudflare.com/api/:splat 200
+/api/* https://gnome-prep-envelope-innovative.trycloudflare.com/api/:splat 200
 /* /index.html 200
